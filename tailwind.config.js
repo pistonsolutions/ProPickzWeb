@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       animation: {
-        'marquee': 'marquee 25s linear infinite',
+        'marquee': 'marquee 60s linear infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float': 'float 6s ease-in-out infinite',
         'slide-in-left': 'slideInLeft 0.5s ease-out',
