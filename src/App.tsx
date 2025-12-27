@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import {
   TrendingUp, CheckCircle, Smartphone,
   Menu, X, ChevronDown, MessageSquare, Send,
-  Zap, ArrowUpRight, Play, Star, Sparkles, BookOpen, HelpCircle, Trophy, Flame, Target, Award, Disc, Dribbble
+  Zap, ArrowUpRight, Play, Star, Sparkles, BookOpen, HelpCircle, Trophy, Flame, Target, Award, Disc, Dribbble, AlertCircle, Activity, Shield, UserPlus, Clock, Wallet, LineChart, Users, Info, LayoutDashboard, Layers, Gift
 } from 'lucide-react';
 
 // Firebase Imports
@@ -12,6 +12,7 @@ import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import propickzLogo from './assets/propickzlogo.png';
+import learningUi from './assets/learning_ui.png';
 
 // --- TYPES ---
 interface Message {
@@ -446,15 +447,20 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
   const navGroups = {
     Platform: [
       { name: 'Home', action: () => setView('Home'), icon: <TrendingUp size={16} /> },
+      { name: 'EV+ & Arbitrage', action: () => setView('EV'), icon: <Activity size={16} /> },
       { name: 'Results', action: () => setView('Results'), icon: <CheckCircle size={16} /> },
       { name: 'How It Works', action: () => setView('HowItWorks'), icon: <Zap size={16} /> },
       { name: 'Supported Sports', action: () => setView('SupportedSports'), icon: <Trophy size={16} /> },
     ],
     Membership: [
       { name: 'Pricing', action: () => setView('Pricing'), icon: <Star size={16} /> },
-      { name: 'Guarantee', action: () => setView('Guarantee'), icon: <Sparkles size={16} /> },
+      { name: 'Free Trial', action: () => setView('FreeTrial'), icon: <Zap size={16} /> },
+      { name: 'Testimonials', action: () => setView('Testimonials'), icon: <MessageSquare size={16} /> },
+      { name: 'Guarantee', action: () => setView('Guarantee'), icon: <Shield size={16} /> },
     ],
     Resources: [
+      { name: 'About Us', action: () => setView('AboutUs'), icon: <TrendingUp size={16} /> },
+      { name: 'Why Trust Us', action: () => setView('Trust'), icon: <CheckCircle size={16} /> },
       { name: 'Betting Academy', action: () => setView('BettingAcademy'), icon: <BookOpen size={16} /> },
       { name: 'FAQ', action: () => setView('FAQ'), icon: <HelpCircle size={16} /> },
       { name: 'Legal', action: () => setView('Legal'), icon: <MessageSquare size={16} /> },
@@ -465,64 +471,107 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
     <nav className="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-gray-800" onMouseLeave={() => setActiveDropdown(null)}>
       <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
 
-        {/* Logo Section */}
-        <div className="flex items-center gap-8">
+        {/* Left Side: Contact Us + Logo */}
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => window.location.href = 'mailto:support@propickz.com'}
+            className="text-gray-400 hover:text-purple-400 text-sm font-medium transition-colors hidden md:block"
+          >
+            Contact Us
+          </button>
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setView('Home')}>
             <img src={propickzLogo} alt="ProPickz" className="h-24 w-auto object-contain" />
           </div>
+        </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {Object.entries(navGroups).map(([group, items]) => (
-              <div
-                key={group}
-                className="relative"
-                onMouseEnter={() => setActiveDropdown(group)}
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center gap-1">
+          {Object.entries(navGroups).map(([group, items]) => (
+            <div
+              key={group}
+              className="relative"
+              onMouseEnter={() => setActiveDropdown(group)}
+            >
+              <button
+                className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-1 transition-colors ${activeDropdown === group ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}
               >
-                <button
-                  className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-1 transition-colors ${activeDropdown === group ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}
-                >
-                  {group}
-                  <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === group ? 'rotate-180' : ''}`} />
-                </button>
+                {group}
+                <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === group ? 'rotate-180' : ''}`} />
+              </button>
 
-                {/* Dropdown Menu */}
-                {activeDropdown === group && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden animate-fade-in-up z-50">
-                    <div className="p-2 space-y-1">
-                      {items.map((item) => (
-                        <button
-                          key={item.name}
-                          onClick={() => {
-                            item.action();
-                            setActiveDropdown(null);
-                          }}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors text-left group"
-                        >
-                          <span className="text-gray-500 group-hover:text-purple-400 transition-colors">{item.icon}</span>
-                          {item.name}
-                        </button>
-                      ))}
-                    </div>
+              {/* Dropdown Menu */}
+              {activeDropdown === group && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden animate-fade-in-up z-50">
+                  <div className="p-2 space-y-1">
+                    {items.map((item) => (
+                      <button
+                        key={item.name}
+                        onClick={() => {
+                          item.action();
+                          setActiveDropdown(null);
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors text-left group"
+                      >
+                        <span className="text-gray-500 group-hover:text-purple-400 transition-colors">{item.icon}</span>
+                        {item.name}
+                      </button>
+                    ))}
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Right Side Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <button onClick={() => window.open('https://www.winible.com/propickz', '_blank')} className="px-5 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-gray-200 transition shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-            Get Started
+          <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="px-5 py-2 border border-purple-500 text-purple-400 text-sm font-bold rounded-lg hover:bg-purple-500/10 transition shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+            Join Free Discord
+          </button>
+          <button onClick={() => setView('Pricing')} className="px-5 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-gray-200 transition shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+            View Pricing
           </button>
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden text-white p-2 hover:bg-gray-800 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button className="lg:hidden text-white p-2 hover:bg-gray-800 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X /> : <Menu />}
         </button>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-black border-t border-gray-800 absolute w-full left-0 top-24 p-4 flex flex-col gap-4 animate-fade-in-up md:hidden h-[calc(100vh-6rem)] overflow-y-auto">
+          <button onClick={() => { setView('Home'); setMobileMenuOpen(false); }} className="text-left text-white font-bold py-2 border-b border-gray-800">Home</button>
+
+          {Object.entries(navGroups).map(([group, items]) => (
+            <div key={group} className="py-2">
+              <div className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2 px-2">{group}</div>
+              <div className="flex flex-col gap-1">
+                {items.map(item => (
+                  <button
+                    key={item.name}
+                    onClick={() => { item.action(); setMobileMenuOpen(false); }}
+                    className="flex items-center gap-3 p-2 text-gray-300 hover:text-white hover:bg-gray-900 rounded-lg text-sm"
+                  >
+                    {item.icon}
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div className="mt-4 pt-4 border-t border-gray-800 flex flex-col gap-3">
+            <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="w-full py-3 border border-purple-500 text-purple-400 font-bold rounded-xl">
+              Join Free Discord
+            </button>
+            <button onClick={() => { setView('Pricing'); setMobileMenuOpen(false); }} className="w-full py-3 bg-white text-black font-bold rounded-xl">
+              View Pricing
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
@@ -791,13 +840,87 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
         </div>
       </section>
 
-      {/* 5. PRICING */}
+      {/* 5. LEARNING SECTION */}
+      <section className="py-24 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-purple-900/5 pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Image with Automation/Tilt */}
+          <div className="order-2 lg:order-1 relative perspective-1000 group">
+            <div className="relative z-10 transform transition-transform duration-700 ease-out group-hover:rotate-y-12 group-hover:rotate-x-6">
+              <img src={learningUi} alt="ProPickz Education" className="w-full max-w-lg mx-auto drop-shadow-2xl rounded-3xl border border-gray-800/50" />
+
+              {/* Floating elements */}
+              <div className="absolute -top-6 -right-6 bg-black/80 backdrop-blur border border-purple-500/50 p-4 rounded-2xl shadow-2xl animate-float delay-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
+                    <BookOpen size={20} className="text-white" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-sm">New Guide</div>
+                    <div className="text-purple-300 text-xs">Bankroll Mastery 101</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Background Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-purple-600/20 blur-[100px] pointer-events-none rounded-full"></div>
+          </div>
+
+          {/* Right: Content */}
+          <div className="order-1 lg:order-2 space-y-8">
+            <Reveal>
+              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
+                Master the Game <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Behind the Picks</span>
+              </h2>
+            </Reveal>
+            <Reveal delay={200}>
+              <p className="text-xl text-gray-400 leading-relaxed">
+                We don't just hand out picks—we help you become a sharper, more strategic bettor. At ProPickz, education is part of the edge. Learn the principles behind profitable betting, bankroll management, and how to think like a pro.
+              </p>
+            </Reveal>
+
+            <div className="space-y-6">
+              {[
+                {
+                  icon: <Wallet className="text-green-400" size={24} />,
+                  title: "Bankroll Management",
+                  desc: "Learn how to size your bets, avoid tilt, and grow your bankroll like a pro, even through losing streaks."
+                },
+                {
+                  icon: <LineChart className="text-blue-400" size={24} />,
+                  title: "Find the Edge",
+                  desc: "We teach you how to identify value in the lines, not just follow trends. Understand what gives you a long term-advantage."
+                },
+                {
+                  icon: <Users className="text-purple-400" size={24} />,
+                  title: "Live Strategy Sessions",
+                  desc: "Join exclusive Discord breakdowns where our analysts walk through picks, explain mistakes, and answer live questions."
+                }
+              ].map((feature, i) => (
+                <Reveal key={i} delay={300 + (i * 100)} className="flex gap-4 p-4 rounded-2xl hover:bg-gray-900/50 transition-colors border border-transparent hover:border-gray-800">
+                  <div className="shrink-0 mt-1 w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center">
+                    {feature.icon}
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-1">{feature.title}</h4>
+                    <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. PRICING */}
       <section className="py-24 bg-black relative" id="pricing">
         <div className="absolute inset-0 bg-purple-900/10 pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Invest in Yourself.</h2>
-            <p className="text-xl text-gray-400">Prices increase next month as we limit Discord capacity.</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Free for 7 Days. If You Don’t Profit, the Next Month is on Us.</h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">No gimmicks. No guesswork. Just expert picks, performance tracking, and a community that wins together.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -820,7 +943,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
 
             {/* Yearly */}
             <div className="bg-black border border-purple-500 rounded-3xl p-8 relative shadow-2xl shadow-purple-900/50 transform md:scale-105 z-10 flex flex-col">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-6 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg shadow-purple-600/50">
                 Most Popular
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Yearly</h3>
@@ -870,124 +993,142 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
 // --- 5. PRICING PAGE COMPONENT ---
 
 const PricingPage: React.FC = () => {
-  const [capacity, setCapacity] = useState(0);
-
-  useEffect(() => {
-    // Animate capacity bar on mount
-    setTimeout(() => setCapacity(87), 500);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-black pt-20 pb-20">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
         {/* Header */}
-        <div className="text-center mb-16 animate-fade-in-up">
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-6">
-            Invest in <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Yourself.</span>
+        <Reveal>
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+            Pick Plans That Match Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Hustle.</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-            Professional sports betting tools, daily +EV picks, and a community of winners.
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+            No Gimmicks. Just Gains.
+          </h2>
+        </Reveal>
+
+        <Reveal delay={200}>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
+            Whether you’re testing the waters or betting with conviction, profits are one click away.
           </p>
+        </Reveal>
 
-          {/* Progress Indicator / FOMO */}
-          <div className="max-w-md mx-auto bg-gray-900 rounded-full h-4 relative overflow-hidden border border-gray-800">
-            <div
-              className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-1000 ease-out"
-              style={{ width: `${capacity}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between text-xs font-mono text-gray-500 mt-2 max-w-md mx-auto">
-            <span>Discord Capacity</span>
-            <span className="text-green-400 font-bold">{capacity}% Full</span>
-          </div>
-        </div>
+        {/* Pricing Tiers */}
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-20">
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {/* Monthly */}
-          <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-8 hover:bg-gray-900 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/20 flex flex-col animate-fade-in-up delay-100 group">
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">Monthly</h3>
+          {/* FREE PLAN */}
+          <Reveal delay={300} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-6 hover:bg-gray-900 transition-colors flex flex-col text-left">
+            <h3 className="text-xl font-bold text-gray-400 mb-2">Free Plan</h3>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-4xl font-bold text-white">$39.99</span>
+              <span className="text-4xl font-bold text-white">$0</span>
               <span className="text-gray-500">/mo</span>
             </div>
             <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Daily bet recommendations</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Full Discord lounge access</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> +EV and Arbitrage tools</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Results & unit tracking</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Bankroll management guide</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Gift className="text-yellow-500 shrink-0" size={18} /> Entry to Member Lottery</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><LayoutDashboard className="text-blue-500 shrink-0" size={18} /> Access to Results Tracker</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Zap className="text-purple-500 shrink-0" size={18} /> Weekly free picks & previews</li>
+              <li className="flex gap-3 text-gray-500 text-sm italic">Great way to test ProPickz</li>
             </ul>
             <button
-              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-              className="w-full py-4 bg-purple-600/10 border border-purple-500/50 text-purple-300 font-bold rounded-xl hover:bg-purple-600 hover:text-white transition-all duration-300 relative overflow-hidden group/btn"
+              onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+              className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
             >
-              <span className="relative z-10">Start Monthly Access</span>
-              <div className="absolute inset-0 bg-purple-600 transform scale-x-0 group-hover/btn:scale-x-100 transition-transform origin-left duration-300"></div>
+              Join for Free
             </button>
-          </div>
+          </Reveal>
 
-          {/* Yearly */}
-          <div className="bg-black border border-purple-500 rounded-3xl p-8 relative shadow-[0_0_50px_rgba(147,51,234,0.3)] transform md:scale-105 z-10 flex flex-col animate-fade-in-up delay-200 hover:-translate-y-2 transition-transform duration-300">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg animate-pulse-slow">
+          {/* PRO PLAN - GLOWING/HIGHLIGHTED */}
+          <Reveal delay={400} className="bg-black border-2 border-purple-500 rounded-3xl p-6 relative shadow-[0_0_40px_rgba(147,51,234,0.3)] transform md:scale-105 z-10 flex flex-col text-left">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">
               Most Popular
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Yearly</h3>
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">$349</span>
+            <h3 className="text-xl font-bold text-white mb-2">Pro Plan</h3>
+            <div className="flex items-baseline gap-1 mb-6">
+              <span className="text-4xl font-bold text-white">$74.99</span>
+              <span className="text-gray-500">/mo</span>
+            </div>
+            <ul className="space-y-4 mb-8 flex-1">
+              <li className="flex gap-3 text-white text-sm font-bold"><CheckCircle className="text-purple-400 shrink-0" size={18} /> Full access to all picks</li>
+              <li className="flex gap-3 text-white text-sm font-bold"><Layers className="text-purple-400 shrink-0" size={18} /> Parlays (Safe & Risky)</li>
+              <li className="flex gap-3 text-white text-sm font-bold"><TrendingUp className="text-purple-400 shrink-0" size={18} /> Ladder Challenges</li>
+              <li className="flex gap-3 text-white text-sm font-bold"><Gift className="text-yellow-400 shrink-0" size={18} /> Full Giveaway Access</li>
+              <li className="flex gap-3 text-white text-sm font-bold"><BookOpen className="text-purple-400 shrink-0" size={18} /> Education Section</li>
+              <li className="flex gap-3 text-gray-400 text-sm">Included in Member Lottery</li>
+            </ul>
+            <button
+              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+              className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-purple-900/40"
+            >
+              Get Pro Access
+            </button>
+          </Reveal>
+
+          {/* QUARTERLY PLAN */}
+          <Reveal delay={500} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-6 hover:bg-gray-900 transition-colors flex flex-col text-left">
+            <h3 className="text-xl font-bold text-white mb-2">Quarterly</h3>
+            <div className="flex items-baseline gap-1 mb-1">
+              <span className="text-4xl font-bold text-white">$189</span>
+              <span className="text-gray-500">/3mo</span>
+            </div>
+            <p className="text-green-400 text-xs font-bold mb-6">Save $36 vs Monthly</p>
+            <ul className="space-y-4 mb-8 flex-1">
+              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-green-500 shrink-0" size={18} /> Everything in Pro Plan</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Clock className="text-green-500 shrink-0" size={18} /> 3 Months Locked In</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><TrendingUp className="text-green-500 shrink-0" size={18} /> Ideal for consistent bettors</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Activity className="text-green-500 shrink-0" size={18} /> Stronger Value</li>
+            </ul>
+            <button
+              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+              className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors border border-gray-700"
+            >
+              Start Quarterly
+            </button>
+          </Reveal>
+
+          {/* ANNUAL PLAN */}
+          <Reveal delay={600} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-6 hover:bg-gray-900 transition-colors flex flex-col text-left">
+            <div className="absolute -top-3 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              Best Value
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Annual</h3>
+            <div className="flex items-baseline gap-1 mb-1">
+              <span className="text-4xl font-bold text-white">$649</span>
               <span className="text-gray-500">/yr</span>
             </div>
-            <p className="text-green-400 text-sm font-bold mb-6 flex items-center gap-2">
-              <span className="bg-green-500/20 px-2 py-0.5 rounded text-xs">SAVE $130</span>
-              Just $29.08/mo
+            <p className="text-green-400 text-xs font-bold mb-6">Lowest Cost Per Month ($54)</p>
+            <ul className="space-y-4 mb-8 flex-1">
+              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-green-500 shrink-0" size={18} /> Full Access for 12 Months</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Trophy className="text-green-500 shrink-0" size={18} /> Perfect for serious bettors</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Target className="text-green-500 shrink-0" size={18} /> Long-term strategy focus</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Shield className="text-green-500 shrink-0" size={18} /> Maximize Bankroll Growth</li>
+            </ul>
+            <button
+              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+              className="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors"
+            >
+              Go Annual
+            </button>
+          </Reveal>
+
+        </div>
+
+        {/* Final CTA */}
+        <Reveal delay={700} className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-500/30 rounded-3xl p-12 mb-16">
+          <h2 className="text-3xl font-black text-white mb-4">Pick a Plan. Build a Bankroll.</h2>
+          <p className="text-xl text-gray-300 mb-8 font-light">
+            Be the one who wins on <span className="font-bold text-white">Purpose.</span>
+          </p>
+        </Reveal>
+
+        <Reveal delay={500}>
+          <div className="text-center">
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Profit or it’s free. If you don't finish the month in profit, we’ll give you the next month on us. Simple.
             </p>
-
-            <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex gap-3 text-white text-sm font-bold"><CheckCircle className="text-green-400 shrink-0" size={18} /> 12 Months full access</li>
-              <li className="flex gap-3 text-white text-sm font-bold"><CheckCircle className="text-green-400 shrink-0" size={18} /> Private breakdown threads</li>
-              <li className="flex gap-3 text-white text-sm font-bold"><CheckCircle className="text-green-400 shrink-0" size={18} /> Beta invites to new tools</li>
-              <li className="flex gap-3 text-white text-sm font-bold"><CheckCircle className="text-green-400 shrink-0" size={18} /> Priority Discord role</li>
-              <li className="flex gap-3 text-white text-sm font-bold"><CheckCircle className="text-green-400 shrink-0" size={18} /> Locked-in renewal rate</li>
-            </ul>
-            <button
-              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-              className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] transform hover:scale-[1.02]"
-            >
-              Go Yearly - Lock In Value
-            </button>
           </div>
+        </Reveal>
 
-          {/* Lifetime */}
-          <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-8 hover:bg-gray-900 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/20 flex flex-col animate-fade-in-up delay-300 group">
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">Lifetime</h3>
-            <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-4xl font-bold text-white">$699</span>
-              <span className="text-gray-500">/once</span>
-            </div>
-            <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Unlimited lifetime access</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> VIP "Founder" Label</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Long-term strategy models</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Future exclusives included</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> No recurring charges ever</li>
-            </ul>
-            <button
-              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-              className="w-full py-4 bg-purple-600/20 border border-purple-500/50 text-purple-300 font-bold rounded-xl hover:bg-purple-600 hover:text-white transition-all duration-300 relative overflow-hidden group/btn"
-            >
-              <span className="relative z-10">Claim Lifetime Access</span>
-              <div className="absolute inset-0 bg-purple-600 transform scale-x-0 group-hover/btn:scale-x-100 transition-transform origin-left duration-300"></div>
-            </button>
-          </div>
-        </div>
-
-        {/* Guarantee Badge */}
-        <div className="mt-16 text-center animate-fade-in-up delay-500">
-          <div className="inline-flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-6 py-3">
-            <CheckCircle className="text-green-500" size={20} />
-            <span className="text-gray-300 text-sm">30-Day Profit Guarantee applied to all plans</span>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -996,21 +1137,110 @@ const PricingPage: React.FC = () => {
 // --- 9. HOW IT WORKS PAGE COMPONENT ---
 
 const HowItWorksPage: React.FC = () => {
+  const [showSamplePick, setShowSamplePick] = useState(false);
+
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
 
-        {/* Hero */}
-        <div className="text-center mb-24">
+        {/* NEW HERO: 3-STEP FLOW */}
+        <div className="mb-32 text-center">
           <Reveal>
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-6">
+            <h1 className="text-4xl md:text-6xl font-black text-white mb-12">
+              How Propickz Makes You a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Smarter Bettor</span>
+            </h1>
+          </Reveal>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {[
+              { icon: <UserPlus className="text-purple-400" size={32} />, title: "Subscribe", desc: "Choose a plan that matches your style. You will instantly get access to our Discord." },
+              { icon: <Zap className="text-blue-400" size={32} />, title: "Get Picks Daily", desc: "Every day, receive our vetted, high confidence selections backed by data & discipline." },
+              { icon: <TrendingUp className="text-green-400" size={32} />, title: "Track Performance", desc: "All picks are timestamped and tracked for transparency. See your profits grow day by day." },
+            ].map((step, i) => (
+              <Reveal key={i} delay={i * 100} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl backdrop-blur-sm hover:bg-gray-900/60 transition-colors">
+                <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-purple-900/20">
+                  {step.icon}
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{step.desc}</p>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal delay={400}>
+            <button
+              onClick={() => setShowSamplePick(true)}
+              className="px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2 mx-auto"
+            >
+              See a Sample Pick <ChevronDown size={20} />
+            </button>
+          </Reveal>
+        </div>
+
+        {/* SAMPLE PICK MODAL */}
+        {showSamplePick && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in-up" onClick={() => setShowSamplePick(false)}>
+            <div className="bg-gray-900 border border-gray-700 rounded-3xl p-8 max-w-md w-full relative shadow-2xl shadow-purple-900/50" onClick={e => e.stopPropagation()}>
+              <button
+                onClick={() => setShowSamplePick(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-green-500/30">
+                  Confirmed Win
+                </div>
+                <span className="text-gray-500 text-xs">Sample Preview</span>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Pick</div>
+                  <div className="text-2xl font-black text-white">Bills -2.5 <span className="text-gray-500 text-lg font-medium">(-110)</span></div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-800/50 p-3 rounded-xl">
+                    <div className="text-gray-500 text-xs mb-1 flex items-center gap-1"><Target size={12} /> Game</div>
+                    <div className="text-white text-sm font-bold">BUF @ MIA</div>
+                  </div>
+                  <div className="bg-gray-800/50 p-3 rounded-xl">
+                    <div className="text-gray-500 text-xs mb-1 flex items-center gap-1"><Clock size={12} /> Date</div>
+                    <div className="text-white text-sm font-bold">Sun, Sept 17</div>
+                  </div>
+                </div>
+
+                <div className="pb-4 border-b border-gray-800">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400 text-sm">Sportsbook</span>
+                    <span className="text-blue-400 font-bold flex items-center gap-1"><Zap size={14} fill="currentColor" /> FanDuel</span>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-gray-500 text-xs mb-3">Instant Analysis Logic included with every pick.</p>
+                  <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors">
+                    Unlock Today's Picks
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ORIGINAL HERO (Pushed Down) */}
+        <div className="text-center mb-24 pt-12 border-t border-gray-800/50">
+          <Reveal>
+            <h1 className="text-3xl md:text-5xl font-black text-white mb-6 text-gray-400">
               The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">Engine</span> Behind the Edge.
             </h1>
           </Reveal>
           <Reveal delay={200}>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">
               We don't guess. We scrape millions of data points in real-time to find where the books are wrong. Here is exactly how we print money.
             </p>
           </Reveal>
@@ -1401,94 +1631,106 @@ const GuaranteePage: React.FC = () => {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
       <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+
+      {/* Intense Purple Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-black to-black pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
 
       <div className="max-w-4xl mx-auto px-4 relative z-10 w-full">
 
         {/* Header Section */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-4 tracking-tighter">
-            ZERO <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">RISK.</span>
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            We don't just promise results. We engineer them.
-          </p>
+          <Reveal>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+              Try ProPickz Free for 7 Days.<br />
+              If You Don’t Profit, the <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Next Month Is On Us.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={200}>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              You win – or you don't pay. That's how confident we are in our system.
+            </p>
+          </Reveal>
         </div>
 
-        {/* The Monolith Card */}
-        <div className="relative bg-gray-900/40 backdrop-blur-xl border border-gray-800 rounded-[2rem] overflow-hidden shadow-2xl">
-          {/* Glowing Top Border */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-70"></div>
+        {/* Dual Card Container */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
 
-          <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 p-8 md:p-12 items-center relative">
+          {/* Free Trial Card */}
+          <Reveal delay={300}>
+            <div className="bg-[#0f1014] border border-gray-800 rounded-3xl p-8 flex flex-col h-full hover:border-gray-700 transition-colors">
+              <h3 className="text-2xl font-bold text-white mb-8 tracking-wide">FREE TRIAL</h3>
 
-            {/* Left Side: The Logic */}
-            <div className="space-y-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gray-800 flex items-center justify-center shrink-0 border border-gray-700">
-                  <span className="text-purple-400 font-bold text-xl">01</span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">The 7-Day Proof</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    If you don't see green in your first week, we extend your trial for <span className="text-white font-bold">30 days FREE.</span> We prove the system works before you pay a dime.
-                  </p>
-                </div>
-              </div>
+              <ul className="space-y-6 mb-8 flex-1">
+                <li className="flex items-start gap-4">
+                  <CheckCircle className="text-green-500 shrink-0 mt-1" size={20} />
+                  <span className="text-gray-300 text-lg">Access to daily picks for all major sports</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <CheckCircle className="text-green-500 shrink-0 mt-1" size={20} />
+                  <span className="text-gray-300 text-lg">Entry to Discord betting community</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <CheckCircle className="text-green-500 shrink-0 mt-1" size={20} />
+                  <span className="text-gray-300 text-lg">No credit card required</span>
+                </li>
+              </ul>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gray-800 flex items-center justify-center shrink-0 border border-gray-700">
-                  <span className="text-green-400 font-bold text-xl">02</span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">The 30-Day Assurance</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Finish your first month down? We refund <span className="text-white font-bold">100% of your subscription.</span> No questions. No loopholes. Just math.
-                  </p>
-                </div>
-              </div>
+              <button
+                onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+                className="w-full py-4 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold text-lg rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
+              >
+                Start Free Trial
+              </button>
             </div>
+          </Reveal>
 
-            {/* Center Divider (Desktop) */}
-            <div className="hidden md:flex flex-col items-center justify-center h-full gap-2">
-              <div className="w-px h-20 bg-gradient-to-b from-transparent to-gray-700"></div>
-              <div className="w-10 h-10 rounded-full border border-gray-600 flex items-center justify-center bg-black">
-                <CheckCircle size={16} className="text-green-500" />
-              </div>
-              <div className="w-px h-20 bg-gradient-to-t from-transparent to-gray-700"></div>
-            </div>
+          {/* Pro Membership Card */}
+          <Reveal delay={400}>
+            <div className="bg-[#0f1014] border border-gray-800 rounded-3xl p-8 flex flex-col h-full hover:border-purple-500/50 transition-colors relative overflow-hidden group">
+              {/* Subtle purple glow for Pro */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-600/20 transition-colors"></div>
 
-            {/* Right Side: The CTA */}
-            <div className="text-center md:text-left bg-gradient-to-br from-purple-900/20 to-black p-8 rounded-2xl border border-purple-500/20 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-purple-600/5 group-hover:bg-purple-600/10 transition-colors duration-500"></div>
+              <h3 className="text-2xl font-bold text-white mb-8 tracking-wide">PRO MEMBERSHIP</h3>
 
-              <h3 className="text-2xl font-bold text-white mb-2 relative z-10">Protected by Math.</h3>
-              <p className="text-gray-400 text-sm mb-6 relative z-10">
-                Our +EV edge is so strong, we can afford to take the risk. Can you afford not to?
-              </p>
+              <ul className="space-y-6 mb-8 flex-1">
+                <li className="flex items-start gap-4">
+                  <Info className="text-[#5865F2] shrink-0 mt-1" size={20} />
+                  <span className="text-gray-300 text-lg">Full pick archive access</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <LayoutDashboard className="text-[#5865F2] shrink-0 mt-1" size={20} />
+                  <span className="text-gray-300 text-lg">Advanced tracking dashboard</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <Zap className="text-[#5865F2] shrink-0 mt-1" size={20} />
+                  <span className="text-gray-300 text-lg">Daily Picks + 35% off DFS</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <BookOpen className="text-[#5865F2] shrink-0 mt-1" size={20} />
+                  <span className="text-gray-300 text-lg">Strategy education vault</span>
+                </li>
+              </ul>
 
               <button
                 onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-                className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] relative z-10 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold text-lg rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
               >
-                Activate Guarantee <ArrowUpRight size={18} />
+                Unlock Full Access
               </button>
-
-              <div className="mt-4 flex items-center justify-center md:justify-start gap-2 text-xs text-gray-500 relative z-10">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                System Active & Monitoring
-              </div>
             </div>
+          </Reveal>
 
-          </div>
+        </div>
 
-          {/* Bottom Bar */}
-          <div className="bg-black/40 p-4 text-center border-t border-gray-800">
-            <p className="text-xs text-gray-500 font-mono uppercase tracking-widest">
-              Protocol ID: PRO-GUARANTEE-V2 // Status: ENFORCED
+        {/* Footer Guarantee Text */}
+        <Reveal delay={500}>
+          <div className="text-center">
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Profit or it’s free. If you don't finish the month in profit, we’ll give you the next month on us. Simple.
             </p>
           </div>
-        </div>
+        </Reveal>
 
       </div>
     </div>
@@ -1538,108 +1780,829 @@ const LegalPage: React.FC = () => {
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Legal</h1>
         <p className="text-gray-400 mb-12">Effective Date: June 1, 2025</p>
 
-        <div className="space-y-12 text-gray-300 leading-relaxed">
+        <div className="space-y-12 text-gray-300 leading-relaxed font-light">
           <p>
-            These Terms of Use ("Terms") govern your access to and use of the ProPickz website, Discord server, platform tools (including the “ProPickz Bot”), and any other content, products, or services provided (collectively, the "Service"). By accessing or using any part of the Service, you acknowledge that you have read, understood, and agreed to be bound by these Terms in full. If you do not agree, you are not authorized to access or use the Service.
+            These Terms & Conditions (“Terms”) govern your access to and use of the ProPickz platform, including but not limited to our website, Discord server, bots, tools, data, models, projections, recommendations, content, communications, and any related products or services (collectively, the “Service”).
+            <br /><br />
+            By accessing, subscribing to, or otherwise using the Service, you acknowledge that you have read, understood, and agree to be legally bound by these Terms. If you do not agree, you must not use the Service.
           </p>
 
+          {/* 1 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">1. Informational Purposes Only – Not Financial Advice</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">1. Informational Purposes Only – Not Financial or Gambling Advice</h2>
             <p className="mb-4">
-              All content provided by ProPickz, including but not limited to betting picks, data, projections, models, articles, server discussions, and bot-generated outputs, is intended strictly for informational and entertainment purposes only.
+              All content provided by ProPickz, including but not limited to betting picks, statistical models, educational material, projections, articles, Discord discussions, tools, and bot-generated outputs, is intended strictly for informational, educational, and entertainment purposes only.
             </p>
             <p className="mb-4">
-              We are not financial advisors, bookmakers, or licensed gaming operators, and none of the information provided should be interpreted as investment advice, financial guidance, or an inducement to gamble.
+              ProPickz is not a financial advisor, investment advisor, bookmaker, gambling operator, or licensed gaming provider.
+            </p>
+            <p className="mb-4">
+              No content provided constitutes investment advice, financial guidance, legal advice, tax advice, or an inducement to gamble. Any decisions you make based on the information provided are made entirely at your own discretion and risk.
             </p>
             <p>
-              You are solely responsible for how you use the information. Betting and gambling involve significant risk, including the loss of your entire stake, and you acknowledge that you act entirely at your own risk.
+              You acknowledge that gambling and betting inherently involve high risk, including the potential loss of your entire stake, and you agree that you assume all responsibility and liability for how you use the Service.
             </p>
           </section>
 
+          {/* 2 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">2. No Guarantee of Profit or Outcome</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">2. No Guarantee of Profit, Outcome, or Accuracy</h2>
             <p className="mb-4">
-              ProPickz makes no guarantee of success, profitability, win rate, or accuracy of any content or selections published on our platform or communicated through our tools. Historical performance — whether real or simulated — is not indicative of future results.
+              ProPickz makes no guarantees, warranties, or representations — express or implied — regarding:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>The accuracy, reliability, timeliness, or completeness of any information or selections.</li>
+              <li>The likelihood of achieving profit, success, or any particular outcome.</li>
+              <li>Win rates, statistical advantages, or performance results.</li>
+            </ul>
+            <p className="mb-4">
+              Historical performance, whether real, simulated, or hypothetical, is provided for reference and educational purposes only and does not guarantee future outcomes.
             </p>
             <p>
-              You understand and accept that betting outcomes are inherently uncertain, and that ProPickz, its team, affiliates, and technology providers will not be liable for any financial losses, emotional distress, or damages of any kind incurred through use of the Service.
+              By using the Service, you expressly acknowledge and agree that all betting and gambling decisions are inherently uncertain, and ProPickz shall not be held responsible or liable for any reliance you place on the content.
             </p>
           </section>
 
+          {/* 3 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">3. Content May Include Simulations and Fictional Representations</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">3. Content May Include Simulations, Hypotheticals, and Marketing Materials</h2>
             <p className="mb-4">
-              Some information displayed on this website and/or its related marketing materials — including but not limited to drawings, mockups, illustrations, profit examples, projections, dashboards, and rendering images — are fictional, simulated, or hypothetical in nature. They are intended solely for presentation purposes and do not reflect actual financial performance or guaranteed results.
+              Certain materials provided or displayed by ProPickz, including but not limited to illustrations, mockups, dashboards, case studies, projections, or profit examples, may be fictional, simulated, or hypothetical in nature.
+            </p>
+            <p className="mb-4">
+              All such content is intended solely for presentation and marketing purposes and is clearly distinguished from actual performance data.
+            </p>
+            <p className="mb-4">
+              Any resemblance to actual events, earnings, or outcomes is purely coincidental and not intended to imply real-world accuracy or guaranteed results.
             </p>
             <p>
-              Any resemblance to real earnings, gains, or events is purely coincidental and not meant to imply a guaranteed outcome.
+              Where simulations or hypothetical results are displayed, they will be prominently labeled as such.
             </p>
           </section>
 
+          {/* 4 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">4. No Client or Fiduciary Relationship</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">4. No Client, Fiduciary, or Advisory Relationship</h2>
             <p className="mb-4">
-              Accessing or subscribing to the Service does not create a professional-client, fiduciary, or advisory relationship of any kind. You are solely responsible for complying with your local laws, including laws surrounding sports betting, internet gambling, and financial risk.
+              Your use of the Service does not establish any professional-client, fiduciary, advisory, or partnership relationship between you and ProPickz.
             </p>
+            <p className="mb-4">
+              ProPickz does not act in any advisory capacity, including but not limited to financial, legal, or gambling-related advisory.
+            </p>
+            <p className="mb-2">You are solely responsible for:</p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Complying with all local, state/provincial, federal, and international laws applicable to your activities.</li>
+              <li>Determining whether sports betting or gambling is legal in your jurisdiction.</li>
+              <li>Ensuring that you meet the minimum legal age requirement in your jurisdiction (in no event less than 18 years old, and in some jurisdictions 21 years old).</li>
+            </ul>
             <p>
-              You must be at least 21 years old and legally permitted to participate in sports betting activities in your jurisdiction to access the Service.
+              ProPickz does not provide access to the Service in jurisdictions where doing so would violate applicable law, and we reserve the right to restrict access accordingly.
             </p>
           </section>
 
+          {/* 5 */}
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">5. Limitation of Liability</h2>
             <p className="mb-4">
-              To the fullest extent permitted by applicable law, ProPickz, its owners, employees, contractors, affiliates, or agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, resulting from:
+              To the maximum extent permitted by law, ProPickz, its owners, employees, contractors, affiliates, and agents shall not be liable for:
             </p>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>Use or inability to use the Service</li>
-              <li>Any content obtained from the Service</li>
-              <li>Unauthorized access to or alteration of your transmissions or data</li>
-              <li>Third-party platforms, integrations, or bookmakers you interact with through or outside our platform</li>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Any losses or damages of any kind — including but not limited to direct, indirect, incidental, consequential, punitive, exemplary, or special damages;</li>
+              <li>Loss of profits, revenues, savings, data, goodwill, or opportunity;</li>
+              <li>Reliance on content, recommendations, or services provided by ProPickz;</li>
+              <li>Unauthorized access to or alteration of your data, transmissions, or account;</li>
+              <li>Third-party platforms, tools, bookmakers, or integrations accessed through or in connection with the Service.</li>
             </ul>
-            <p>
-              All content is provided “as is” and “as available” without warranties of any kind.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-white mb-4">6. Intellectual Property</h2>
-            <p>
-              All intellectual property, branding, code, bots, written content, designs, and trademarks on the ProPickz platform are the sole property of ProPickz and protected under copyright and trademark law. Any unauthorized reproduction, distribution, modification, or public display of this content is strictly prohibited.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-white mb-4">7. Jurisdiction and Governing Law</h2>
             <p className="mb-4">
-              These Terms shall be governed by and construed in accordance with the laws of the Province of Quebec, Canada, without regard to its conflict of law principles.
+              This limitation applies even if ProPickz has been advised of the possibility of such damages.
             </p>
-            <p>
-              You agree that any legal action or proceeding related to the Service must be filed exclusively in the provincial or federal courts located in Montreal, Quebec, and you irrevocably consent to the jurisdiction of such courts.
-            </p>
+            <p className="mb-2">Nothing in these Terms excludes liability for:</p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Fraud or fraudulent misrepresentation;</li>
+              <li>Gross negligence or willful misconduct by ProPickz;</li>
+              <li>Any liability that cannot be excluded under applicable law.</li>
+            </ul>
           </section>
 
+          {/* 6 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">8. Changes to These Terms</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">6. Disclaimer of Warranties</h2>
+            <p className="mb-4">
+              The Service and all content are provided strictly “as is” and “as available” without warranties of any kind, express or implied.
+            </p>
+            <p className="mb-4">
+              ProPickz disclaims all warranties including, but not limited to:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Merchantability, fitness for a particular purpose, accuracy, reliability, or non-infringement.</li>
+            </ul>
+            <p className="mb-4">
+              We do not warrant that the Service will be uninterrupted, timely, secure, error-free, or free of harmful components.
+            </p>
             <p>
-              We reserve the right to modify or update these Terms at any time. Continued use of the Service after such changes constitutes your acceptance of the revised Terms.
+              You acknowledge that any reliance you place on the Service is entirely at your own risk.
             </p>
           </section>
 
+          {/* 7 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">9. Severability</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">7. Intellectual Property and User License</h2>
+            <p className="mb-4">
+              All intellectual property rights in and to the Service, including but not limited to software, bots, tools, written content, logos, branding, trademarks, and design elements, are and shall remain the exclusive property of ProPickz.
+            </p>
+            <p className="mb-4">
+              ProPickz grants you a limited, revocable, non-exclusive, non-transferable license to use the Service strictly for personal, non-commercial, lawful purposes, subject to these Terms.
+            </p>
+            <p className="mb-4">
+              You may not copy, reproduce, distribute, modify, reverse-engineer, or publicly display any ProPickz content without prior written consent.
+            </p>
             <p>
-              If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary so that the remaining Terms remain in full force and effect.
+              Any unauthorized use of intellectual property may result in termination of access and legal action.
             </p>
           </section>
 
+          {/* 8 */}
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">8. Jurisdiction, Governing Law, and Dispute Resolution</h2>
+            <p className="mb-4">
+              These Terms shall be governed by and construed in accordance with the laws of the Province of Quebec, Canada, without regard to conflict of law principles.
+            </p>
+            <p className="mb-4">
+              You agree that all legal actions, claims, or proceedings arising from or relating to the Service shall be brought exclusively before the provincial and federal courts located in Montreal, Quebec.
+            </p>
+            <p className="mb-4">
+              By using the Service, you expressly and irrevocably consent to the jurisdiction of these courts.
+            </p>
+            <p>
+              To the fullest extent permitted by law, you waive the right to participate in any class action or representative lawsuit against ProPickz. All disputes must be resolved on an individual basis.
+            </p>
+          </section>
+
+          {/* 9 */}
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">9. Changes to Terms</h2>
+            <p className="mb-4">
+              ProPickz reserves the right to amend, update, or replace these Terms at any time.
+            </p>
+            <p className="mb-4">
+              Material changes will be communicated through prominent notice (such as email, Discord announcements, or website updates).
+            </p>
+            <p className="mb-4">
+              Your continued use of the Service following any such changes constitutes acceptance of the revised Terms.
+            </p>
+            <p>
+              It is your responsibility to review these Terms regularly.
+            </p>
+          </section>
+
+          {/* 10 */}
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">10. Severability</h2>
+            <p>
+              If any provision of these Terms is determined to be unlawful, invalid, or unenforceable, such provision shall be enforced to the maximum extent permissible, and the remainder of the Terms shall remain in full force and effect.
+            </p>
+          </section>
+
+          {/* 11 */}
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">11. Entire Agreement</h2>
+            <p>
+              These Terms constitute the entire agreement between you and ProPickz regarding the Service and supersede any prior agreements, understandings, or representations.
+            </p>
+          </section>
+
+          {/* 12 - Guarantee Disclaimer */}
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">12. Guarantee Disclaimer</h2>
+
+            <h3 className="text-xl font-bold text-white mt-6 mb-2">Scope of Guarantee</h3>
+            <p className="mb-4">
+              The guarantee described herein applies solely to the subscription fee paid by the Member for their Membership plan (monthly, yearly, or lifetime). Under no circumstances shall Propickz (“the Company”) be liable for any losses, damages, or claims beyond the limited refund amounts defined below.
+            </p>
+
+            <h3 className="text-xl font-bold text-white mt-6 mb-2">Definition of Loss and Evaluation Period</h3>
+            <p className="mb-4">
+              The term loss is defined exclusively as the absence of net profit within a given thirty (30) consecutive calendar-day period (“Guarantee Month”), measured from the first day of Membership activation or from any subsequent monthly cycle.
+            </p>
+            <p className="mb-4">
+              Profit or loss shall be determined solely on the collective results of all Company-provided content, including but not limited to event picks, analyst recommendations, +EV strategies, and arbitrage tools.
+            </p>
+            <p className="mb-4">
+              Each Guarantee Month is treated independently, and no Guarantee Month may be combined or averaged with another to establish a claim.
+            </p>
+
+            <h3 className="text-xl font-bold text-white mt-6 mb-2">Membership-Specific Guarantees</h3>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li><strong>Monthly Memberships:</strong> If no net profit is achieved during any Guarantee Month, the Company’s sole obligation shall be to refund the subscription fee paid for that specific month.</li>
+              <li><strong>Yearly Memberships:</strong> If no net profit is achieved during any Guarantee Month within the yearly term, the Company’s sole obligation shall be to refund an amount equal to one (1) month of Pro Membership fees at the then-current monthly rate, regardless of the total annual fee paid.</li>
+              <li><strong>Lifetime Memberships:</strong> If no net profit is achieved during any Guarantee Month within the lifetime of the Membership (e.g., Month 37, Month 52, etc.), the Company’s sole obligation shall be to refund an amount equal to one (1) month of Pro Membership fees at the then-current monthly rate, regardless of the lifetime fee paid.</li>
+            </ul>
+
+            <h3 className="text-xl font-bold text-white mt-6 mb-2">Member-Initiated Claims</h3>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Refunds are not proactive. It is the Member’s sole responsibility to request a refund in writing within seven (7) days following the end of the applicable Guarantee Month.</li>
+              <li>Failure to make a timely request shall result in forfeiture of that month’s refund eligibility.</li>
+              <li>The Company will not issue refunds automatically, nor will it notify Members of eligibility.</li>
+            </ul>
+
+            <h3 className="text-xl font-bold text-white mt-6 mb-2">Exclusions of Liability</h3>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>The Company provides sports picks, strategies, tools, and related content strictly for informational and entertainment purposes only.</li>
+              <li>The Company does not provide financial, investment, or gambling advice, and nothing on its platform shall be construed as such.</li>
+              <li>The Company assumes no responsibility for any wagering outcomes, financial losses, or personal decisions made by Members in reliance upon its content.</li>
+              <li>Any betting or financial activity undertaken by Members is done solely at their own risk.</li>
+            </ul>
+
+            <h3 className="text-xl font-bold text-white mt-6 mb-2">Guarantee Limitation</h3>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Refunds are capped strictly at the amounts described in Section 3 above.</li>
+              <li>The guarantee does not extend to any claimed or alleged losses beyond the subscription refund described herein, including but not limited to wagering losses, consequential damages, indirect losses, or opportunity costs.</li>
+            </ul>
+
+            <h3 className="text-xl font-bold text-white mt-6 mb-2">No Workarounds / Binding Effect</h3>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>This guarantee is non-transferable, non-renewable, and may not be restarted by canceling and re-enrolling in any Membership plan.</li>
+              <li>This guarantee cannot be circumvented by any claim, workaround, or interpretation inconsistent with the express terms stated herein.</li>
+              <li>By enrolling in any Membership plan, the Member acknowledges, accepts, and agrees to be bound by this Guarantee Disclaimer in full.</li>
+            </ul>
+          </section>
+
+          {/* 13 */}
           <div className="pt-8 border-t border-gray-800">
-            <h3 className="text-xl font-bold text-white mb-2">Get in touch</h3>
+            <h3 className="text-xl font-bold text-white mb-2">13. Contact</h3>
             <p>
               For questions regarding these Terms, please contact us at: <a href="mailto:support@propickz.com" className="text-purple-400 hover:text-purple-300 transition-colors">support@propickz.com</a>
             </p>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+// --- NEW ABOUT US PAGE ---
+
+const AboutUsPage: React.FC = () => {
+  const scrollToNext = () => {
+    const nextSection = document.getElementById('who-we-are');
+    if (nextSection) nextSection.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+
+      {/* SECTION 1: HERO */}
+      <section className="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
+        {/* Background Effects */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-900/20 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+
+        <div className="relative z-10 max-w-5xl mx-auto space-y-8">
+          <Reveal>
+            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight">
+              We’re Not Just Here to Give Picks.<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">We’re Here to Change How You Bet.</span>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Founded by disciplined bettors. Built for those who are tired of guesswork, hype, and losing streaks.
+              <br /><br />
+              Welcome to <span className="font-bold text-white">ProPickz</span> — where data, transparency, and consistency come first.
+            </p>
+          </Reveal>
+
+          <Reveal delay={400}>
+            <button
+              onClick={scrollToNext}
+              className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-full transition-all shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:shadow-[0_0_50px_rgba(147,51,234,0.5)] flex items-center gap-2 mx-auto"
+            >
+              Explore Our Process <ChevronDown size={20} />
+            </button>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* SECTION 2: WHO WE ARE */}
+      <section id="who-we-are" className="py-24 bg-black relative border-t border-gray-900">
+        <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 items-center">
+          <Reveal>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+              Who We <span className="text-purple-500">Are</span>
+            </h2>
+            <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
+              <p>
+                ProPickz is a premium betting insights platform that delivers high-confidence daily picks, transparent performance tracking, and long-term profitability tools.
+              </p>
+              <p>
+                We’re a combination of real sports bettors with over <span className="text-white font-bold">18 years of combined experience</span>, not hype-driven influencers or generic "AI" generators. We focus on value, edge, and discipline, and we show our work.
+              </p>
+              <p className="border-l-4 border-purple-500 pl-4 italic text-gray-400">
+                "Whether you’re a casual bettor or sharp in the making, our system is designed to give you the consistency you’re looking for."
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={200} className="relative">
+            <div className="absolute inset-0 bg-blue-600/10 rounded-3xl blur-2xl transform rotate-3"></div>
+            <div className="bg-gray-900 border border-gray-800 p-8 rounded-3xl relative z-10">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="text-center p-4 bg-black/50 rounded-2xl border border-gray-800">
+                  <div className="text-4xl font-black text-purple-400 mb-1">18+</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-widest">Years Exp.</div>
+                </div>
+                <div className="text-center p-4 bg-black/50 rounded-2xl border border-gray-800">
+                  <div className="text-4xl font-black text-green-400 mb-1">2.4k+</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-widest">Members</div>
+                </div>
+                <div className="text-center p-4 bg-black/50 rounded-2xl border border-gray-800 col-span-2">
+                  <div className="text-4xl font-black text-blue-400 mb-1">$214k+</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-widest">Profit Generated YTD</div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* SECTION 3: OUR STORY */}
+      <section className="py-24 bg-gradient-to-b from-gray-900 to-black relative">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <Reveal>
+            <h2 className="text-4xl font-bold text-white mb-8">Why We Built ProPickz</h2>
+          </Reveal>
+          <Reveal delay={200} className="bg-gray-800/30 border border-gray-700 p-10 rounded-3xl backdrop-blur-sm">
+            <p className="text-gray-300 text-lg leading-relaxed mb-6">
+              We were tired of watching bettors lose money chasing picks from influencers with no accountability. We saw a need for a clean, disciplined, data-backed system that focused on <span className="text-white font-bold">transparency and long-term profitability</span>, not "locks" and unrealistic parlays.
+            </p>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              ProPickz started in a single Discord group, evolved through months of tracking, testing, and refining, and now delivers smart picks daily across all major sports. <span className="text-purple-400 font-bold">We built what we wished we had when we started betting.</span>
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* SECTION 4: WHAT MAKES US DIFFERENT */}
+      <section className="py-24 bg-black relative">
+        <div className="max-w-7xl mx-auto px-4">
+          <Reveal className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">What Makes Us Different</h2>
+            <p className="text-gray-400">See the difference between hype and value.</p>
+          </Reveal>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* WHAT WE ARE NOT */}
+            <Reveal delay={100} className="bg-red-900/10 border border-red-900/30 p-8 rounded-3xl">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="bg-red-500/20 p-3 rounded-full"><X className="text-red-500" size={24} /></div>
+                <h3 className="text-2xl font-bold text-red-500">What We Are NOT</h3>
+              </div>
+              <ul className="space-y-4">
+                {["TikTok 'Cappers' with fake lifestyles", "No tracked records or history", "Promoting unrealistic parlay lotteries", "Poor bankroll management advice"].map((item, i) => (
+                  <li key={i} className="flex gap-3 text-gray-400">
+                    <X className="text-red-900 shrink-0 mt-1" size={18} /> {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+
+            {/* WHAT WE ARE */}
+            <Reveal delay={300} className="bg-green-900/10 border border-green-900/30 p-8 rounded-3xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10"><CheckCircle size={100} className="text-green-500" /></div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="bg-green-500/20 p-3 rounded-full"><CheckCircle className="text-green-500" size={24} /></div>
+                <h3 className="text-2xl font-bold text-green-500">What We ARE</h3>
+              </div>
+              <ul className="space-y-4">
+                {["Live tracked picks with verified history", "Real data-backed +EV strategies", "Bankroll-focused growth foundation", "Full refund guarantees if not profitable"].map((item, i) => (
+                  <li key={i} className="flex gap-3 text-white font-medium">
+                    <CheckCircle className="text-green-500 shrink-0 mt-1" size={18} /> {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: CTA BANNER */}
+      <section className="py-24 bg-black relative border-t border-gray-900">
+        <div className="absolute inset-0 bg-purple-900/10 pointer-events-none"></div>
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <Reveal>
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-6">
+              Smart Betting Starts With the <span className="text-purple-500">Right System.</span>
+            </h2>
+            <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+              Join ProPickz today and get access to our proven picks, transparent performance history, and a community that wins together.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+                className="px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+              >
+                Start Your Free Trial
+              </button>
+              <button
+                onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+                className="px-10 py-5 bg-transparent border border-gray-700 text-white font-bold text-lg rounded-full hover:bg-gray-900 transition-colors"
+              >
+                View Membership Plans
+              </button>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+    </div>
+  );
+};
+
+
+
+
+
+// --- NEW TESTIMONIALS PAGE ---
+
+const TestimonialsPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+
+      <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
+        <h1 className="text-4xl md:text-6xl font-black text-white mb-6 animate-fade-in-up">
+          What Members <span className="text-purple-400">Say</span>
+        </h1>
+        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16 animate-fade-in-up delay-100">
+          Real results from the ProPickz community.
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-gray-900/50 backdrop-blur border border-gray-800 p-8 rounded-3xl text-left hover:border-purple-500/50 transition-colors animate-fade-in-up" style={{ animationDelay: `${200 + i * 100}ms` }}>
+              <div className="flex gap-1 mb-4">
+                {[...Array(5)].map((_, j) => <Star key={j} size={16} className="text-yellow-500 fill-yellow-500" />)}
+              </div>
+              <p className="text-gray-300 mb-6 leading-relaxed">"Honestly the transparency here is unmatched. I've tried other discords and they all delete losses. These guys own it and we still come out profitable."</p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  {String.fromCharCode(65 + i)}
+                </div>
+                <div>
+                  <div className="text-white font-bold text-sm">Member #{8291 + i}</div>
+                  <div className="text-gray-500 text-xs">Verified Subscriber</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- NEW EV+ & ARBITRAGE PAGE ---
+
+const EVPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+
+      {/* Intense Background Glow */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
+
+        {/* SECTION 1: INTRO */}
+        <div className="text-center mb-24">
+          <Reveal>
+            <h1 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight">
+              A Separate System. A Sharper Edge.<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Same Membership.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={200}>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
+              ProPickz is powered by elite sports analysts — but we also believe in data doing its part. That’s why every Pro Membership includes access to the <strong className="text-white">ProPickz Bot</strong> — a fully automated system that tracks markets in real time and delivers its own exclusive stream of +EV and arbitrage picks, completely independent of our human team.
+            </p>
+          </Reveal>
+        </div>
+
+        {/* SECTION 2: +EV Picks */}
+        <Reveal delay={300} className="grid md:grid-cols-2 gap-12 items-center mb-24">
+          <div>
+            <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">
+              <TrendingUp size={32} className="text-blue-500" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">+EV Picks: When the Numbers Beat the Books</h2>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              The ProPickz Bot constantly monitors odds across major sportsbooks and compares them to our own probability models. When the bot finds a line that’s off — where the math shows positive expected value — it flags it and posts it to its own channel.
+            </p>
+            <p className="text-gray-400 leading-relaxed">
+              Only plays with a strong, quantifiable edge are sent out. No guesswork. No bias. Just value.
+            </p>
+            <div className="mt-6 flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
+              <AlertCircle size={20} className="text-blue-400 shrink-0" />
+              <p className="text-sm text-blue-200">
+                If the edge doesn’t meet our threshold, the bot doesn’t post. Period.
+              </p>
+            </div>
+          </div>
+          <div className="bg-gray-900/50 border border-gray-800 p-8 rounded-3xl relative overflow-hidden group hover:border-blue-500/30 transition-colors">
+            {/* Visual simulation of bot scanning */}
+            <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+                <span>SCANNING MARKET_ID: 9942</span>
+                <span className="text-green-500 font-mono">LIVE ●</span>
+              </div>
+              <div className="bg-black/50 p-4 rounded-xl border border-gray-800 flex justify-between items-center">
+                <div>
+                  <div className="text-white font-bold">KC Chiefs -3.5</div>
+                  <div className="text-xs text-gray-500">Implied Prob: 52.4%</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-blue-400 font-bold">-105</div>
+                  <div className="text-xs text-green-400">+4.2% EDGE</div>
+                </div>
+              </div>
+              <div className="bg-black/50 p-4 rounded-xl border border-gray-800 flex justify-between items-center opacity-50">
+                <div>
+                  <div className="text-white font-bold">LAL Lakers ML</div>
+                  <div className="text-xs text-gray-500">Implied Prob: 48.0%</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-gray-400 font-bold">+115</div>
+                  <div className="text-xs text-gray-600">NO EDGE</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* SECTION 3: Arbitrage Alerts */}
+        <Reveal delay={400} className="grid md:grid-cols-2 gap-12 items-center mb-24">
+          <div className="order-2 md:order-1 bg-gray-900/50 border border-gray-800 p-8 rounded-3xl relative overflow-hidden group hover:border-green-500/30 transition-colors">
+            <div className="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded">ARBITRAGE FOUND</span>
+                <span className="text-gray-500 text-xs">0m 12s ago</span>
+              </div>
+              <div className="flex justify-between items-center bg-black/40 p-4 rounded-xl border border-gray-700">
+                <div className="text-left">
+                  <div className="text-gray-400 text-xs">Book A</div>
+                  <div className="text-white font-bold">Over 215.5</div>
+                  <div className="text-green-400 font-mono">+120</div>
+                </div>
+                <div className="h-8 w-px bg-gray-700"></div>
+                <div className="text-right">
+                  <div className="text-gray-400 text-xs">Book B</div>
+                  <div className="text-white font-bold">Under 215.5</div>
+                  <div className="text-green-400 font-mono">-110</div>
+                </div>
+              </div>
+              <div className="bg-green-500/10 border border-green-500/30 p-3 rounded-lg text-center">
+                <span className="text-green-400 font-bold text-sm">GUARANTEED PROFIT: 3.8% ROI</span>
+              </div>
+            </div>
+          </div>
+          <div className="order-1 md:order-2">
+            <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mb-6">
+              <Activity size={32} className="text-green-500" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">Arbitrage Alerts: Guaranteed Profit Across Books</h2>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              Sometimes, sportsbooks disagree enough for you to bet both sides and lock in a risk-free profit. The ProPickz Bot watches for these gaps. When it detects one, it sends an instant alert that includes:
+            </p>
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> The books involved</li>
+              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> How to split your bets</li>
+              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> The ROI you’ll lock in</li>
+              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> How long the opportunity may last</li>
+            </ul>
+            <div className="flex items-center gap-2 text-green-400 text-sm font-bold">
+              <Zap size={16} /> These windows are rare and short — but when they hit, they’re pure upside.
+            </div>
+          </div>
+        </Reveal>
+
+        {/* SECTION 4: Full Log */}
+        <Reveal delay={500} className="bg-gray-900/30 border border-gray-800 rounded-[2rem] p-8 md:p-12 text-center">
+          <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <LayoutDashboard size={32} className="text-purple-500" />
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-6">A Full Log of Every Bot Pick</h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
+            The bot doesn’t just post picks, it logs them all in an easily accessible table inside the server. You’ll always be able to see:
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
+            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
+              <span className="text-gray-300 font-bold block mb-1">Every Pick Made</span>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
+              <span className="text-gray-300 font-bold block mb-1">Exact Odds</span>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
+              <span className="text-gray-300 font-bold block mb-1">Timestamp</span>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
+              <span className="text-gray-300 font-bold block mb-1">Final Result</span>
+            </div>
+          </div>
+          <p className="text-gray-500 text-sm">
+            This way, nothing is hidden. Every bet recommendation is fully transparent and available for review at any time.
+          </p>
+        </Reveal>
+
+      </div>
+    </div>
+  );
+};
+
+const TrustPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+
+      <div className="max-w-5xl mx-auto px-4 relative z-10">
+        <h1 className="text-4xl md:text-6xl font-black text-white mb-16 text-center animate-fade-in-up">
+          Why You Can <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">Trust Us.</span>
+        </h1>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          {/* Transparency */}
+          <div className="bg-gray-900/50 backdrop-blur border border-gray-800 p-8 rounded-3xl animate-fade-in-up delay-100 hover:border-green-500/50 transition-colors group">
+            <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <TrendingUp className="text-green-500" size={24} />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-4">Transparency</h3>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Every pick is tracked and performance is openly reported. You see what we make. No hidden plays, no deleting history.
+            </p>
+            <button
+              onClick={() => window.open('https://docs.google.com/spreadsheets/', '_blank')}
+              className="flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition-colors border-b border-green-500/30 pb-1"
+            >
+              View Verified Spreadsheet <ArrowUpRight size={14} />
+            </button>
+          </div>
+
+          {/* Accountability */}
+          <div className="bg-gray-900/50 backdrop-blur border border-gray-800 p-8 rounded-3xl animate-fade-in-up delay-200 hover:border-blue-500/50 transition-colors group">
+            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <AlertCircle className="text-blue-500" size={24} />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-4">Accountability</h3>
+            <p className="text-gray-400 leading-relaxed">
+              We never hide losses. Both wins and setbacks are visible so you know exactly how we’re performing, not just the highlights. We own every result.
+            </p>
+          </div>
+
+          {/* Consistency */}
+          <div className="bg-gray-900/50 backdrop-blur border border-gray-800 p-8 rounded-3xl animate-fade-in-up delay-300 hover:border-purple-500/50 transition-colors group">
+            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Activity className="text-purple-500" size={24} />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-4">Consistency</h3>
+            <p className="text-gray-400 leading-relaxed">
+              Our system is built for the long run. Picks are logged daily with clear units, odds, and results, so you see a reliable track record instead of cherry-picked outcomes.
+            </p>
+          </div>
+
+          {/* The Guarantee */}
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 p-8 rounded-3xl animate-fade-in-up delay-400 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-6">
+              <Shield className="text-white" size={24} />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-4">The Guarantee</h3>
+            <p className="text-gray-300 leading-relaxed mb-6">
+              We back it up. If we don’t hit profit over the set timeframe, you don’t just walk away empty, you’re covered by our guarantee.
+            </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold uppercase tracking-widest">
+              <CheckCircle size={12} /> Profit or Refund
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+// --- 13. FREE TRIAL PAGE COMPONENT ---
+
+const FreeTrialPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden flex flex-col items-center justify-center">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+
+      {/* Background Glows */}
+      {/* Intense Purple Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-black to-black pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10 w-full">
+
+        {/* Header */}
+        <div className="text-center mb-16">
+          <Reveal>
+            <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+              Try ProPickz Free for <span className="text-purple-500">7 Days.</span><br />
+              If You Don’t Profit, the <span className="text-white">Next Month Is on Us.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={200}>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              You win – or you don't pay. That's how confident we are in our system.
+            </p>
+          </Reveal>
+        </div>
+
+        {/* Dual Cards */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+
+          {/* Free Trial Card */}
+          <Reveal delay={300} className="bg-[#0A0A0A] border border-gray-800 rounded-3xl p-8 hover:border-gray-700 transition-colors flex flex-col relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-gray-700 to-transparent opacity-50"></div>
+
+            <h3 className="text-2xl font-black text-white mb-8 tracking-wide">FREE TRIAL</h3>
+
+            <ul className="space-y-6 mb-10 flex-1">
+              <li className="flex gap-4 text-gray-300">
+                <CheckCircle className="text-green-500 shrink-0" size={24} />
+                <span className="text-lg">Access to daily picks for all major sports</span>
+              </li>
+              <li className="flex gap-4 text-gray-300">
+                <CheckCircle className="text-green-500 shrink-0" size={24} />
+                <span className="text-lg">Entry to Discord betting community</span>
+              </li>
+              <li className="flex gap-4 text-gray-300">
+                <CheckCircle className="text-green-500 shrink-0" size={24} />
+                <span className="text-lg">No credit card required</span>
+              </li>
+            </ul>
+
+            <button
+              onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+              className="w-full py-4 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold text-lg rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
+            >
+              Start Free Trial
+            </button>
+          </Reveal>
+
+          {/* Pro Membership Card */}
+          <Reveal delay={400} className="bg-[#0A0A0A] border border-purple-900/50 rounded-3xl p-8 hover:border-purple-500/50 transition-colors flex flex-col relative overflow-hidden group">
+            {/* Glow Effect */}
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl group-hover:bg-purple-600/20 transition-colors"></div>
+
+            <h3 className="text-2xl font-black text-white mb-8 tracking-wide">PRO MEMBERSHIP</h3>
+
+            <ul className="space-y-6 mb-10 flex-1">
+              <li className="flex gap-4 text-gray-300 items-start">
+                <Info className="text-purple-500 shrink-0 mt-1" size={20} />
+                <span className="text-lg">Full pick archive access</span>
+              </li>
+              <li className="flex gap-4 text-gray-300 items-start">
+                <LayoutDashboard className="text-purple-500 shrink-0 mt-1" size={20} />
+                <span className="text-lg">Advanced tracking dashboard</span>
+              </li>
+              <li className="flex gap-4 text-gray-300 items-start">
+                <Zap className="text-purple-500 shrink-0 mt-1" size={20} />
+                <span className="text-lg">Daily Picks + 35% off DFS</span>
+              </li>
+              <li className="flex gap-4 text-gray-300 items-start">
+                <Layers className="text-purple-500 shrink-0 mt-1" size={20} />
+                <span className="text-lg">Strategy education vault</span>
+              </li>
+            </ul>
+
+            <button
+              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+              className="w-full py-4 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold text-lg rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
+            >
+              Unlock Full Access
+            </button>
+          </Reveal>
+
+        </div>
+
+        {/* Footer Guarantee */}
+        <Reveal delay={500} className="text-center">
+          <p className="text-gray-400 text-lg">
+            Profit or it’s free. If you don’t finish the month in profit, we’ll give you the next month on us. <span className="text-white font-bold">Simple.</span>
+          </p>
+        </Reveal>
+
       </div>
     </div>
   );
@@ -1659,11 +2622,16 @@ const App: React.FC = () => {
     switch (view) {
       case 'Home': return <HomePage navigateTo={setView} />;
       case 'Pricing': return <PricingPage />;
+      case 'FreeTrial': return <FreeTrialPage />;
       case 'Guarantee': return <GuaranteePage />;
       case 'Results': return <ResultsPage />;
       case 'HowItWorks': return <HowItWorksPage />;
       case 'SupportedSports': return <SupportedSportsPage />;
       case 'BettingAcademy': return <BettingAcademyPage />;
+      case 'AboutUs': return <AboutUsPage />;
+      case 'Trust': return <TrustPage />;
+      case 'Testimonials': return <TestimonialsPage />;
+      case 'EV': return <EVPage />;
       case 'FAQ': return <FAQPage />;
       case 'Legal': return <LegalPage />;
       default: return <div className="p-20 text-center text-white bg-black min-h-screen">Placeholder for {view}</div>;
