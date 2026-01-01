@@ -1,18 +1,25 @@
 'use client'; // Ensures Next.js compatibility
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import {
-  TrendingUp, CheckCircle, Smartphone,
-  Menu, X, ChevronDown, MessageSquare, Send,
-  Zap, ArrowUpRight, Play, Star, Sparkles, BookOpen, HelpCircle, Trophy, Flame, Target, Award, Disc, Dribbble, AlertCircle, Activity, Shield, UserPlus, Clock, Wallet, LineChart, Users, Info, LayoutDashboard, Layers, Gift
-} from 'lucide-react';
+import { ChevronDown, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, UserPlus, Gift, Trophy, Globe, Sparkles, Send, HelpCircle, ArrowUpRight, Smartphone, Wallet, LineChart, Info } from 'lucide-react';
 
 // Firebase Imports
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import propickzLogo from './assets/propickzlogo.png';
-import learningUi from './assets/learning_ui.png';
+import EarningsPopup from './components/EarningsPopup';
+import ContactPage from './components/ContactPage';
+import AsSeenOn from './components/AsSeenOn';
+import Hero3DPhone from './components/Hero3DPhone';
+import EducationVisual from './components/EducationVisual';
+import ResultsDashboard from './components/ResultsDashboard';
+import WinningSlips from './components/WinningSlips';
+import SportsCarousel from './components/SportsCarousel';
+import { Reveal } from './utils/Reveal';
+import CommunityBenefits from './components/CommunityBenefits';
+import AboutUsPage from './components/AboutUsPage';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 // --- TYPES ---
 interface Message {
@@ -96,24 +103,6 @@ const useOnScreen = (ref: React.RefObject<HTMLElement | null>) => {
   return isIntersecting;
 };
 
-// Hook to track mouse position for 3D parallax effects
-const useMousePosition = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const updateMousePosition = (ev: MouseEvent) => {
-      setMousePosition({ x: ev.clientX, y: ev.clientY });
-    };
-
-    // Check for window existence to support SSR (Next.js)
-    if (typeof window !== 'undefined') {
-      window.addEventListener('mousemove', updateMousePosition);
-      return () => window.removeEventListener('mousemove', updateMousePosition);
-    }
-  }, []);
-  return mousePosition;
-};
-
 // Hook to animate numbers counting up
 const useCountUp = (end: number, duration: number = 2000, start: number = 0): [React.RefObject<HTMLDivElement | null>, number] => {
   const [count, setCount] = useState(start);
@@ -139,21 +128,6 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0): [R
   return [ref, count];
 };
 
-// Component for scroll reveal animations
-const Reveal: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const onScreen = useOnScreen(ref);
-
-  return (
-    <div
-      ref={ref}
-      style={{ animationDelay: `${delay}ms` }}
-      className={`${className} ${onScreen ? 'animate-fade-in-up opacity-100' : 'opacity-0 translate-y-10 transition-all duration-700'}`}
-    >
-      {children}
-    </div>
-  );
-};
 
 // --- FIREBASE SERVICE ---
 
@@ -239,17 +213,18 @@ const ROICalculator: React.FC = () => {
   const [bankroll, setBankroll] = useState<number>(1000);
   const profit = (bankroll * 0.35).toFixed(0);
   const yearly = (bankroll * 0.35 * 12).toFixed(0);
+  const { t } = useLanguage();
 
   return (
     <div className="bg-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all duration-500">
       <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl group-hover:bg-purple-600/20 transition-all duration-500"></div>
 
-      <h3 className="text-2xl font-bold text-white mb-2 relative z-10">Potential Earnings Calculator</h3>
-      <p className="text-gray-400 mb-8 text-sm relative z-10">See what happens when you follow our system.</p>
+      <h3 className="text-2xl font-bold text-white mb-2 relative z-10">{t('roi', 'Title')}</h3>
+      <p className="text-gray-400 mb-8 text-sm relative z-10">{t('roi', 'Subtitle')}</p>
 
       <div className="mb-6 relative z-10">
-        <div className="flex justify-between text-gray-400 mb-2 font-mono text-xs uppercase tracking-widest">
-          <span>Starting Bankroll</span>
+        <div className="flex justify-between text-gray-400 mb-2 font-mono text-xs uppercase tracking-widest font-heading">
+          <span>{t('roi', 'StartingBankroll')}</span>
           <span className="text-purple-400 font-bold">${bankroll.toLocaleString()}</span>
         </div>
         <input
@@ -273,33 +248,39 @@ const ROICalculator: React.FC = () => {
 
       <div className="grid grid-cols-2 gap-4 relative z-10">
         <div className="bg-black/50 p-4 rounded-xl border border-gray-800">
-          <div className="text-gray-500 text-xs font-bold uppercase mb-1">Monthly Profit</div>
+          <div className="text-gray-500 text-xs font-bold uppercase mb-1">{t('roi', 'MonthlyProfit')}</div>
           <div className="text-3xl font-bold text-green-400 animate-pulse-slow">${parseInt(profit).toLocaleString()}</div>
         </div>
         <div className="bg-black/50 p-4 rounded-xl border border-gray-800">
-          <div className="text-gray-500 text-xs font-bold uppercase mb-1">Yearly Potential</div>
+          <div className="text-gray-500 text-xs font-bold uppercase mb-1">{t('roi', 'YearlyPotential')}</div>
           <div className="text-3xl font-bold text-white">${parseInt(yearly).toLocaleString()}</div>
         </div>
       </div>
 
-      <p className="text-xs text-gray-600 mt-4 italic text-center">*Based on average member performance. Results vary.</p>
+      <p className="text-xs text-gray-600 mt-4 italic text-center">{t('roi', 'Disclaimer')}</p>
     </div>
   );
 };
 
 const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { t } = useLanguage();
+
   const faqs: FaqItem[] = [
-    { q: "Is this guaranteed profit?", a: "No investment is 100% guaranteed. However, our +EV system is mathematically proven to generate profit over a large sample size of bets (300+)." },
-    { q: "Do I need a large bankroll?", a: "Not at all. We recommend starting with at least $200 so you can follow our unit sizing correctly. The calculator above shows how small starts can grow." },
-    { q: "Can I cancel my subscription?", a: "Yes, you can cancel anytime from your dashboard. If you're on the free trial, you won't be charged if you cancel before day 7." },
-    { q: "Which sportsbooks do I need?", a: "We recommend having accounts with at least 3 major books (DraftKings, FanDuel, MGM) to ensure you can always get the best odds (line shopping)." }
+    { q: t('faq', 'q1'), a: t('faq', 'a1') },
+    { q: t('faq', 'q2'), a: t('faq', 'a2') },
+    { q: t('faq', 'q3'), a: t('faq', 'a3') },
+    { q: t('faq', 'q4'), a: t('faq', 'a4') },
+    { q: t('faq', 'q5'), a: t('faq', 'a5') },
+    { q: t('faq', 'q6'), a: t('faq', 'a6') },
+    { q: t('faq', 'q7'), a: t('faq', 'a7') },
+    { q: t('faq', 'q8'), a: t('faq', 'a8') },
   ];
 
   return (
     <section className="py-20 bg-black border-t border-gray-900">
       <div className="max-w-3xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-white text-center mb-12">Frequently Asked Questions</h2>
+        <h2 className="text-3xl font-bold text-white text-center mb-12">{t('faq', 'Headline')}</h2>
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
@@ -326,7 +307,7 @@ const FomoNotification: React.FC = () => {
   const [data, setData] = useState<FomoData>({ name: '', action: '' });
 
   const names = ['Alex M.', 'Sarah K.', 'Davon J.', 'Mike R.', 'Chris P.'];
-  const actions = ['just started a Free Trial', 'hit a 5-leg parlay', 'upgraded to Lifetime', 'won $1,200 today'];
+  const actions = ['joined the Free Server', 'hit a 5-leg parlay', 'upgraded to Lifetime', 'won $1,200 today'];
 
   useEffect(() => {
     const trigger = () => {
@@ -359,10 +340,21 @@ const FomoNotification: React.FC = () => {
 
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([{ text: "Hi! I'm the ProPickz AI Analyst. Ask me about bankroll management or +EV strategies!", sender: 'bot' }]);
+  const { t } = useLanguage();
+  const [messages, setMessages] = useState<Message[]>([{ text: t('chat', 'Welcome'), sender: 'bot' }]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Update initial message when language changes
+  useEffect(() => {
+    setMessages(prev => {
+      if (prev.length === 1 && prev[0].sender === 'bot') {
+        return [{ text: t('chat', 'Welcome'), sender: 'bot' }];
+      }
+      return prev;
+    });
+  }, [t]);
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -393,7 +385,7 @@ const ChatWidget: React.FC = () => {
           <div className="bg-purple-600 p-4 flex justify-between items-center shrink-0">
             <span className="text-white font-bold flex items-center gap-2">
               <Sparkles size={16} className="text-yellow-300" />
-              ProPickz AI Analyst
+              {t('chat', 'Analyst')}
             </span>
             <button onClick={() => setIsOpen(false)} className="text-white hover:bg-purple-700 rounded-full p-1"><X size={16} /></button>
           </div>
@@ -421,7 +413,7 @@ const ChatWidget: React.FC = () => {
           <form onSubmit={handleSend} className="p-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2 shrink-0">
             <input
               className="flex-1 bg-transparent text-sm p-2 outline-none text-black dark:text-white"
-              placeholder="Ask about betting strategy..."
+              placeholder={t('chat', 'Placeholder')}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -443,27 +435,31 @@ const ChatWidget: React.FC = () => {
 
 const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuOpen }) => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const { language, setLanguage, t } = useLanguage();
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'en' ? 'fr' : 'en');
+  };
 
   const navGroups = {
     Platform: [
-      { name: 'Home', action: () => setView('Home'), icon: <TrendingUp size={16} /> },
-      { name: 'EV+ & Arbitrage', action: () => setView('EV'), icon: <Activity size={16} /> },
-      { name: 'Results', action: () => setView('Results'), icon: <CheckCircle size={16} /> },
-      { name: 'How It Works', action: () => setView('HowItWorks'), icon: <Zap size={16} /> },
-      { name: 'Supported Sports', action: () => setView('SupportedSports'), icon: <Trophy size={16} /> },
+      { name: t('nav', 'Home'), action: () => setView('Home'), icon: <TrendingUp size={16} /> },
+      // { name: 'EV+ & Arbitrage', action: () => setView('EV'), icon: <Activity size={16} /> },
+      { name: t('nav', 'Result'), action: () => setView('Results'), icon: <CheckCircle size={16} /> },
+      { name: t('nav', 'HowItWorks'), action: () => setView('HowItWorks'), icon: <Zap size={16} /> },
+      { name: t('nav', 'SupportedSports'), action: () => setView('SupportedSports'), icon: <Trophy size={16} /> },
     ],
     Membership: [
-      { name: 'Pricing', action: () => setView('Pricing'), icon: <Star size={16} /> },
-      { name: 'Free Trial', action: () => setView('FreeTrial'), icon: <Zap size={16} /> },
-      { name: 'Testimonials', action: () => setView('Testimonials'), icon: <MessageSquare size={16} /> },
-      { name: 'Guarantee', action: () => setView('Guarantee'), icon: <Shield size={16} /> },
+      { name: t('nav', 'Pricing'), action: () => setView('Pricing'), icon: <Star size={16} /> },
+      { name: t('nav', 'FreeTrial'), action: () => setView('FreeTrial'), icon: <Zap size={16} /> },
+      { name: t('nav', 'Testimonials'), action: () => setView('Testimonials'), icon: <MessageSquare size={16} /> },
+      { name: t('nav', 'Guarantee'), action: () => setView('Guarantee'), icon: <Shield size={16} /> },
     ],
     Resources: [
-      { name: 'About Us', action: () => setView('AboutUs'), icon: <TrendingUp size={16} /> },
-      { name: 'Why Trust Us', action: () => setView('Trust'), icon: <CheckCircle size={16} /> },
-      { name: 'Betting Academy', action: () => setView('BettingAcademy'), icon: <BookOpen size={16} /> },
-      { name: 'FAQ', action: () => setView('FAQ'), icon: <HelpCircle size={16} /> },
-      { name: 'Legal', action: () => setView('Legal'), icon: <MessageSquare size={16} /> },
+      { name: t('nav', 'AboutUs'), action: () => setView('AboutUs'), icon: <TrendingUp size={16} /> },
+      { name: t('nav', 'Trust'), action: () => setView('Trust'), icon: <CheckCircle size={16} /> },
+      { name: t('nav', 'FAQ'), action: () => setView('FAQ'), icon: <HelpCircle size={16} /> },
+      { name: t('nav', 'Legal'), action: () => setView('Legal'), icon: <MessageSquare size={16} /> },
     ]
   };
 
@@ -474,12 +470,12 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
         {/* Left Side: Contact Us + Logo */}
         <div className="flex items-center gap-6">
           <button
-            onClick={() => window.location.href = 'mailto:support@propickz.com'}
+            onClick={() => setView('Contact')}
             className="text-gray-400 hover:text-purple-400 text-sm font-medium transition-colors hidden md:block"
           >
-            Contact Us
+            {t('nav', 'Contact')}
           </button>
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setView('Home')}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setView('Home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
             <img src={propickzLogo} alt="ProPickz" className="h-24 w-auto object-contain" />
           </div>
         </div>
@@ -495,7 +491,7 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
               <button
                 className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-1 transition-colors ${activeDropdown === group ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}
               >
-                {group}
+                {t('nav', group as any) || group}
                 <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === group ? 'rotate-180' : ''}`} />
               </button>
 
@@ -525,11 +521,14 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
 
         {/* Right Side Actions */}
         <div className="hidden md:flex items-center gap-4">
+          <button onClick={toggleLanguage} className="p-2 text-gray-400 hover:text-white transition-colors flex items-center gap-1 font-heading text-sm uppercase">
+            <Globe size={18} /> {language}
+          </button>
           <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="px-5 py-2 border border-purple-500 text-purple-400 text-sm font-bold rounded-lg hover:bg-purple-500/10 transition shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-            Join Free Discord
+            {t('nav', 'JoinDiscord')}
           </button>
           <button onClick={() => setView('Pricing')} className="px-5 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-gray-200 transition shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-            View Pricing
+            {t('nav', 'ViewPricing')}
           </button>
         </div>
 
@@ -541,12 +540,17 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-black border-t border-gray-800 absolute w-full left-0 top-24 p-4 flex flex-col gap-4 animate-fade-in-up md:hidden h-[calc(100vh-6rem)] overflow-y-auto">
-          <button onClick={() => { setView('Home'); setMobileMenuOpen(false); }} className="text-left text-white font-bold py-2 border-b border-gray-800">Home</button>
+        <div className="lg:hidden bg-black border-t border-gray-800 absolute w-full left-0 top-24 p-4 flex flex-col gap-4 animate-fade-in-up h-[calc(100vh-6rem)] overflow-y-auto">
+          <div className="flex justify-between items-center border-b border-gray-800 pb-2">
+            <button onClick={() => { setView('Home'); setMobileMenuOpen(false); }} className="text-left text-white font-bold">{t('nav', 'Home')}</button>
+            <button onClick={toggleLanguage} className="p-2 text-gray-400 hover:text-white transition-colors flex items-center gap-1 font-heading text-sm uppercase border border-gray-700 rounded-lg">
+              <Globe size={16} /> {language === 'en' ? 'English' : 'Français'}
+            </button>
+          </div>
 
           {Object.entries(navGroups).map(([group, items]) => (
             <div key={group} className="py-2">
-              <div className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2 px-2">{group}</div>
+              <div className="text-gray-500 text-xs font-bold uppercase tracking-widest font-heading mb-2 px-2">{t('nav', group as any) || group}</div>
               <div className="flex flex-col gap-1">
                 {items.map(item => (
                   <button
@@ -564,10 +568,10 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
 
           <div className="mt-4 pt-4 border-t border-gray-800 flex flex-col gap-3">
             <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="w-full py-3 border border-purple-500 text-purple-400 font-bold rounded-xl">
-              Join Free Discord
+              {t('nav', 'JoinDiscord')}
             </button>
             <button onClick={() => { setView('Pricing'); setMobileMenuOpen(false); }} className="w-full py-3 bg-white text-black font-bold rounded-xl">
-              View Pricing
+              {t('nav', 'ViewPricing')}
             </button>
           </div>
         </div>
@@ -576,28 +580,24 @@ const Navbar: React.FC<NavbarProps> = ({ setView, mobileMenuOpen, setMobileMenuO
   );
 };
 
-const Footer: React.FC = () => (
-  <footer className="bg-black border-t border-gray-900 py-12 text-center text-gray-600 text-sm">
-    <p>&copy; 2025 ProPickz Inc. All rights reserved. <br /> This is not gambling advice. Please bet responsibly.</p>
-  </footer>
-);
+const Footer: React.FC = () => {
+  const { t } = useLanguage();
+  return (
+    <footer className="bg-black border-t border-gray-900 py-12 text-center text-gray-600 text-sm">
+      <p>{t('footer', 'Copyright')}<br /> {t('footer', 'Disclaimer')}</p>
+    </footer>
+  );
+};
 
 // --- 4. HOMEPAGE COMPONENT ---
 
 const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
-  const { x, y } = useMousePosition();
-  // Default values for SSR/Initial render
-  const centerX = typeof window !== 'undefined' ? window.innerWidth / 2 : 0;
-  const centerY = typeof window !== 'undefined' ? window.innerHeight / 2 : 0;
-
-  const rotateX = ((y - centerY) / 50).toFixed(2);
-  const rotateY = ((x - centerX) / 50).toFixed(2);
-
   const [unitsRef, unitsVal] = useCountUp(214.5, 2000);
   const [membersRef, membersVal] = useCountUp(1250, 2000);
 
   const [aiTip, setAiTip] = useState("");
   const [loadingTip, setLoadingTip] = useState(false);
+  const { t } = useLanguage();
 
   const generateAiTip = async () => {
     setLoadingTip(true);
@@ -618,34 +618,34 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
           {/* Left: Copy & CTA */}
           <div className="text-left space-y-8 pt-10 lg:pt-0">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-900/30 border border-purple-500/50 text-purple-300 text-xs font-bold uppercase tracking-widest animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-900/30 border border-purple-500/50 text-purple-300 text-xs font-bold uppercase tracking-widest font-heading animate-fade-in-up">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              System Live & Tracking
+              {t('hero', 'SystemLive')}
             </div>
 
             <h1 className="text-6xl md:text-8xl font-black text-white leading-[0.9] tracking-tight animate-fade-in-up delay-100">
-              STOP<br />
-              <span className="text-red-500 shake-text">GAMBLING.</span><br />
-              START<br />
-              <span className="text-green-500">INVESTING.</span>
+              {t('hero', 'Stop')}<br />
+              <span className="text-red-500 shake-text drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">{t('hero', 'Gambling')}</span><br />
+              {t('hero', 'Start')}<br />
+              <span className="text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">{t('hero', 'Investing')}</span>
             </h1>
 
             <p className="text-xl text-gray-400 max-w-lg leading-relaxed animate-fade-in-up delay-200">
-              Join the <span className="text-white font-bold">top 1% of bettors</span> who treat sports betting as a math problem, not a guessing game. Guaranteed profit in 30 days or we pay you.
+              {t('hero', 'Subheadline')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
               <button
-                onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+                onClick={() => navigateTo('Pricing')}
                 className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2 group"
               >
-                Start Free Trial <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                {t('hero', 'StartFreeTrial')} <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </button>
               <button
-                onClick={() => navigateTo('Pricing')}
+                onClick={() => navigateTo('Guarantee')}
                 className="px-8 py-4 bg-transparent border border-gray-700 text-white rounded-full font-bold text-lg hover:bg-gray-900 hover:border-white transition-all flex items-center justify-center gap-2"
               >
-                <Play size={20} fill="currentColor" /> Watch Demo
+                <Shield size={20} fill="currentColor" /> {t('hero', 'WatchDemo')}
               </button>
             </div>
 
@@ -657,101 +657,71 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
                   </div>
                 ))}
               </div>
-              <p><span className="text-white font-bold">2,400+</span> members winning daily.</p>
+              <p><span className="text-white font-bold">2,400+</span> {t('hero', 'MembersWinning')}</p>
             </div>
           </div>
 
           {/* Right: 3D Interactive Hero */}
-          <div className="relative hidden lg:block perspective-1000">
-            <div
-              className="relative z-20 transition-transform duration-100 ease-out will-change-transform"
-              style={{
-                transform: `rotateX(${rotateX}deg) rotateY(${parseFloat(rotateY) * -1}deg)`,
-                transformStyle: 'preserve-3d'
-              }}
-            >
-              <img
-                src="https://cdn.prod.website-files.com/683c64c4aa0f10093bc3ddc1/683f4baf9511918153fe3405_Phone%20exports-p-1080.png"
-                alt="Dashboard"
-                className="w-full max-w-md mx-auto drop-shadow-2xl"
-              />
-
-              {/* Floating Elements */}
-              <div className="absolute top-20 -left-10 bg-black/80 backdrop-blur-md border border-purple-500/50 p-4 rounded-xl shadow-2xl animate-float" style={{ transform: 'translateZ(40px)' }}>
-                <div className="text-gray-400 text-xs font-bold uppercase mb-1">Current Streak</div>
-                <div className="text-green-400 font-mono text-2xl font-bold flex items-center gap-2">
-                  <TrendingUp size={20} /> 7 WINS
-                </div>
-              </div>
-
-              <div className="absolute bottom-40 -right-5 bg-black/80 backdrop-blur-md border border-gray-700 p-4 rounded-xl shadow-2xl animate-float delay-700" style={{ transform: 'translateZ(60px)' }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center font-bold text-white">VP</div>
-                  <div>
-                    <div className="text-white text-sm font-bold">New Pick Posted</div>
-                    <div className="text-gray-400 text-xs">NBA • Lakers Moneyline</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Hero3DPhone />
         </div>
       </section>
+
+      {/* AS SEEN ON */}
+      <AsSeenOn />
 
       {/* 2. THE PROBLEM/SOLUTION */}
       <section className="py-24 bg-black relative">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Most Bettors Are <span className="text-red-500">Guessing.</span></h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t('features', 'MostBettors')} <span className="text-red-500">{t('features', 'Guessing')}</span></h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              The sportsbooks hire PhD mathematicians to take your money.
-              Trying to beat them with "gut feeling" is financial suicide.
+              {t('features', 'ProblemSub')}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gray-900/50 border border-gray-800 p-8 rounded-3xl hover:border-red-500/50 transition-colors group">
+            <div className="glass-card glass-card-hover p-8 rounded-3xl group relative overflow-hidden">
               <div className="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <X size={32} className="text-red-500" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">The "Fan" Approach</h3>
+              <h3 className="text-xl font-bold text-white mb-3">{t('features', 'Fan')}</h3>
               <ul className="space-y-3 text-gray-500 text-sm">
-                <li className="flex gap-2"><X size={16} /> Bets on favorite teams</li>
-                <li className="flex gap-2"><X size={16} /> Chases losses aggressively</li>
-                <li className="flex gap-2"><X size={16} /> Zero bankroll management</li>
-                <li className="mt-4 pt-4 border-t border-gray-800 text-red-400 font-bold">Result: Broke in 2 months.</li>
+                <li className="flex gap-2"><X size={16} /> {t('features', 'Fan1')}</li>
+                <li className="flex gap-2"><X size={16} /> {t('features', 'Fan2')}</li>
+                <li className="flex gap-2"><X size={16} /> {t('features', 'Fan3')}</li>
+                <li className="mt-4 pt-4 border-t border-gray-800 text-red-400 font-bold">{t('features', 'FanResult')}</li>
               </ul>
             </div>
 
-            <div className="bg-purple-900/20 border border-purple-500 p-8 rounded-3xl transform md:-translate-y-6 shadow-2xl shadow-purple-900/20 relative overflow-hidden">
+            <div className="glass-card border-purple-500/50 p-8 rounded-3xl transform md:-translate-y-6 shadow-[0_0_50px_rgba(147,51,234,0.15)] relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">YOU</div>
               <div className="w-14 h-14 bg-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-purple-600/50">
                 <Zap size={32} className="text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">The ProPickz System</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">{t('features', 'ProSystem')}</h3>
               <ul className="space-y-3 text-gray-300 text-sm">
-                <li className="flex gap-2"><CheckCircle size={16} className="text-green-400" /> Math-based +EV edges</li>
-                <li className="flex gap-2"><CheckCircle size={16} className="text-green-400" /> Strict unit sizing (1-3%)</li>
-                <li className="flex gap-2"><CheckCircle size={16} className="text-green-400" /> Emotionless execution</li>
-                <li className="mt-4 pt-4 border-t border-purple-500/30 text-green-400 font-bold text-lg">Result: Consistent Income.</li>
+                <li className="flex gap-2"><CheckCircle size={16} className="text-green-400" /> {t('features', 'Pro1')}</li>
+                <li className="flex gap-2"><CheckCircle size={16} className="text-green-400" /> {t('features', 'Pro2')}</li>
+                <li className="flex gap-2"><CheckCircle size={16} className="text-green-400" /> {t('features', 'Pro3')}</li>
+                <li className="mt-4 pt-4 border-t border-purple-500/30 text-green-400 font-bold text-lg">{t('features', 'ProResult')}</li>
               </ul>
 
               {/* GEMINI INTEGRATION: MINDSET TIP */}
               <div className="mt-6 p-4 bg-purple-950/50 rounded-xl border border-purple-500/30">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center gap-1">
-                    <Sparkles size={12} /> AI Mindset Coach
+                    <Sparkles size={12} /> {t('features', 'AiCoach')}
                   </span>
                 </div>
                 <p className="text-sm text-gray-300 min-h-[40px]">
-                  {loadingTip ? "Analyzing market..." : (aiTip || "Discipline is the bridge between goals and accomplishment. Stay sharp.")}
+                  {loadingTip ? t('features', 'AiAnalyzing') : (aiTip || t('features', 'AiDefault'))}
                 </p>
                 <button
                   onClick={generateAiTip}
                   disabled={loadingTip}
                   className="mt-3 w-full py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
-                  {loadingTip ? "Generating..." : "✨ Generate Daily Discipline Tip"}
+                  {loadingTip ? t('features', 'Generating') : t('features', 'GenerateTip')}
                 </button>
               </div>
 
@@ -761,12 +731,12 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
               <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Smartphone size={32} className="text-blue-500" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">The "Tout" Scam</h3>
+              <h3 className="text-xl font-bold text-white mb-3">{t('features', 'Tout')}</h3>
               <ul className="space-y-3 text-gray-500 text-sm">
-                <li className="flex gap-2"><X size={16} /> Deletes losing picks</li>
-                <li className="flex gap-2"><X size={16} /> "Whale play of the century"</li>
-                <li className="flex gap-2"><X size={16} /> No verified tracking</li>
-                <li className="mt-4 pt-4 border-t border-gray-800 text-gray-400 font-bold">Result: Scammed.</li>
+                <li className="flex gap-2"><X size={16} /> {t('features', 'Tout1')}</li>
+                <li className="flex gap-2"><X size={16} /> {t('features', 'Tout2')}</li>
+                <li className="flex gap-2"><X size={16} /> {t('features', 'Tout3')}</li>
+                <li className="mt-4 pt-4 border-t border-gray-800 text-gray-400 font-bold">{t('features', 'ToutResult')}</li>
               </ul>
             </div>
           </div>
@@ -778,20 +748,20 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <div className="inline-block px-4 py-1.5 rounded-full bg-purple-900/30 text-purple-300 font-bold text-sm mb-6 border border-purple-500/30">
-              DATA DOESN'T LIE
+              {t('roi', 'Badge')}
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">Calculate Your <br />Financial Freedom.</h2>
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 whitespace-pre-line">{t('roi', 'Headline')}</h2>
             <p className="text-gray-400 text-lg mb-8 leading-relaxed">
-              Stop wondering "what if". Use our calculator to see the compounding power of consistent, disciplined betting using the ProPickz strategy.
+              {t('roi', 'Subheadline')}
             </p>
             <div className="flex gap-8">
               <div>
                 <div className="text-4xl font-bold text-white mb-1" ref={unitsRef}>+{unitsVal.toFixed(1)}u</div>
-                <div className="text-sm text-gray-500 uppercase tracking-widest">Profit YTD</div>
+                <div className="text-sm text-gray-500 uppercase tracking-widest font-heading">{t('roi', 'ProfitYTD')}</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-white mb-1" ref={membersRef}>{membersVal.toFixed(0)}+</div>
-                <div className="text-sm text-gray-500 uppercase tracking-widest">Active Members</div>
+                <div className="text-sm text-gray-500 uppercase tracking-widest font-heading">{t('roi', 'ActiveMembers')}</div>
               </div>
             </div>
           </div>
@@ -803,7 +773,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
 
       {/* 4. SOCIAL PROOF WALL */}
       <section className="py-20 bg-black border-y border-gray-900">
-        <h3 className="text-center text-2xl font-bold text-white mb-12">Join the Winning Side</h3>
+        <h3 className="text-center text-2xl font-bold text-white mb-12">{t('testimonials', 'Headline')}</h3>
         <div className="relative flex overflow-x-hidden group">
           <div className="animate-marquee whitespace-nowrap flex gap-6">
             {[...Array(2)].map((_, setIndex) => (
@@ -825,7 +795,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
                       </div>
                       <div>
                         <div className="text-white font-bold text-sm">{testimonial.user}</div>
-                        <div className="text-gray-500 text-xs">Verified Member</div>
+                        <div className="text-gray-500 text-xs">{t('testimonials', 'Verified')}</div>
                       </div>
                     </div>
                     <p className="text-gray-300 text-sm whitespace-normal">"{testimonial.msg.replace('another big win', `another $${testimonial.amount}`)}"</p>
@@ -845,39 +815,20 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
         <div className="absolute inset-0 bg-purple-900/5 pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: Image with Automation/Tilt */}
-          <div className="order-2 lg:order-1 relative perspective-1000 group">
-            <div className="relative z-10 transform transition-transform duration-700 ease-out group-hover:rotate-y-12 group-hover:rotate-x-6">
-              <img src={learningUi} alt="ProPickz Education" className="w-full max-w-lg mx-auto drop-shadow-2xl rounded-3xl border border-gray-800/50" />
-
-              {/* Floating elements */}
-              <div className="absolute -top-6 -right-6 bg-black/80 backdrop-blur border border-purple-500/50 p-4 rounded-2xl shadow-2xl animate-float delay-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
-                    <BookOpen size={20} className="text-white" />
-                  </div>
-                  <div>
-                    <div className="text-white font-bold text-sm">New Guide</div>
-                    <div className="text-purple-300 text-xs">Bankroll Mastery 101</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-purple-600/20 blur-[100px] pointer-events-none rounded-full"></div>
+          <div className="order-2 lg:order-1 relative group">
+            <EducationVisual />
           </div>
 
           {/* Right: Content */}
           <div className="order-1 lg:order-2 space-y-8">
             <Reveal>
-              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
-                Master the Game <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Behind the Picks</span>
+              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight whitespace-pre-line">
+                {t('learning', 'Headline')}
               </h2>
             </Reveal>
             <Reveal delay={200}>
               <p className="text-xl text-gray-400 leading-relaxed">
-                We don't just hand out picks—we help you become a sharper, more strategic bettor. At ProPickz, education is part of the edge. Learn the principles behind profitable betting, bankroll management, and how to think like a pro.
+                {t('learning', 'Subheadline')}
               </p>
             </Reveal>
 
@@ -885,18 +836,18 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
               {[
                 {
                   icon: <Wallet className="text-green-400" size={24} />,
-                  title: "Bankroll Management",
-                  desc: "Learn how to size your bets, avoid tilt, and grow your bankroll like a pro, even through losing streaks."
+                  title: t('learning', 'BankrollTitle'),
+                  desc: t('learning', 'BankrollDesc')
                 },
                 {
                   icon: <LineChart className="text-blue-400" size={24} />,
-                  title: "Find the Edge",
-                  desc: "We teach you how to identify value in the lines, not just follow trends. Understand what gives you a long term-advantage."
+                  title: t('learning', 'EdgeTitle'),
+                  desc: t('learning', 'EdgeDesc')
                 },
                 {
                   icon: <Users className="text-purple-400" size={24} />,
-                  title: "Live Strategy Sessions",
-                  desc: "Join exclusive Discord breakdowns where our analysts walk through picks, explain mistakes, and answer live questions."
+                  title: t('learning', 'StrategyTitle'),
+                  desc: t('learning', 'StrategyDesc')
                 }
               ].map((feature, i) => (
                 <Reveal key={i} delay={300 + (i * 100)} className="flex gap-4 p-4 rounded-2xl hover:bg-gray-900/50 transition-colors border border-transparent hover:border-gray-800">
@@ -919,7 +870,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
         <div className="absolute inset-0 bg-purple-900/10 pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Free for 7 Days. If You Don’t Profit, the Next Month is on Us.</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">30-Day Money Back Guarantee. If You Don’t Profit, We Pay You.</h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">No gimmicks. No guesswork. Just expert picks, performance tracking, and a community that wins together.</p>
           </div>
 
@@ -943,7 +894,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
 
             {/* Yearly */}
             <div className="bg-black border border-purple-500 rounded-3xl p-8 relative shadow-2xl shadow-purple-900/50 transform md:scale-105 z-10 flex flex-col">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-6 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg shadow-purple-600/50">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-6 py-1 rounded-full text-xs font-bold uppercase tracking-widest font-heading shadow-lg shadow-purple-600/50">
                 Most Popular
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Yearly</h3>
@@ -993,6 +944,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo }) => {
 // --- 5. PRICING PAGE COMPONENT ---
 
 const PricingPage: React.FC = () => {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
@@ -1001,16 +953,13 @@ const PricingPage: React.FC = () => {
         {/* Header */}
         <Reveal>
           <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
-            Pick Plans That Match Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Hustle.</span>
+            {t('pricing', 'HeadlineStart')} <span className="text-green-500">{t('pricing', 'HeadlineGreen')}</span><br className="hidden md:block" /> {t('pricing', 'HeadlineMid')} <span className="text-purple-500">{t('pricing', 'HeadlinePurple')}</span>
           </h1>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-            No Gimmicks. Just Gains.
-          </h2>
         </Reveal>
 
         <Reveal delay={200}>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
-            Whether you’re testing the waters or betting with conviction, profits are one click away.
+            {t('pricing', 'Subheadline')}
           </p>
         </Reveal>
 
@@ -1018,32 +967,32 @@ const PricingPage: React.FC = () => {
         <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-20">
 
           {/* FREE PLAN */}
-          <Reveal delay={300} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-6 hover:bg-gray-900 transition-colors flex flex-col text-left">
-            <h3 className="text-xl font-bold text-gray-400 mb-2">Free Plan</h3>
+          <Reveal delay={300} className="glass-card glass-card-hover flex flex-col text-left p-6 rounded-3xl">
+            <h3 className="text-xl font-bold text-gray-400 mb-2">{t('pricing', 'FreePlan')}</h3>
             <div className="flex items-baseline gap-1 mb-6">
               <span className="text-4xl font-bold text-white">$0</span>
               <span className="text-gray-500">/mo</span>
             </div>
             <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex gap-3 text-gray-300 text-sm"><Gift className="text-yellow-500 shrink-0" size={18} /> Entry to Member Lottery</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Gift className="text-yellow-500 shrink-0" size={18} /> Entry to Monthly Lottery (Win Cash)</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><TrendingUp className="text-green-500 shrink-0" size={18} /> Access to 5-0 Free Picks Run</li>
               <li className="flex gap-3 text-gray-300 text-sm"><LayoutDashboard className="text-blue-500 shrink-0" size={18} /> Access to Results Tracker</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><Zap className="text-purple-500 shrink-0" size={18} /> Weekly free picks & previews</li>
               <li className="flex gap-3 text-gray-500 text-sm italic">Great way to test ProPickz</li>
             </ul>
             <button
               onClick={() => window.open('https://discord.gg/propickz', '_blank')}
               className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
             >
-              Join for Free
+              {t('pricing', 'FreeCTA')}
             </button>
           </Reveal>
 
           {/* PRO PLAN - GLOWING/HIGHLIGHTED */}
-          <Reveal delay={400} className="bg-black border-2 border-purple-500 rounded-3xl p-6 relative shadow-[0_0_40px_rgba(147,51,234,0.3)] transform md:scale-105 z-10 flex flex-col text-left">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">
-              Most Popular
+          <Reveal delay={400} className="bg-black border border-purple-500 rounded-3xl p-6 relative shadow-[0_0_40px_rgba(147,51,234,0.3)] transform md:scale-105 z-10 flex flex-col text-left animate-border-beam">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest font-heading shadow-lg">
+              {t('pricing', 'MostPopular')}
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Pro Plan</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{t('pricing', 'ProPlan')}</h3>
             <div className="flex items-baseline gap-1 mb-6">
               <span className="text-4xl font-bold text-white">$74.99</span>
               <span className="text-gray-500">/mo</span>
@@ -1060,45 +1009,44 @@ const PricingPage: React.FC = () => {
               onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
               className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-purple-900/40"
             >
-              Get Pro Access
+              {t('pricing', 'MonthlyCTA')}
             </button>
           </Reveal>
 
           {/* QUARTERLY PLAN */}
-          <Reveal delay={500} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-6 hover:bg-gray-900 transition-colors flex flex-col text-left">
-            <h3 className="text-xl font-bold text-white mb-2">Quarterly</h3>
+          <Reveal delay={500} className="glass-card glass-card-hover flex flex-col text-left p-6 rounded-3xl">
+            <h3 className="text-xl font-bold text-white mb-2">{t('pricing', 'Quarterly')}</h3>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="text-4xl font-bold text-white">$189</span>
-              <span className="text-gray-500">/3mo</span>
+              <span className="text-gray-500">/qtr</span>
             </div>
-            <p className="text-green-400 text-xs font-bold mb-6">Save $36 vs Monthly</p>
+            <p className="text-green-400 text-xs font-bold mb-6">Save 15% vs Monthly</p>
             <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-green-500 shrink-0" size={18} /> Everything in Pro Plan</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><Clock className="text-green-500 shrink-0" size={18} /> 3 Months Locked In</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><TrendingUp className="text-green-500 shrink-0" size={18} /> Ideal for consistent bettors</li>
-              <li className="flex gap-3 text-gray-300 text-sm"><Activity className="text-green-500 shrink-0" size={18} /> Stronger Value</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> All Pro Features included</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Star className="text-purple-500 shrink-0" size={18} /> Priority Support</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><Users className="text-purple-500 shrink-0" size={18} /> Exclusive Discord Channels</li>
             </ul>
             <button
               onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-              className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors border border-gray-700"
+              className="w-full py-3 bg-white hover:bg-gray-200 text-black font-bold rounded-xl transition-colors"
             >
-              Start Quarterly
+              {t('pricing', 'QuarterlyCTA')}
             </button>
           </Reveal>
 
           {/* ANNUAL PLAN */}
-          <Reveal delay={600} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-3xl p-6 hover:bg-gray-900 transition-colors flex flex-col text-left">
-            <div className="absolute -top-3 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+          <Reveal delay={600} className="glass-card glass-card-hover flex flex-col text-left p-6 rounded-3xl border border-yellow-500/20">
+            <div className="absolute top-0 right-0 bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-bl-xl text-xs font-bold uppercase tracking-wider">
               Best Value
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Annual</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{t('pricing', 'Yearly')}</h3>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="text-4xl font-bold text-white">$649</span>
               <span className="text-gray-500">/yr</span>
             </div>
-            <p className="text-green-400 text-xs font-bold mb-6">Lowest Cost Per Month ($54)</p>
+            <p className="text-green-400 text-xs font-bold mb-6">Save 33% vs Monthly</p>
             <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-green-500 shrink-0" size={18} /> Full Access for 12 Months</li>
+              <li className="flex gap-3 text-gray-300 text-sm"><CheckCircle className="text-purple-500 shrink-0" size={18} /> Full Access for 12 Months</li>
               <li className="flex gap-3 text-gray-300 text-sm"><Trophy className="text-green-500 shrink-0" size={18} /> Perfect for serious bettors</li>
               <li className="flex gap-3 text-gray-300 text-sm"><Target className="text-green-500 shrink-0" size={18} /> Long-term strategy focus</li>
               <li className="flex gap-3 text-gray-300 text-sm"><Shield className="text-green-500 shrink-0" size={18} /> Maximize Bankroll Growth</li>
@@ -1107,24 +1055,21 @@ const PricingPage: React.FC = () => {
               onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
               className="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors"
             >
-              Go Annual
+              {t('pricing', 'AnnualCTA')}
             </button>
           </Reveal>
 
         </div>
 
-        {/* Final CTA */}
-        <Reveal delay={700} className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-500/30 rounded-3xl p-12 mb-16">
-          <h2 className="text-3xl font-black text-white mb-4">Pick a Plan. Build a Bankroll.</h2>
-          <p className="text-xl text-gray-300 mb-8 font-light">
-            Be the one who wins on <span className="font-bold text-white">Purpose.</span>
-          </p>
+        {/* Benefits / Lottery Widget */}
+        <Reveal delay={700}>
+          <CommunityBenefits />
         </Reveal>
 
         <Reveal delay={500}>
           <div className="text-center">
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Profit or it’s free. If you don't finish the month in profit, we’ll give you the next month on us. Simple.
+              {t('pricing', 'Guarantee')}
             </p>
           </div>
         </Reveal>
@@ -1138,6 +1083,7 @@ const PricingPage: React.FC = () => {
 
 const HowItWorksPage: React.FC = () => {
   const [showSamplePick, setShowSamplePick] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
@@ -1149,15 +1095,15 @@ const HowItWorksPage: React.FC = () => {
         <div className="mb-32 text-center">
           <Reveal>
             <h1 className="text-4xl md:text-6xl font-black text-white mb-12">
-              How Propickz Makes You a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Smarter Bettor</span>
+              {t('steps', 'Title')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">{t('steps', 'TitleHighlight')}</span>
             </h1>
           </Reveal>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {[
-              { icon: <UserPlus className="text-purple-400" size={32} />, title: "Subscribe", desc: "Choose a plan that matches your style. You will instantly get access to our Discord." },
-              { icon: <Zap className="text-blue-400" size={32} />, title: "Get Picks Daily", desc: "Every day, receive our vetted, high confidence selections backed by data & discipline." },
-              { icon: <TrendingUp className="text-green-400" size={32} />, title: "Track Performance", desc: "All picks are timestamped and tracked for transparency. See your profits grow day by day." },
+              { icon: <UserPlus className="text-purple-400" size={32} />, title: t('steps', 'Sub1'), desc: t('steps', 'Desc1') },
+              { icon: <Zap className="text-blue-400" size={32} />, title: t('steps', 'Sub2'), desc: t('steps', 'Desc2') },
+              { icon: <TrendingUp className="text-green-400" size={32} />, title: t('steps', 'Sub3'), desc: t('steps', 'Desc3') },
             ].map((step, i) => (
               <Reveal key={i} delay={i * 100} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl backdrop-blur-sm hover:bg-gray-900/60 transition-colors">
                 <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-purple-900/20">
@@ -1174,7 +1120,7 @@ const HowItWorksPage: React.FC = () => {
               onClick={() => setShowSamplePick(true)}
               className="px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2 mx-auto"
             >
-              See a Sample Pick <ChevronDown size={20} />
+              {t('steps', 'SamplePick')} <ChevronDown size={20} />
             </button>
           </Reveal>
         </div>
@@ -1191,7 +1137,7 @@ const HowItWorksPage: React.FC = () => {
               </button>
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-green-500/30">
+                <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest font-heading border border-green-500/30">
                   Confirmed Win
                 </div>
                 <span className="text-gray-500 text-xs">Sample Preview</span>
@@ -1236,12 +1182,12 @@ const HowItWorksPage: React.FC = () => {
         <div className="text-center mb-24 pt-12 border-t border-gray-800/50">
           <Reveal>
             <h1 className="text-3xl md:text-5xl font-black text-white mb-6 text-gray-400">
-              The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">Engine</span> Behind the Edge.
+              {t('steps', 'EngineTitle')}
             </h1>
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">
-              We don't guess. We scrape millions of data points in real-time to find where the books are wrong. Here is exactly how we print money.
+              {t('steps', 'EngineDesc')}
             </p>
           </Reveal>
         </div>
@@ -1257,9 +1203,9 @@ const HowItWorksPage: React.FC = () => {
               <div className="inline-block p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 mb-4">
                 <TrendingUp size={32} className="text-blue-400" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">1. Smart Scanning</h3>
+              <h3 className="text-3xl font-bold text-white mb-4">{t('steps', 'Step1Title')}</h3>
               <p className="text-gray-400 leading-relaxed">
-                Imagine having 1,000 eyes watching every sportsbook at once. Our system scans millions of odds in real-time, looking for lines that are "off" compared to the rest of the market.
+                {t('steps', 'Step1Desc')}
               </p>
             </div>
             <div className="order-1 md:order-2 relative">
@@ -1302,24 +1248,24 @@ const HowItWorksPage: React.FC = () => {
             <div className="order-2">
               <div className="absolute right-0 top-1/2 translate-x-1/2 w-4 h-4 bg-purple-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(168,85,247,0.5)]"></div>
               <div className="bg-gray-900/50 border border-gray-800 p-8 rounded-3xl backdrop-blur-sm">
-                <div className="font-mono text-xs text-purple-300 mb-4 text-center">&gt;&gt; ANALYZING_TRUE_PROBABILITY...</div>
+                <div className="font-mono text-xs text-purple-300 mb-4 text-center">&gt;&gt; HYBRID_MODEL_ACTIVE...</div>
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="text-center">
-                      <div className="text-gray-500 text-xs mb-1">Sharp Book Odds</div>
-                      <div className="text-xl font-bold text-white">-150</div>
-                      <div className="text-xs text-gray-600">(60% Probability)</div>
+                      <div className="text-gray-500 text-xs mb-1">AI Projection</div>
+                      <div className="text-lg font-bold text-white">Lakers -4</div>
+                      <div className="text-xs text-gray-600">(Data Only)</div>
                     </div>
                     <div className="h-px w-12 bg-gray-700"></div>
                     <div className="text-center">
-                      <div className="text-gray-500 text-xs mb-1">Your Book Odds</div>
-                      <div className="text-xl font-bold text-green-400">-110</div>
-                      <div className="text-xs text-gray-600">(52% Implied)</div>
+                      <div className="text-gray-500 text-xs mb-1">Analyst Adjustment</div>
+                      <div className="text-lg font-bold text-blue-400">-1.5 Adjustment</div>
+                      <div className="text-xs text-gray-600">(Injury Factor)</div>
                     </div>
                   </div>
                   <div className="bg-purple-500/10 border border-purple-500/30 p-3 rounded-xl text-center">
-                    <div className="text-purple-400 font-bold text-sm">EDGE DETECTED: 8%</div>
-                    <div className="text-gray-400 text-xs mt-1">The math says this bet wins more often than the odds imply.</div>
+                    <div className="text-purple-400 font-bold text-sm">FINAL VERDICT: LAKERS -5.5</div>
+                    <div className="text-gray-400 text-xs mt-1">Confirmed by Data & Human Expertise.</div>
                   </div>
                 </div>
               </div>
@@ -1328,9 +1274,9 @@ const HowItWorksPage: React.FC = () => {
               <div className="inline-block p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 mb-4">
                 <Zap size={32} className="text-purple-400" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">2. +EV Identification</h3>
+              <h3 className="text-3xl font-bold text-white mb-4">{t('steps', 'Step2Title')}</h3>
               <p className="text-gray-400 leading-relaxed">
-                We don't rely on gut feelings. We compare lines against the sharpest bookmakers in the world. When a regular sportsbook gives you better odds than the true probability of the event, that is <strong>Positive Expected Value (+EV)</strong>. That is how you win long-term.
+                {t('steps', 'Step2Desc')}
               </p>
             </div>
           </Reveal>
@@ -1341,9 +1287,9 @@ const HowItWorksPage: React.FC = () => {
               <div className="inline-block p-3 rounded-2xl bg-green-500/10 border border-green-500/30 mb-4">
                 <Smartphone size={32} className="text-green-400" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">3. Instant Delivery</h3>
+              <h3 className="text-3xl font-bold text-white mb-4">{t('steps', 'Step3Title')}</h3>
               <p className="text-gray-400 leading-relaxed">
-                The second an edge is found, our bot blasts it to the Discord. You get the notification, place the bet, and lock in the value before the line moves. Speed is everything.
+                {t('steps', 'Step3Desc')}
               </p>
             </div>
             <div className="order-1 md:order-2 relative">
@@ -1362,7 +1308,7 @@ const HowItWorksPage: React.FC = () => {
                   <div className="text-green-400 font-bold text-sm mb-1">💎 WHALE PLAY DETECTED</div>
                   <div className="text-white text-sm">LeBron James Over 25.5 Pts</div>
                   <div className="text-gray-400 text-xs mt-1">Odds: -110 (Implied: -145)</div>
-                  <div className="text-purple-400 text-xs font-bold mt-1">EV: +12.4%</div>
+                  <div className="text-purple-400 text-xs font-bold mt-1">Hybrid Score: 9.8/10</div>
                 </div>
               </div>
             </div>
@@ -1372,19 +1318,19 @@ const HowItWorksPage: React.FC = () => {
         {/* Trust Section */}
         <div className="mt-32 text-center">
           <Reveal>
-            <h2 className="text-3xl font-bold text-white mb-8">Why This Isn't Gambling</h2>
+            <h2 className="text-3xl font-bold text-white mb-8">{t('trust', 'Title')}</h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="bg-gray-900/30 p-8 rounded-2xl border border-gray-800">
-                <h4 className="text-xl font-bold text-white mb-2">Law of Large Numbers</h4>
-                <p className="text-gray-400 text-sm">In the short term, anything happens. In the long term, math always wins. We play the long game.</p>
+                <h4 className="text-xl font-bold text-white mb-2">{t('trust', 'Card1Title')}</h4>
+                <p className="text-gray-400 text-sm">{t('trust', 'Card1Desc')}</p>
               </div>
               <div className="bg-gray-900/30 p-8 rounded-2xl border border-gray-800">
-                <h4 className="text-xl font-bold text-white mb-2">Closing Line Value</h4>
-                <p className="text-gray-400 text-sm">We consistently beat the closing line. If you beat the closing line, you are guaranteed to profit over time.</p>
+                <h4 className="text-xl font-bold text-white mb-2">{t('trust', 'Card2Title')}</h4>
+                <p className="text-gray-400 text-sm">{t('trust', 'Card2Desc')}</p>
               </div>
               <div className="bg-gray-900/30 p-8 rounded-2xl border border-gray-800">
-                <h4 className="text-xl font-bold text-white mb-2">Bankroll Management</h4>
-                <p className="text-gray-400 text-sm">We teach you strictly how to size your bets so you never blow up your account, even on a bad day.</p>
+                <h4 className="text-xl font-bold text-white mb-2">{t('trust', 'Card3Title')}</h4>
+                <p className="text-gray-400 text-sm">{t('trust', 'Card3Desc')}</p>
               </div>
             </div>
           </Reveal>
@@ -1398,21 +1344,12 @@ const HowItWorksPage: React.FC = () => {
 // --- 10. SUPPORTED SPORTS PAGE COMPONENT ---
 
 const SupportedSportsPage: React.FC = () => {
-  const sports = [
-    { name: 'NFL', full: 'National Football League', icon: <Trophy className="text-blue-500" size={40} />, color: 'from-blue-600 to-blue-800', desc: 'Spreads, Totals, Player Props' },
-    { name: 'NBA', full: 'National Basketball Association', icon: <Dribbble className="text-orange-500" size={40} />, color: 'from-orange-600 to-red-600', desc: 'Moneyline, Quarter Bets, Player Performance' },
-    { name: 'MLB', full: 'Major League Baseball', icon: <Disc className="text-red-500" size={40} />, color: 'from-red-600 to-blue-900', desc: 'Run Lines, First 5 Innings, Pitcher Props' },
-    { name: 'NHL', full: 'National Hockey League', icon: <Flame className="text-cyan-500" size={40} />, color: 'from-cyan-600 to-blue-500', desc: 'Puck Line, Goal Totals, Period Bets' },
-    { name: 'NCAAF', full: 'College Football', icon: <Award className="text-yellow-500" size={40} />, color: 'from-yellow-600 to-orange-600', desc: 'Saturday Slates, Bowl Games, Heisman Futures' },
-    { name: 'UFC', full: 'Ultimate Fighting Championship', icon: <Target className="text-red-600" size={40} />, color: 'from-red-700 to-black', desc: 'Fight Winner, Method of Victory, Round Betting' },
-  ];
-
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
+      <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
+        <div className="mb-12">
           <Reveal>
             <h1 className="text-4xl md:text-6xl font-black text-white mb-6">
               Total Market <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Dominance.</span>
@@ -1425,41 +1362,15 @@ const SupportedSportsPage: React.FC = () => {
           </Reveal>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sports.map((sport, index) => (
-            <Reveal key={sport.name} delay={index * 100}>
-              <div className="group relative bg-gray-900/40 border border-gray-800 rounded-3xl overflow-hidden hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl">
-                {/* Hover Gradient Background */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${sport.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
-
-                <div className="p-8 relative z-10">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="p-3 bg-gray-800/50 rounded-2xl border border-gray-700 group-hover:border-gray-600 transition-colors">
-                      {sport.icon}
-                    </div>
-                    <span className="text-xs font-bold text-gray-500 border border-gray-800 px-2 py-1 rounded-full group-hover:text-white group-hover:border-gray-600 transition-colors">
-                      ACTIVE
-                    </span>
-                  </div>
-
-                  <h3 className="text-3xl font-black text-white mb-1">{sport.name}</h3>
-                  <p className="text-sm text-gray-400 mb-4">{sport.full}</p>
-
-                  <div className="h-px w-full bg-gray-800 mb-4 group-hover:bg-gray-700 transition-colors"></div>
-
-                  <p className="text-sm text-gray-500 group-hover:text-gray-300 transition-colors">
-                    {sport.desc}
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        {/* NEW CAROUSEL WIDGET */}
+        <Reveal delay={300}>
+          <SportsCarousel />
+        </Reveal>
 
         <Reveal delay={600} className="mt-20 text-center bg-gray-900/30 border border-gray-800 rounded-3xl p-8 md:p-12 max-w-4xl mx-auto">
           <h3 className="text-2xl font-bold text-white mb-4">More Leagues Added Constantly</h3>
           <p className="text-gray-400 mb-8">
-            Our team is constantly building models for new markets including Tennis, Soccer (EPL, La Liga), and E-Sports. If there's an edge, we will find it.
+            Our team is constantly building models for new markets including Horse Racing, E-Sports, and International Leagues. If there's an edge, we will find it.
           </p>
           <button
             onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
@@ -1476,18 +1387,20 @@ const SupportedSportsPage: React.FC = () => {
 
 // --- 11. FAQ PAGE COMPONENT ---
 
+
 const FAQPage: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { t } = useLanguage();
 
-  const faqs = [
-    { q: "What exactly is +EV betting?", a: "Positive Expected Value (+EV) betting is mathematically beating the sportsbooks. It means placing bets where the probability of winning is higher than the implied probability of the odds offered. Over time, this mathematical edge guarantees profit, similar to being the house in a casino." },
-    { q: "How much bankroll do I need to start?", a: "We recommend a starting bankroll of at least $500 to comfortably follow our unit sizing strategy. However, we have members who started with $100 and built it up. The key is consistency and following the system." },
-    { q: "Do I need to know sports to win?", a: "Absolutely not. In fact, knowing sports can sometimes hurt you if you rely on 'gut feelings'. Our system is 100% data-driven. You are following math, not teams. We tell you exactly what to bet, when, and how much." },
-    { q: "How do I receive the picks?", a: "All picks are delivered instantly via our private Discord server. You can enable push notifications to ensure you never miss a +EV opportunity. Speed is key, and Discord is the fastest delivery method available." },
-    { q: "Is there a guarantee?", a: "Yes. We offer the industry's strongest guarantee. If you don't profit in your first week, you get 30 days free. If you don't profit in your first month, you get a full refund. We are that confident in our math." },
-    { q: "Can I cancel my subscription anytime?", a: "Yes, you have full control. You can cancel your subscription instantly from your dashboard with one click. No hidden fees, no jumping through hoops." },
-    { q: "Which sportsbooks do I need?", a: "To maximize your edge, we recommend having accounts with at least 3 major sportsbooks (e.g., FanDuel, DraftKings, MGM, Caesars). This allows you to 'line shop' and always get the best odds available." },
-    { q: "Is this legal?", a: "Yes, sports betting is legal in many jurisdictions. However, it is your responsibility to ensure you are complying with the local laws and regulations of your specific location." },
+  const faqs: FaqItem[] = [
+    { q: t('faq', 'q1'), a: t('faq', 'a1') },
+    { q: t('faq', 'q2'), a: t('faq', 'a2') },
+    { q: t('faq', 'q3'), a: t('faq', 'a3') },
+    { q: t('faq', 'q4'), a: t('faq', 'a4') },
+    { q: t('faq', 'q5'), a: t('faq', 'a5') },
+    { q: t('faq', 'q6'), a: t('faq', 'a6') },
+    { q: t('faq', 'q7'), a: t('faq', 'a7') },
+    { q: t('faq', 'q8'), a: t('faq', 'a8') },
   ];
 
   return (
@@ -1498,12 +1411,14 @@ const FAQPage: React.FC = () => {
         <div className="text-center mb-16">
           <Reveal>
             <h1 className="text-4xl md:text-6xl font-black text-white mb-6">
-              Frequently Asked <span className="text-purple-500">Questions.</span>
+              {t('faq', 'Headline').split(' ').map((word, i, arr) =>
+                i === arr.length - 1 ? <span key={i} className="text-purple-500">{word}</span> : word + ' '
+              )}
             </h1>
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-400">
-              Everything you need to know about the system, the math, and the money.
+              {t('faq', 'Subtitle')}
             </p>
           </Reveal>
         </div>
@@ -1511,18 +1426,20 @@ const FAQPage: React.FC = () => {
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <Reveal key={i} delay={i * 50}>
-              <div className="bg-gray-900/40 border border-gray-800 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-colors">
+              <div className="bg-gray-900/40 border border-gray-800 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-colors group">
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                   className="w-full flex justify-between items-center p-6 text-left"
                 >
-                  <span className="text-lg font-bold text-white">{faq.q}</span>
+                  <span className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">{faq.q}</span>
                   <ChevronDown className={`text-purple-500 transition-transform duration-300 ${openIndex === i ? 'rotate-180' : ''}`} />
                 </button>
                 <div
                   className={`px-6 text-gray-400 leading-relaxed overflow-hidden transition-all duration-300 ease-in-out ${openIndex === i ? 'max-h-48 pb-6 opacity-100' : 'max-h-0 opacity-0'}`}
                 >
-                  {faq.a}
+                  <div className="border-t border-gray-800 pt-4 mt-2">
+                    {faq.a}
+                  </div>
                 </div>
               </div>
             </Reveal>
@@ -1530,12 +1447,12 @@ const FAQPage: React.FC = () => {
         </div>
 
         <Reveal delay={600} className="mt-20 text-center">
-          <p className="text-gray-500 mb-6">Still have questions?</p>
+          <p className="text-gray-500 mb-6">{t('faq', 'MoreQuestions')}</p>
           <button
-            onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-            className="px-8 py-3 bg-gray-800 text-white font-bold rounded-full hover:bg-gray-700 transition"
+            onClick={() => window.location.href = 'mailto:support@propickz.com'}
+            className="px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors"
           >
-            Contact Support
+            {t('faq', 'ContactSupport')}
           </button>
         </Reveal>
       </div>
@@ -1543,85 +1460,6 @@ const FAQPage: React.FC = () => {
   );
 };
 
-// --- 12. BETTING ACADEMY PAGE COMPONENT ---
-
-const BettingAcademyPage: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden flex items-center justify-center">
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-
-      {/* Animated Background Blobs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] animate-pulse-slow"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow delay-1000"></div>
-
-      <div className="max-w-5xl mx-auto px-4 relative z-10 text-center">
-
-        <Reveal>
-          <div className="inline-block px-4 py-1 rounded-full border border-purple-500/50 bg-purple-500/10 text-purple-400 text-xs font-bold uppercase tracking-widest mb-8 animate-bounce">
-            Live Education 24/7
-          </div>
-        </Reveal>
-
-        <Reveal delay={200}>
-          <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-tight">
-            THE REAL CLASSROOM <br />
-            IS <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-pulse">LIVE.</span>
-          </h1>
-        </Reveal>
-
-        <Reveal delay={400}>
-          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Static courses are dead. The market moves too fast. Join the <span className="text-white font-bold">Discord</span> to learn directly from the pros, watch live analysis, and see the edge happen in real-time.
-          </p>
-        </Reveal>
-
-        <Reveal delay={600}>
-          <div className="grid md:grid-cols-3 gap-6 mb-16 text-left">
-            <div className="bg-gray-900/60 backdrop-blur border border-gray-800 p-6 rounded-2xl hover:border-purple-500 transition-colors group">
-              <div className="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <MessageSquare className="text-purple-400" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Live Q&A Sessions</h3>
-              <p className="text-gray-500 text-sm">Ask questions and get answers instantly from our lead analysts. No waiting for email support.</p>
-            </div>
-            <div className="bg-gray-900/60 backdrop-blur border border-gray-800 p-6 rounded-2xl hover:border-blue-500 transition-colors group">
-              <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Play className="text-blue-400" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Video Breakdowns</h3>
-              <p className="text-gray-500 text-sm">Watch us break down the board every morning. See exactly why we are taking a position.</p>
-            </div>
-            <div className="bg-gray-900/60 backdrop-blur border border-gray-800 p-6 rounded-2xl hover:border-green-500 transition-colors group">
-              <div className="w-12 h-12 bg-green-600/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <TrendingUp className="text-green-400" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Bankroll Coaching</h3>
-              <p className="text-gray-500 text-sm">Learn the strict money management rules that separate the pros from the gamblers.</p>
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal delay={800}>
-          <button
-            onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-            className="group relative px-12 py-6 bg-[#5865F2] text-white font-black text-xl rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(88,101,242,0.4)] hover:shadow-[0_0_60px_rgba(88,101,242,0.6)] transition-all hover:scale-105"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-            <span className="relative flex items-center gap-3">
-              JOIN THE ACADEMY ON DISCORD <ArrowUpRight size={24} />
-            </span>
-          </button>
-          <p className="mt-6 text-sm text-gray-500 animate-pulse">
-            <span className="w-2 h-2 bg-green-500 rounded-full inline-block mr-2"></span>
-            1,420+ Members Online Now
-          </p>
-        </Reveal>
-
-      </div>
-    </div>
-  );
-};
 
 // --- 8. GUARANTEE PAGE COMPONENT ---
 
@@ -1648,7 +1486,7 @@ const GuaranteePage: React.FC = () => {
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              You win – or you don't pay. That's how confident we are in our system.
+              You win - or you don't pay. That's how confident we are in our system.
             </p>
           </Reveal>
         </div>
@@ -1656,10 +1494,10 @@ const GuaranteePage: React.FC = () => {
         {/* Dual Card Container */}
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
 
-          {/* Free Trial Card */}
+          {/* Free Server Card */}
           <Reveal delay={300}>
             <div className="bg-[#0f1014] border border-gray-800 rounded-3xl p-8 flex flex-col h-full hover:border-gray-700 transition-colors">
-              <h3 className="text-2xl font-bold text-white mb-8 tracking-wide">FREE TRIAL</h3>
+              <h3 className="text-2xl font-black text-white mb-8 tracking-wide">FREE SERVER</h3>
 
               <ul className="space-y-6 mb-8 flex-1">
                 <li className="flex items-start gap-4">
@@ -1680,7 +1518,7 @@ const GuaranteePage: React.FC = () => {
                 onClick={() => window.open('https://discord.gg/propickz', '_blank')}
                 className="w-full py-4 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold text-lg rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
               >
-                Start Free Trial
+                Join Free Community
               </button>
             </div>
           </Reveal>
@@ -1691,7 +1529,7 @@ const GuaranteePage: React.FC = () => {
               {/* Subtle purple glow for Pro */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-600/20 transition-colors"></div>
 
-              <h3 className="text-2xl font-bold text-white mb-8 tracking-wide">PRO MEMBERSHIP</h3>
+              <h3 className="text-2xl font-black text-white mb-8 tracking-wide">PRO MEMBERSHIP</h3>
 
               <ul className="space-y-6 mb-8 flex-1">
                 <li className="flex items-start gap-4">
@@ -1704,7 +1542,7 @@ const GuaranteePage: React.FC = () => {
                 </li>
                 <li className="flex items-start gap-4">
                   <Zap className="text-[#5865F2] shrink-0 mt-1" size={20} />
-                  <span className="text-gray-300 text-lg">Daily Picks + 35% off DFS</span>
+                  <span className="text-gray-300 text-lg">Daily Picks + Exclusive Insights</span>
                 </li>
                 <li className="flex items-start gap-4">
                   <BookOpen className="text-[#5865F2] shrink-0 mt-1" size={20} />
@@ -1754,13 +1592,14 @@ const ResultsPage: React.FC = () => {
           Real wins from real members. The math speaks for itself.
         </p>
 
-        {/* Placeholder for Gallery */}
-        <div className="border-2 border-dashed border-gray-800 rounded-3xl p-20 flex flex-col items-center justify-center bg-gray-900/30 backdrop-blur-sm">
-          <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-6">
-            <TrendingUp size={40} className="text-gray-600" />
-          </div>
-          <h3 className="text-2xl font-bold text-gray-500 mb-2">Gallery Coming Soon</h3>
-          <p className="text-gray-600">We are compiling our latest big wins and member success stories.</p>
+        {/* 1. Live Dashboard */}
+        <div className="mb-24">
+          <ResultsDashboard />
+        </div>
+
+        {/* 2. Winning Slips */}
+        <div>
+          <WinningSlips />
         </div>
       </div>
     </div>
@@ -1789,7 +1628,7 @@ const LegalPage: React.FC = () => {
 
           {/* 1 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">1. Informational Purposes Only – Not Financial or Gambling Advice</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">1. Informational Purposes Only - Not Financial or Gambling Advice</h2>
             <p className="mb-4">
               All content provided by ProPickz, including but not limited to betting picks, statistical models, educational material, projections, articles, Discord discussions, tools, and bot-generated outputs, is intended strictly for informational, educational, and entertainment purposes only.
             </p>
@@ -1808,7 +1647,7 @@ const LegalPage: React.FC = () => {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">2. No Guarantee of Profit, Outcome, or Accuracy</h2>
             <p className="mb-4">
-              ProPickz makes no guarantees, warranties, or representations — express or implied — regarding:
+              ProPickz makes no guarantees, warranties, or representations - express or implied - regarding:
             </p>
             <ul className="list-disc pl-5 mb-4 space-y-2">
               <li>The accuracy, reliability, timeliness, or completeness of any information or selections.</li>
@@ -1867,7 +1706,7 @@ const LegalPage: React.FC = () => {
               To the maximum extent permitted by law, ProPickz, its owners, employees, contractors, affiliates, and agents shall not be liable for:
             </p>
             <ul className="list-disc pl-5 mb-4 space-y-2">
-              <li>Any losses or damages of any kind — including but not limited to direct, indirect, incidental, consequential, punitive, exemplary, or special damages;</li>
+              <li>Any losses or damages of any kind - including but not limited to direct, indirect, incidental, consequential, punitive, exemplary, or special damages;</li>
               <li>Loss of profits, revenues, savings, data, goodwill, or opportunity;</li>
               <li>Reliance on content, recommendations, or services provided by ProPickz;</li>
               <li>Unauthorized access to or alteration of your data, transmissions, or account;</li>
@@ -2040,184 +1879,6 @@ const LegalPage: React.FC = () => {
   );
 };
 
-// --- NEW ABOUT US PAGE ---
-
-const AboutUsPage: React.FC = () => {
-  const scrollToNext = () => {
-    const nextSection = document.getElementById('who-we-are');
-    if (nextSection) nextSection.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  return (
-    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
-
-      {/* SECTION 1: HERO */}
-      <section className="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
-        {/* Background Effects */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-900/20 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
-
-        <div className="relative z-10 max-w-5xl mx-auto space-y-8">
-          <Reveal>
-            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight">
-              We’re Not Just Here to Give Picks.<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">We’re Here to Change How You Bet.</span>
-            </h1>
-          </Reveal>
-
-          <Reveal delay={200}>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Founded by disciplined bettors. Built for those who are tired of guesswork, hype, and losing streaks.
-              <br /><br />
-              Welcome to <span className="font-bold text-white">ProPickz</span> — where data, transparency, and consistency come first.
-            </p>
-          </Reveal>
-
-          <Reveal delay={400}>
-            <button
-              onClick={scrollToNext}
-              className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-full transition-all shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:shadow-[0_0_50px_rgba(147,51,234,0.5)] flex items-center gap-2 mx-auto"
-            >
-              Explore Our Process <ChevronDown size={20} />
-            </button>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* SECTION 2: WHO WE ARE */}
-      <section id="who-we-are" className="py-24 bg-black relative border-t border-gray-900">
-        <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 items-center">
-          <Reveal>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              Who We <span className="text-purple-500">Are</span>
-            </h2>
-            <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
-              <p>
-                ProPickz is a premium betting insights platform that delivers high-confidence daily picks, transparent performance tracking, and long-term profitability tools.
-              </p>
-              <p>
-                We’re a combination of real sports bettors with over <span className="text-white font-bold">18 years of combined experience</span>, not hype-driven influencers or generic "AI" generators. We focus on value, edge, and discipline, and we show our work.
-              </p>
-              <p className="border-l-4 border-purple-500 pl-4 italic text-gray-400">
-                "Whether you’re a casual bettor or sharp in the making, our system is designed to give you the consistency you’re looking for."
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal delay={200} className="relative">
-            <div className="absolute inset-0 bg-blue-600/10 rounded-3xl blur-2xl transform rotate-3"></div>
-            <div className="bg-gray-900 border border-gray-800 p-8 rounded-3xl relative z-10">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center p-4 bg-black/50 rounded-2xl border border-gray-800">
-                  <div className="text-4xl font-black text-purple-400 mb-1">18+</div>
-                  <div className="text-xs text-gray-500 uppercase tracking-widest">Years Exp.</div>
-                </div>
-                <div className="text-center p-4 bg-black/50 rounded-2xl border border-gray-800">
-                  <div className="text-4xl font-black text-green-400 mb-1">2.4k+</div>
-                  <div className="text-xs text-gray-500 uppercase tracking-widest">Members</div>
-                </div>
-                <div className="text-center p-4 bg-black/50 rounded-2xl border border-gray-800 col-span-2">
-                  <div className="text-4xl font-black text-blue-400 mb-1">$214k+</div>
-                  <div className="text-xs text-gray-500 uppercase tracking-widest">Profit Generated YTD</div>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* SECTION 3: OUR STORY */}
-      <section className="py-24 bg-gradient-to-b from-gray-900 to-black relative">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <Reveal>
-            <h2 className="text-4xl font-bold text-white mb-8">Why We Built ProPickz</h2>
-          </Reveal>
-          <Reveal delay={200} className="bg-gray-800/30 border border-gray-700 p-10 rounded-3xl backdrop-blur-sm">
-            <p className="text-gray-300 text-lg leading-relaxed mb-6">
-              We were tired of watching bettors lose money chasing picks from influencers with no accountability. We saw a need for a clean, disciplined, data-backed system that focused on <span className="text-white font-bold">transparency and long-term profitability</span>, not "locks" and unrealistic parlays.
-            </p>
-            <p className="text-gray-300 text-lg leading-relaxed">
-              ProPickz started in a single Discord group, evolved through months of tracking, testing, and refining, and now delivers smart picks daily across all major sports. <span className="text-purple-400 font-bold">We built what we wished we had when we started betting.</span>
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* SECTION 4: WHAT MAKES US DIFFERENT */}
-      <section className="py-24 bg-black relative">
-        <div className="max-w-7xl mx-auto px-4">
-          <Reveal className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">What Makes Us Different</h2>
-            <p className="text-gray-400">See the difference between hype and value.</p>
-          </Reveal>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* WHAT WE ARE NOT */}
-            <Reveal delay={100} className="bg-red-900/10 border border-red-900/30 p-8 rounded-3xl">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="bg-red-500/20 p-3 rounded-full"><X className="text-red-500" size={24} /></div>
-                <h3 className="text-2xl font-bold text-red-500">What We Are NOT</h3>
-              </div>
-              <ul className="space-y-4">
-                {["TikTok 'Cappers' with fake lifestyles", "No tracked records or history", "Promoting unrealistic parlay lotteries", "Poor bankroll management advice"].map((item, i) => (
-                  <li key={i} className="flex gap-3 text-gray-400">
-                    <X className="text-red-900 shrink-0 mt-1" size={18} /> {item}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-
-            {/* WHAT WE ARE */}
-            <Reveal delay={300} className="bg-green-900/10 border border-green-900/30 p-8 rounded-3xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10"><CheckCircle size={100} className="text-green-500" /></div>
-              <div className="flex items-center gap-3 mb-8">
-                <div className="bg-green-500/20 p-3 rounded-full"><CheckCircle className="text-green-500" size={24} /></div>
-                <h3 className="text-2xl font-bold text-green-500">What We ARE</h3>
-              </div>
-              <ul className="space-y-4">
-                {["Live tracked picks with verified history", "Real data-backed +EV strategies", "Bankroll-focused growth foundation", "Full refund guarantees if not profitable"].map((item, i) => (
-                  <li key={i} className="flex gap-3 text-white font-medium">
-                    <CheckCircle className="text-green-500 shrink-0 mt-1" size={18} /> {item}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 5: CTA BANNER */}
-      <section className="py-24 bg-black relative border-t border-gray-900">
-        <div className="absolute inset-0 bg-purple-900/10 pointer-events-none"></div>
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <Reveal>
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-6">
-              Smart Betting Starts With the <span className="text-purple-500">Right System.</span>
-            </h2>
-            <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-              Join ProPickz today and get access to our proven picks, transparent performance history, and a community that wins together.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => window.open('https://discord.gg/propickz', '_blank')}
-                className="px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-              >
-                Start Your Free Trial
-              </button>
-              <button
-                onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
-                className="px-10 py-5 bg-transparent border border-gray-700 text-white font-bold text-lg rounded-full hover:bg-gray-900 transition-colors"
-              >
-                View Membership Plans
-              </button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-    </div>
-  );
-};
 
 
 
@@ -2264,166 +1925,6 @@ const TestimonialsPage: React.FC = () => {
   );
 };
 
-// --- NEW EV+ & ARBITRAGE PAGE ---
-
-const EVPage: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-
-      {/* Intense Background Glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
-
-      <div className="max-w-6xl mx-auto px-4 relative z-10">
-
-        {/* SECTION 1: INTRO */}
-        <div className="text-center mb-24">
-          <Reveal>
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight">
-              A Separate System. A Sharper Edge.<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Same Membership.</span>
-            </h1>
-          </Reveal>
-          <Reveal delay={200}>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
-              ProPickz is powered by elite sports analysts — but we also believe in data doing its part. That’s why every Pro Membership includes access to the <strong className="text-white">ProPickz Bot</strong> — a fully automated system that tracks markets in real time and delivers its own exclusive stream of +EV and arbitrage picks, completely independent of our human team.
-            </p>
-          </Reveal>
-        </div>
-
-        {/* SECTION 2: +EV Picks */}
-        <Reveal delay={300} className="grid md:grid-cols-2 gap-12 items-center mb-24">
-          <div>
-            <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">
-              <TrendingUp size={32} className="text-blue-500" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-4">+EV Picks: When the Numbers Beat the Books</h2>
-            <p className="text-gray-400 leading-relaxed mb-6">
-              The ProPickz Bot constantly monitors odds across major sportsbooks and compares them to our own probability models. When the bot finds a line that’s off — where the math shows positive expected value — it flags it and posts it to its own channel.
-            </p>
-            <p className="text-gray-400 leading-relaxed">
-              Only plays with a strong, quantifiable edge are sent out. No guesswork. No bias. Just value.
-            </p>
-            <div className="mt-6 flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
-              <AlertCircle size={20} className="text-blue-400 shrink-0" />
-              <p className="text-sm text-blue-200">
-                If the edge doesn’t meet our threshold, the bot doesn’t post. Period.
-              </p>
-            </div>
-          </div>
-          <div className="bg-gray-900/50 border border-gray-800 p-8 rounded-3xl relative overflow-hidden group hover:border-blue-500/30 transition-colors">
-            {/* Visual simulation of bot scanning */}
-            <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-                <span>SCANNING MARKET_ID: 9942</span>
-                <span className="text-green-500 font-mono">LIVE ●</span>
-              </div>
-              <div className="bg-black/50 p-4 rounded-xl border border-gray-800 flex justify-between items-center">
-                <div>
-                  <div className="text-white font-bold">KC Chiefs -3.5</div>
-                  <div className="text-xs text-gray-500">Implied Prob: 52.4%</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-blue-400 font-bold">-105</div>
-                  <div className="text-xs text-green-400">+4.2% EDGE</div>
-                </div>
-              </div>
-              <div className="bg-black/50 p-4 rounded-xl border border-gray-800 flex justify-between items-center opacity-50">
-                <div>
-                  <div className="text-white font-bold">LAL Lakers ML</div>
-                  <div className="text-xs text-gray-500">Implied Prob: 48.0%</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-gray-400 font-bold">+115</div>
-                  <div className="text-xs text-gray-600">NO EDGE</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* SECTION 3: Arbitrage Alerts */}
-        <Reveal delay={400} className="grid md:grid-cols-2 gap-12 items-center mb-24">
-          <div className="order-2 md:order-1 bg-gray-900/50 border border-gray-800 p-8 rounded-3xl relative overflow-hidden group hover:border-green-500/30 transition-colors">
-            <div className="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded">ARBITRAGE FOUND</span>
-                <span className="text-gray-500 text-xs">0m 12s ago</span>
-              </div>
-              <div className="flex justify-between items-center bg-black/40 p-4 rounded-xl border border-gray-700">
-                <div className="text-left">
-                  <div className="text-gray-400 text-xs">Book A</div>
-                  <div className="text-white font-bold">Over 215.5</div>
-                  <div className="text-green-400 font-mono">+120</div>
-                </div>
-                <div className="h-8 w-px bg-gray-700"></div>
-                <div className="text-right">
-                  <div className="text-gray-400 text-xs">Book B</div>
-                  <div className="text-white font-bold">Under 215.5</div>
-                  <div className="text-green-400 font-mono">-110</div>
-                </div>
-              </div>
-              <div className="bg-green-500/10 border border-green-500/30 p-3 rounded-lg text-center">
-                <span className="text-green-400 font-bold text-sm">GUARANTEED PROFIT: 3.8% ROI</span>
-              </div>
-            </div>
-          </div>
-          <div className="order-1 md:order-2">
-            <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mb-6">
-              <Activity size={32} className="text-green-500" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-4">Arbitrage Alerts: Guaranteed Profit Across Books</h2>
-            <p className="text-gray-400 leading-relaxed mb-6">
-              Sometimes, sportsbooks disagree enough for you to bet both sides and lock in a risk-free profit. The ProPickz Bot watches for these gaps. When it detects one, it sends an instant alert that includes:
-            </p>
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> The books involved</li>
-              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> How to split your bets</li>
-              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> The ROI you’ll lock in</li>
-              <li className="flex items-center gap-3 text-gray-300"><CheckCircle size={16} className="text-green-500" /> How long the opportunity may last</li>
-            </ul>
-            <div className="flex items-center gap-2 text-green-400 text-sm font-bold">
-              <Zap size={16} /> These windows are rare and short — but when they hit, they’re pure upside.
-            </div>
-          </div>
-        </Reveal>
-
-        {/* SECTION 4: Full Log */}
-        <Reveal delay={500} className="bg-gray-900/30 border border-gray-800 rounded-[2rem] p-8 md:p-12 text-center">
-          <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <LayoutDashboard size={32} className="text-purple-500" />
-          </div>
-          <h2 className="text-3xl font-bold text-white mb-6">A Full Log of Every Bot Pick</h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
-            The bot doesn’t just post picks, it logs them all in an easily accessible table inside the server. You’ll always be able to see:
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
-            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-              <span className="text-gray-300 font-bold block mb-1">Every Pick Made</span>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-              <span className="text-gray-300 font-bold block mb-1">Exact Odds</span>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-              <span className="text-gray-300 font-bold block mb-1">Timestamp</span>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-              <span className="text-gray-300 font-bold block mb-1">Final Result</span>
-            </div>
-          </div>
-          <p className="text-gray-500 text-sm">
-            This way, nothing is hidden. Every bet recommendation is fully transparent and available for review at any time.
-          </p>
-        </Reveal>
-
-      </div>
-    </div>
-  );
-};
 
 const TrustPage: React.FC = () => {
   return (
@@ -2487,7 +1988,7 @@ const TrustPage: React.FC = () => {
             <p className="text-gray-300 leading-relaxed mb-6">
               We back it up. If we don’t hit profit over the set timeframe, you don’t just walk away empty, you’re covered by our guarantee.
             </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold uppercase tracking-widest font-heading">
               <CheckCircle size={12} /> Profit or Refund
             </div>
           </div>
@@ -2517,13 +2018,13 @@ const FreeTrialPage: React.FC = () => {
         <div className="text-center mb-16">
           <Reveal>
             <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
-              Try ProPickz Free for <span className="text-purple-500">7 Days.</span><br />
-              If You Don’t Profit, the <span className="text-white">Next Month Is on Us.</span>
+              30-Day <span className="text-purple-500">Money Back Guarantee.</span><br />
+              <span className="text-white">Profit or We Refund You.</span>
             </h1>
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              You win – or you don't pay. That's how confident we are in our system.
+              You win - or you don't pay. That's how confident we are in our system.
             </p>
           </Reveal>
         </div>
@@ -2535,7 +2036,7 @@ const FreeTrialPage: React.FC = () => {
           <Reveal delay={300} className="bg-[#0A0A0A] border border-gray-800 rounded-3xl p-8 hover:border-gray-700 transition-colors flex flex-col relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-gray-700 to-transparent opacity-50"></div>
 
-            <h3 className="text-2xl font-black text-white mb-8 tracking-wide">FREE TRIAL</h3>
+            <h3 className="text-2xl font-black text-white mb-8 tracking-wide">FREE SERVER</h3>
 
             <ul className="space-y-6 mb-10 flex-1">
               <li className="flex gap-4 text-gray-300">
@@ -2556,7 +2057,7 @@ const FreeTrialPage: React.FC = () => {
               onClick={() => window.open('https://discord.gg/propickz', '_blank')}
               className="w-full py-4 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold text-lg rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
             >
-              Start Free Trial
+              Join Free Community
             </button>
           </Reveal>
 
@@ -2578,7 +2079,7 @@ const FreeTrialPage: React.FC = () => {
               </li>
               <li className="flex gap-4 text-gray-300 items-start">
                 <Zap className="text-purple-500 shrink-0 mt-1" size={20} />
-                <span className="text-lg">Daily Picks + 35% off DFS</span>
+                <span className="text-lg">Daily Picks + Exclusive Insights</span>
               </li>
               <li className="flex gap-4 text-gray-300 items-start">
                 <Layers className="text-purple-500 shrink-0 mt-1" size={20} />
@@ -2621,17 +2122,17 @@ const App: React.FC = () => {
   const renderView = () => {
     switch (view) {
       case 'Home': return <HomePage navigateTo={setView} />;
+      case 'Contact': return <ContactPage />;
       case 'Pricing': return <PricingPage />;
       case 'FreeTrial': return <FreeTrialPage />;
       case 'Guarantee': return <GuaranteePage />;
       case 'Results': return <ResultsPage />;
       case 'HowItWorks': return <HowItWorksPage />;
       case 'SupportedSports': return <SupportedSportsPage />;
-      case 'BettingAcademy': return <BettingAcademyPage />;
       case 'AboutUs': return <AboutUsPage />;
       case 'Trust': return <TrustPage />;
       case 'Testimonials': return <TestimonialsPage />;
-      case 'EV': return <EVPage />;
+      // case 'EV': return <EVPage />;
       case 'FAQ': return <FAQPage />;
       case 'Legal': return <LegalPage />;
       default: return <div className="p-20 text-center text-white bg-black min-h-screen">Placeholder for {view}</div>;
@@ -2639,22 +2140,28 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-purple-500/30">
-      <Navbar setView={setView} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
+    <LanguageProvider>
+      <div className="min-h-screen bg-black text-white font-sans selection:bg-purple-500/30">
+        <Navbar setView={setView} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
-      {/* Main Content */}
-      <main className="relative z-10">
-        {renderView()}
-      </main>
+        {/* Main Content */}
+        <main className="relative z-10">
+          {renderView()}
+        </main>
 
-      <Footer />
+        <Footer />
 
-      {/* Notifications - Only on Home */}
-      {view === 'Home' && <FomoNotification />}
 
-      {/* Chat Widget */}
-      <ChatWidget />
-    </div>
+        {/* Earnings Popup */}
+        <EarningsPopup />
+
+        {/* Notifications - Only on Home */}
+        {view === 'Home' && <FomoNotification />}
+
+        {/* Chat Widget */}
+        <ChatWidget />
+      </div>
+    </LanguageProvider>
   );
 };
 
