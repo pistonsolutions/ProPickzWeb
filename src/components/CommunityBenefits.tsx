@@ -15,7 +15,7 @@ const CommunityBenefits: React.FC = () => {
                             <Gift className="text-yellow-400" size={24} />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-wider">The ProPickz Lottery</h3>
+                            <h3 className="text-xl font-black text-white uppercase italic tracking-wider">The Propickz Lottery</h3>
                             <p className="text-xs text-yellow-500 font-bold uppercase tracking-widest"> Monthly Member Giveback</p>
                         </div>
                     </div>

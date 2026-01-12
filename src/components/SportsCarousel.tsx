@@ -1,51 +1,23 @@
-import React, { useRef, useEffect } from 'react';
-import { Trophy, Flame, Target, Disc, Award, Gamepad2, ChevronLeft, ChevronRight, Dribbble } from 'lucide-react';
+import React, { useRef } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const sports = [
-    { name: 'NFL', full: 'National Football League', icon: <Trophy size={48} className="text-blue-500" />, color: 'from-blue-900/40 to-blue-600/10' },
-    { name: 'NBA', full: 'National Basketball Association', icon: <Dribbble size={48} className="text-orange-500" />, color: 'from-orange-900/40 to-red-600/10' },
-    { name: 'MLB', full: 'Major League Baseball', icon: <Disc size={48} className="text-red-500" />, color: 'from-red-900/40 to-blue-900/10' },
-    { name: 'NHL', full: 'National Hockey League', icon: <Flame size={48} className="text-cyan-500" />, color: 'from-cyan-900/40 to-blue-500/10' },
-    { name: 'NCAAF', full: 'College Football', icon: <Award size={48} className="text-yellow-500" />, color: 'from-yellow-900/40 to-orange-600/10' },
-    { name: 'UFC', full: 'Ultimate Fighting Championship', icon: <Target size={48} className="text-red-600" />, color: 'from-red-900/40 to-black/10' },
-    { name: 'WNBA', full: 'Women\'s NBA', icon: <Dribbble size={48} className="text-orange-400" />, color: 'from-orange-800/40 to-orange-500/10' },
-    { name: 'CBB', full: 'College Basketball', icon: <Dribbble size={48} className="text-blue-400" />, color: 'from-blue-800/40 to-blue-500/10' },
-    { name: 'Horse Racing', full: 'International Racing', icon: <Award size={48} className="text-purple-500" />, color: 'from-purple-900/40 to-pink-600/10' },
-    { name: 'E-Sports', full: 'Competitive Gaming', icon: <Gamepad2 size={48} className="text-green-500" />, color: 'from-green-900/40 to-emerald-600/10' },
+    { name: 'NFL', full: 'National Football League', color: 'bg-blue-900/10 border-blue-500/20' },
+    { name: 'NBA', full: 'National Basketball Association', color: 'bg-orange-900/10 border-orange-500/20' },
+    { name: 'MLB', full: 'Major League Baseball', color: 'bg-red-900/10 border-red-500/20' },
+    { name: 'NHL', full: 'National Hockey League', color: 'bg-cyan-900/10 border-cyan-500/20' },
+    { name: 'NCAAF', full: 'College Football', color: 'bg-yellow-900/10 border-yellow-500/20' },
+    { name: 'UFC', full: 'Ultimate Fighting Championship', color: 'bg-red-950/20 border-red-600/20' },
+    { name: 'WNBA', full: 'Women\'s NBA', color: 'bg-pink-900/10 border-pink-500/20' },
+    { name: 'CBB', full: 'College Basketball', color: 'bg-blue-800/10 border-blue-400/20' },
+    { name: 'Horse Racing', full: 'International Racing', color: 'bg-purple-900/10 border-purple-500/20' },
+    { name: 'E-Sports', full: 'Competitive Gaming', color: 'bg-green-900/10 border-green-500/20' },
 ];
 
 const SportsCarousel: React.FC = () => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    // Triplicate the data to create a buffer for infinite scrolling
-    const infiniteSports = [...sports, ...sports, ...sports, ...sports];
-
-    // Handle Scroll to creating infinite loop effect
-    const handleScroll = () => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        const maxScroll = container.scrollWidth;
-        const oneSetWidth = maxScroll / 4; // Since we have 4 sets
-
-        // If we scroll too far right (into the last set), jump back to the second set
-        if (container.scrollLeft >= oneSetWidth * 3) {
-            container.scrollLeft = container.scrollLeft - oneSetWidth;
-        }
-        // If we scroll too far left (into the first set), jump forward to the second set
-        else if (container.scrollLeft <= 50) { // Threshold near 0
-            container.scrollLeft = container.scrollLeft + oneSetWidth;
-        }
-    };
-
-    // Initial scroll positioning to the second set
-    useEffect(() => {
-        if (scrollContainerRef.current) {
-            const container = scrollContainerRef.current;
-            const maxScroll = container.scrollWidth;
-            // Start at the second set
-            container.scrollLeft = maxScroll / 4;
-        }
-    }, []);
+    // Large buffer to simulate infinity without glitchy jump logic
+    const infiniteSports = Array(15).fill(sports).flat();
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
@@ -63,48 +35,44 @@ const SportsCarousel: React.FC = () => {
             {/* Scroll Buttons */}
             <button
                 onClick={() => scroll('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/50 border border-gray-700 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm hover:bg-white hover:text-black md:-left-6"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black border border-gray-800 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-900 md:-left-6 shadow-xl"
             >
                 <ChevronLeft size={24} />
             </button>
 
             <button
                 onClick={() => scroll('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/50 border border-gray-700 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm hover:bg-white hover:text-black md:-right-6"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black border border-gray-800 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-900 md:-right-6 shadow-xl"
             >
                 <ChevronRight size={24} />
             </button>
 
-            {/* Fade Gradients for visual "infinity" feel */}
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
+            {/* Fade Gradients */}
+            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black via-black/80 to-transparent z-10 pointer-events-none"></div>
 
             {/* Scroll Container */}
             <div
                 ref={scrollContainerRef}
-                onScroll={handleScroll}
                 className="flex gap-6 overflow-x-auto pb-8 pt-4 snap-x snap-mandatory hide-scrollbar px-8 md:px-4"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {infiniteSports.map((sport, i) => (
                     <div
                         key={i}
-                        className="flex-shrink-0 w-[240px] md:w-[280px] h-[360px] snap-center bg-gray-900/40 border border-gray-800 rounded-3xl relative overflow-hidden transition-transform duration-500 hover:scale-105 hover:border-gray-600 group/card"
+                        className="flex-shrink-0 w-[240px] md:w-[280px] h-[360px] snap-center bg-[#0f1014] border border-gray-800 rounded-3xl relative overflow-hidden transition-all duration-300 hover:border-gray-700 hover:bg-[#15161a] group/card"
                     >
-                        {/* Background Gradient */}
-                        <div className={`absolute inset-0 bg-gradient-to-br ${sport.color} opacity-30 group-hover/card:opacity-50 transition-opacity`}></div>
+                        <div className={`absolute inset-0 ${sport.color} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}></div>
 
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-                            <div className="mb-6 p-4 bg-black/30 rounded-2xl border border-white/5 shadow-xl group-hover/card:scale-110 transition-transform duration-500">
-                                {sport.icon}
-                            </div>
+                            {/* Just Text - No Icons */}
 
-                            <h3 className="text-2xl font-black text-white mb-2">{sport.name}</h3>
-                            <p className="text-xs text-gray-400 uppercase tracking-widest mb-4">{sport.full}</p>
+                            <h3 className="text-3xl font-black text-white mb-3 tracking-tight relative z-20">{sport.name}</h3>
+                            <p className="text-sm text-gray-400 uppercase tracking-widest mb-8 font-medium relative z-20">{sport.full}</p>
 
-                            <div className="w-8 h-1 bg-gray-700 rounded-full mb-4"></div>
+                            <div className="w-12 h-1 bg-gray-800 rounded-full mb-8 group-hover/card:bg-gray-700 transition-colors relative z-20"></div>
 
-                            <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] font-bold text-gray-300">
+                            <div className="px-4 py-2 bg-black/50 rounded-full border border-gray-800 text-xs font-bold text-gray-500 group-hover/card:text-white group-hover/card:border-white/20 transition-all relative z-20">
                                 ACTIVE MARKET
                             </div>
                         </div>

@@ -23,7 +23,7 @@ const AboutUsPage: React.FC = () => {
                     <Reveal>
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 backdrop-blur-md">
                             <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
-                            The ProPickz Standard
+                            The Propickz Standard
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black text-white leading-tight mb-6 tracking-tight">
                             Bet Like a <br />
@@ -81,7 +81,7 @@ const AboutUsPage: React.FC = () => {
                                     We were tired of watching bettors lose money chasing "locks" from influencers with zero accountability. The industry was broken—full of hype, fake lifestyles, and deleted loss posts.
                                 </p>
                                 <p className="text-gray-400 text-lg leading-relaxed">
-                                    ProPickz started as a small private group of disciplined bettors. We focused on one thing: <span className="text-white font-bold">Finding the Edge.</span> No gut feelings. No bias. Just probability, math, and execution.
+                                    Propickz started as a small private group of disciplined bettors. We focused on one thing: <span className="text-white font-bold">Finding the Edge.</span> No gut feelings. No bias. Just probability, math, and execution.
                                 </p>
                             </div>
                         </div>
@@ -112,87 +112,7 @@ const AboutUsPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* WHY TRUST US SECTION */}
-            <section className="py-32 bg-gradient-to-b from-black to-[#050505] relative">
-                <div className="max-w-7xl mx-auto px-4">
-                    <Reveal className="text-center mb-20">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold uppercase tracking-widest text-blue-400 mb-6 font-heading">
-                            <Shield size={14} /> The ProPickz Guarantee
-                        </div>
-                        <h2 className="text-4xl md:text-6xl font-black text-white mb-6">Built to Beat the Books. <span className="text-blue-500">Consistently.</span></h2>
-                        <p className="text-xl text-gray-400 max-w-3xl mx-auto">There's a reason our members stick around. Here is exactly why ProPickz is built different.</p>
-                    </Reveal>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* 1. Transparency */}
-                        <Reveal delay={100} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl hover:bg-gray-900/60 transition-colors group">
-                            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                <LayoutDashboard className="text-blue-500" size={24} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-4">Full Transparency</h3>
-                            <p className="text-gray-400 leading-relaxed text-sm">
-                                We don't cherry-pick wins or delete losses. Every single pick is tracked in our public Result-Tracker, visible to everyone. <span className="text-gray-200 font-medium">Real record. Real ROI. Real trust.</span>
-                            </p>
-                        </Reveal>
-
-                        {/* 2. Guarantee */}
-                        <Reveal delay={200} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl hover:bg-gray-900/60 transition-colors group">
-                            <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                <Shield className="text-green-500" size={24} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-4">Profit or Money Back</h3>
-                            <p className="text-gray-400 leading-relaxed text-sm">
-                                If you follow our plays and don't profit, you get your money back. No questions asked. <span className="text-gray-200 font-medium">No other group offers that level of accountability.</span>
-                            </p>
-                        </Reveal>
-
-                        {/* 3. Rewards */}
-                        <Reveal delay={300} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl hover:bg-gray-900/60 transition-colors group">
-                            <div className="w-12 h-12 bg-yellow-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                <Gift className="text-yellow-500" size={24} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-4">Member Rewards</h3>
-                            <p className="text-gray-400 leading-relaxed text-sm">
-                                50% of our own gambling profits go back into the Member Lottery. As we win, the pot grows, and we give it away to random members. <span className="text-gray-200 font-medium">When we win, you win too.</span>
-                            </p>
-                        </Reveal>
-
-                        {/* 4. Education */}
-                        <Reveal delay={400} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl hover:bg-gray-900/60 transition-colors group">
-                            <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                <BookOpen className="text-purple-500" size={24} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-4">Learn While You Earn</h3>
-                            <p className="text-gray-400 leading-relaxed text-sm">
-                                Whether you're a beginner or a veteran, our Education Hub helps you understand every pick. We teach you how to fish, not just feed you.
-                            </p>
-                        </Reveal>
-
-                        {/* 5. Clarity */}
-                        <Reveal delay={500} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl hover:bg-gray-900/60 transition-colors group">
-                            <div className="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                <CheckCircle className="text-pink-500" size={24} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-4">Clarity Over Clutter</h3>
-                            <p className="text-gray-400 leading-relaxed text-sm">
-                                No spam. No chaos. No 100 unread channels. Our layout is clean, minimal, and easy to follow. Everything you need, nothing you don't.
-                            </p>
-                        </Reveal>
-
-                        {/* 6. Quality */}
-                        <Reveal delay={600} className="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl hover:bg-gray-900/60 transition-colors group">
-                            <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                <Target className="text-red-500" size={24} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-4">Quality Over Quantity</h3>
-                            <p className="text-gray-400 leading-relaxed text-sm">
-                                We don't flood you with 20 random bets a day. We post only when there's a clear statistical edge backed by expert review. <span className="text-gray-200 font-medium">Consistent profit over volume.</span>
-                            </p>
-                        </Reveal>
-
-                    </div>
-                </div>
-            </section>
 
             {/* FINAL CTA */}
             <section className="py-24 text-center px-4">

@@ -1,5 +1,4 @@
 import React from 'react';
-import { CheckCircle, Zap } from 'lucide-react';
 
 const WinningSlips: React.FC = () => {
     // Mock Data for Slips to Generate "Digital Tickets"
@@ -15,23 +14,46 @@ const WinningSlips: React.FC = () => {
     ];
 
     const SlipCard = ({ slip }: { slip: any }) => (
-        <div className="w-64 h-32 flex-shrink-0 bg-white text-black p-4 rounded-xl shadow-lg border-l-8 border-green-500 mx-4 relative overflow-hidden transform rotate-1 hover:rotate-0 transition-transform">
-            <div className="absolute top-2 right-2 text-green-600">
-                <CheckCircle size={20} fill="currentColor" className="text-white" />
-            </div>
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{slip.sport}</div>
-            <div className="text-lg font-black leading-tight mb-1">{slip.team}</div>
-            <div className="text-sm font-bold text-gray-800 mb-2">@{slip.odds}</div>
-
-            <div className="border-t border-dashed border-gray-300 pt-2 flex justify-between items-center">
-                <div className="text-[10px] text-gray-500 uppercase">Payout</div>
-                <div className="text-green-600 font-black text-lg">{slip.payout}</div>
+        <div className="w-72 flex-shrink-0 bg-[#121212] text-white rounded-2xl shadow-2xl mx-4 relative overflow-hidden flex flex-col font-sans border border-gray-800">
+            {/* Mock Status Bar */}
+            <div className="bg-[#1e1e1e] p-3 flex justify-between items-center border-b border-gray-800">
+                <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                </div>
+                <div className="text-[10px] text-gray-400 font-bold tracking-widest">SPORTSBOOK</div>
             </div>
 
-            {/* Watermark */}
-            <div className="absolute -bottom-4 -right-4 opacity-10 pointer-events-none text-green-800">
-                <Zap size={64} />
+            {/* Slip Content */}
+            <div className="p-5 flex-1 flex flex-col relative">
+                <div className="inline-block bg-green-500/20 text-green-500 text-[10px] font-black uppercase px-2 py-0.5 rounded mb-3 self-start border border-green-500/30">
+                    Wager Won
+                </div>
+
+                <div className="mb-4">
+                    <div className="text-xl font-black leading-tight mb-1">{slip.team}</div>
+                    <div className="text-gray-400 text-xs font-bold">{slip.sport}</div>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-500">Odds</span>
+                        <span className="font-bold">{slip.odds}</span>
+                    </div>
+                    <div className="w-full h-px bg-gray-800"></div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-gray-400 font-bold">Total Payout</span>
+                        <span className="text-green-400 font-black text-xl">{slip.payout}</span>
+                    </div>
+                </div>
+
+                {/* Shine Effect */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none"></div>
             </div>
+
+            {/* Bottom Bar Mock */}
+            <div className="h-1 bg-green-500 w-full"></div>
         </div>
     );
 
