@@ -6,11 +6,11 @@ const sports = [
     { name: 'NBA', full: 'National Basketball Association', color: 'bg-orange-900/10 border-orange-500/20', image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=80' },
     { name: 'MLB', full: 'Major League Baseball', color: 'bg-red-900/10 border-red-500/20', image: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=600&q=80' },
     { name: 'NHL', full: 'National Hockey League', color: 'bg-cyan-900/10 border-cyan-500/20', image: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=600&q=80' },
-    { name: 'NCAAF', full: 'College Football', color: 'bg-yellow-900/10 border-yellow-500/20', image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&q=80' },
+    { name: 'NCAAF', full: 'College Football', color: 'bg-yellow-900/10 border-yellow-500/20', image: 'https://images.unsplash.com/photo-1731046498945-33316f26e5ca?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
     { name: 'UFC', full: 'Ultimate Fighting Championship', color: 'bg-red-950/20 border-red-600/20', image: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=600&q=80' },
     { name: 'WNBA', full: 'Women\'s NBA', color: 'bg-pink-900/10 border-pink-500/20', image: 'https://images.unsplash.com/photo-1518063319789-7217e6706b04?w=600&q=80' },
     { name: 'CBB', full: 'College Basketball', color: 'bg-blue-800/10 border-blue-400/20', image: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=600&q=80' },
-    { name: 'Horse Racing', full: 'International Racing', color: 'bg-purple-900/10 border-purple-500/20', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80' },
+    { name: 'Horse Racing', full: 'International Racing', color: 'bg-purple-900/10 border-purple-500/20', image: 'https://images.unsplash.com/photo-1495543377553-b2aba1f925d7?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
     { name: 'E-Sports', full: 'Competitive Gaming', color: 'bg-green-900/10 border-green-500/20', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80' },
 ];
 
