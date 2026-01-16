@@ -1,7 +1,7 @@
 'use client'; // Ensures Next.js compatibility
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import { ChevronDown, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, UserPlus, Gift, Trophy, Globe, Sparkles, Send, ArrowUpRight, Smartphone, Wallet, LineChart, Info, ArrowRight, ShoppingCart, Wrench, Brain, Lock } from 'lucide-react';
+import { ChevronDown, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, Sparkles, Send, ArrowUpRight, Smartphone, Wallet, LineChart, ArrowRight, Lock } from 'lucide-react';
 
 // Firebase Imports
 import { initializeApp, FirebaseApp } from 'firebase/app';
@@ -293,46 +293,6 @@ const ROICalculator: React.FC = () => {
         </p>
       </div>
     </div>
-  );
-};
-
-const FAQSection: React.FC = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { t } = useLanguage();
-
-  const faqs: FaqItem[] = [
-    { q: t('faq', 'q1'), a: t('faq', 'a1') },
-    { q: t('faq', 'q2'), a: t('faq', 'a2') },
-    { q: t('faq', 'q3'), a: t('faq', 'a3') },
-    { q: t('faq', 'q4'), a: t('faq', 'a4') },
-    { q: t('faq', 'q5'), a: t('faq', 'a5') },
-    { q: t('faq', 'q6'), a: t('faq', 'a6') },
-    { q: t('faq', 'q7'), a: t('faq', 'a7') },
-    { q: t('faq', 'q8'), a: t('faq', 'a8') },
-  ];
-
-  return (
-    <section id="faq" className="py-20 bg-black border-t border-gray-900">
-      <div className="max-w-3xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-white text-center mb-12">{t('faq', 'Headline')}</h2>
-        <div className="space-y-4">
-          {faqs.map((faq, i) => (
-            <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex justify-between items-center p-6 text-left"
-              >
-                <span className="text-white font-medium">{faq.q}</span>
-                <ChevronDown className={`text-purple-500 transition-transform ${openIndex === i ? 'rotate-180' : ''}`} />
-              </button>
-              <div className={`px-6 text-gray-400 text-sm overflow-hidden transition-all duration-300 ${openIndex === i ? 'max-h-40 pb-6' : 'max-h-0'}`}>
-                {faq.a}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 };
 
@@ -651,19 +611,7 @@ const Footer: React.FC = () => {
 
 const HomePage: React.FC<HomePageProps> = () => {
   const [unitsRef, unitsVal] = useCountUp(214.5, 2000);
-
-
-  const [aiTip, setAiTip] = useState("");
-  const [loadingTip, setLoadingTip] = useState(false);
   const { t } = useLanguage();
-
-  const generateAiTip = async () => {
-    setLoadingTip(true);
-    const prompt = "Short, punchy betting advice about discipline. Max 2 sentences.";
-    const tip = await callGeminiAPI(prompt);
-    setAiTip(tip);
-    setLoadingTip(false);
-  };
 
   return (
     <div className="overflow-x-hidden">

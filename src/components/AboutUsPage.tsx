@@ -1,6 +1,6 @@
 import React from 'react';
 import { Reveal } from '../utils/Reveal';
-import { ChevronDown, TrendingUp, Users, Target, CheckCircle, ArrowRight, Shield, LayoutDashboard, Gift, BookOpen } from 'lucide-react';
+import { ChevronDown, TrendingUp, Users, Target, ArrowRight } from 'lucide-react';
 
 const AboutUsPage: React.FC = () => {
     const scrollToNext = () => {

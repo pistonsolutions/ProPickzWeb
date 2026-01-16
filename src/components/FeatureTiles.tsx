@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Cpu, CheckCircle, MessageSquare, BarChart2, Shield } from 'lucide-react';
+import { Users, Cpu, BarChart2, Shield } from 'lucide-react';
 import { Reveal } from '../utils/Reveal';
 
 const FeatureTiles: React.FC = () => {
