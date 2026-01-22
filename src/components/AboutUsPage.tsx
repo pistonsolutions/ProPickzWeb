@@ -1,8 +1,11 @@
 import React from 'react';
 import { Reveal } from '../utils/Reveal';
 import { ChevronDown, TrendingUp, Users, Target, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const AboutUsPage: React.FC = () => {
+    const { t } = useLanguage();
+
     const scrollToNext = () => {
         const nextSection = document.getElementById('mission');
         if (nextSection) nextSection.scrollIntoView({ behavior: 'smooth' });
@@ -23,36 +26,36 @@ const AboutUsPage: React.FC = () => {
                     <Reveal>
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 backdrop-blur-md">
                             <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
-                            The Propickz Standard
+                            {t('about', 'Standard')}
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black text-white leading-tight mb-6 tracking-tight">
-                            Bet Like a <br />
+                            {t('about', 'Title')} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-                                Professional.
+                                {t('about', 'TitleHighlight')}
                             </span>
                         </h1>
                     </Reveal>
 
                     <Reveal delay={200}>
                         <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light">
-                            We’re not just here to give you picks. We’re here to change the way you look at sports betting—forever.
-                            <span className="text-white font-medium block mt-2">Data-Driven. Transparent. Disciplined.</span>
+                            {t('about', 'Description')}
+                            <span className="text-white font-medium block mt-2">{t('about', 'Keywords')}</span>
                         </p>
                     </Reveal>
 
                     <Reveal delay={400}>
                         <div className="grid grid-cols-3 gap-4 md:gap-12 mt-12 max-w-3xl mx-auto">
                             <div className="text-center">
-                                <div className="text-3xl md:text-5xl font-black text-white mb-2">18+</div>
-                                <div className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-bold">Years Experience</div>
+                                <div className="text-3xl md:text-5xl font-black text-white mb-2">{t('about', 'Stat1Value')}</div>
+                                <div className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-bold">{t('about', 'Stat1Label')}</div>
                             </div>
                             <div className="text-center border-l border-gray-800 pl-4 md:pl-12">
-                                <div className="text-3xl md:text-5xl font-black text-white mb-2">2.4k+</div>
-                                <div className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-bold">Active Members</div>
+                                <div className="text-3xl md:text-5xl font-black text-white mb-2">{t('about', 'Stat2Value')}</div>
+                                <div className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-bold">{t('about', 'Stat2Label')}</div>
                             </div>
                             <div className="text-center border-l border-gray-800 pl-4 md:pl-12">
-                                <div className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-green-400 to-emerald-600 mb-2">$214k+</div>
-                                <div className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-bold">Projected Profit</div>
+                                <div className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-green-400 to-emerald-600 mb-2">{t('about', 'Stat3Value')}</div>
+                                <div className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-bold">{t('about', 'Stat3Label')}</div>
                             </div>
                         </div>
                     </Reveal>
@@ -76,12 +79,12 @@ const AboutUsPage: React.FC = () => {
                                 <div className="absolute top-0 right-0 p-8 opacity-5">
                                     <Target size={200} className="text-white" />
                                 </div>
-                                <h3 className="text-3xl font-black text-white mb-6">Built on Frustration.<br />Fueled by Math.</h3>
+                                <h3 className="text-3xl font-black text-white mb-6 whitespace-pre-line">{t('about', 'MissionTitle')}</h3>
                                 <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                                    We were tired of watching bettors lose money chasing "locks" from influencers with zero accountability. The industry was broken—full of hype, fake lifestyles, and deleted loss posts.
+                                    {t('about', 'MissionText1')}
                                 </p>
                                 <p className="text-gray-400 text-lg leading-relaxed">
-                                    Propickz started as a small private group of disciplined bettors. We focused on one thing: <span className="text-white font-bold">Finding the Edge.</span> No gut feelings. No bias. Just probability, math, and execution.
+                                    {t('about', 'MissionText2')}
                                 </p>
                             </div>
                         </div>
@@ -94,8 +97,8 @@ const AboutUsPage: React.FC = () => {
                                     <TrendingUp className="text-green-500" size={28} />
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-bold text-white mb-2">Long-Term Vision</h4>
-                                    <p className="text-gray-400">We don't chase get-rich-quick schemes. We play the statistics, compounding small edges into massive gains over time.</p>
+                                    <h4 className="text-xl font-bold text-white mb-2">{t('about', 'VisionTitle')}</h4>
+                                    <p className="text-gray-400">{t('about', 'VisionText')}</p>
                                 </div>
                             </div>
                             <div className="flex gap-6">
@@ -103,8 +106,8 @@ const AboutUsPage: React.FC = () => {
                                     <Users className="text-blue-500" size={28} />
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-bold text-white mb-2">Community First</h4>
-                                    <p className="text-gray-400">We win together. Our Discord isn't just a feed of picks—it's a classroom where you learn to become a sharper bettor.</p>
+                                    <h4 className="text-xl font-bold text-white mb-2">{t('about', 'CommunityTitle')}</h4>
+                                    <p className="text-gray-400">{t('about', 'CommunityText')}</p>
                                 </div>
                             </div>
                         </div>
@@ -117,12 +120,12 @@ const AboutUsPage: React.FC = () => {
             {/* FINAL CTA */}
             <section className="py-24 text-center px-4">
                 <Reveal>
-                    <h2 className="text-4xl md:text-7xl font-black text-white mb-8">Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Upgrade?</span></h2>
+                    <h2 className="text-4xl md:text-7xl font-black text-white mb-8">{t('about', 'CTA')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">{t('about', 'CTAHighlight')}</span></h2>
                     <button
                         onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
                         className="px-10 py-5 bg-white text-black font-black text-lg rounded-full hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.3)] flex items-center gap-2 mx-auto"
                     >
-                        Start Winning Today <ArrowRight size={20} />
+                        {t('about', 'Button')} <ArrowRight size={20} />
                     </button>
                 </Reveal>
             </section>

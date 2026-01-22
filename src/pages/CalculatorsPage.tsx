@@ -164,8 +164,8 @@ const CalculatorsPage: React.FC = () => {
                             key={calc.id}
                             onClick={() => setActiveCalc(calc.id)}
                             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${activeCalc === calc.id
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)]'
-                                    : 'bg-gray-900/50 text-gray-400 hover:bg-gray-900 hover:text-white border border-gray-800'
+                                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)]'
+                                : 'bg-gray-900/50 text-gray-400 hover:bg-gray-900 hover:text-white border border-gray-800'
                                 }`}
                         >
                             {calc.icon}

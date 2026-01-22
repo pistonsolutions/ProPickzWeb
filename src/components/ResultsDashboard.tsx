@@ -4,12 +4,14 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const ResultsDashboard: React.FC = () => {
     const { t } = useLanguage();
+    // Default to '30D' but we might want to translate these values or map them
+    // For now, keeping state labels internal, but displaying translated buttons
     const [timeRange, setTimeRange] = useState('30D');
 
     // RECAP DATA
     const recaps = [
         {
-            name: "Hybrid In-House Model",
+            name: t('resultsDashboard', 'HybridModel'),
             units: "+124.6",
             roi: "12.4%",
             winRate: "58.2%",
@@ -18,7 +20,7 @@ const ResultsDashboard: React.FC = () => {
             border: "border-purple-500/30"
         },
         {
-            name: "Safe Parlay",
+            name: "SAFE PARLAYS",
             units: "+42.8",
             roi: "18.5%",
             winRate: "42.1%",
@@ -27,7 +29,7 @@ const ResultsDashboard: React.FC = () => {
             border: "border-green-500/30"
         },
         {
-            name: "Free Play",
+            name: "FREE PLAYS",
             units: "+15.3",
             roi: "8.2%",
             winRate: "52.4%",
@@ -46,18 +48,18 @@ const ResultsDashboard: React.FC = () => {
     ];
 
     const UnitTable = ({ title, profitPoints }: { title: string, profitPoints: { unit: number, profit: number }[] }) => (
-        <div className="bg-[#0A0A0A] border border-gray-800 rounded-3xl overflow-hidden flex flex-col">
-            <div className="bg-purple-600 p-4 text-center">
+        <div className="bg-[#0A0A0A] border border-gray-800 rounded-3xl overflow-hidden flex flex-col shadow-lg">
+            <div className="bg-[#4c1d95] p-4 text-center border-b border-white/10">
                 <h3 className="text-white font-black italic uppercase tracking-wider text-sm md:text-base">
                     {title}
                 </h3>
             </div>
-            <div className="p-4 bg-gray-200 text-black">
+            <div className="p-4 bg-[#111] text-white">
                 <div className="space-y-2">
                     {profitPoints.map((pt, i) => (
-                        <div key={i} className="flex justify-between items-center text-sm font-bold border-b border-gray-300 last:border-0 pb-2 last:pb-0">
-                            <span>${pt.unit} {t('resultsDashboard', 'UnitsLabel')}</span>
-                            <span className="font-black">${pt.profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <div key={i} className="flex justify-between items-center text-xs md:text-sm font-bold border-b border-white/10 last:border-0 pb-2 last:pb-0">
+                            <span className="text-gray-400">${pt.unit} {t('resultsDashboard', 'UnitsLabel')}</span>
+                            <span className="font-black text-green-400">${pt.profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                     ))}
                 </div>
@@ -83,7 +85,7 @@ const ResultsDashboard: React.FC = () => {
             </div>
 
             {/* TOP STATS ROW - REMOVED TOTAL BETS */}
-            <div className="grid grid-cols-3 gap-4 mb-8 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 relative z-10">
                 <div className="bg-gray-900/40 border border-gray-800 p-6 rounded-2xl backdrop-blur-sm">
                     <div className="text-gray-500 text-xs uppercase tracking-wider mb-2">{t('resultsDashboard', 'Last30Day')}</div>
                     <div className="text-3xl md:text-4xl font-black text-purple-400">124.6</div>
@@ -102,37 +104,36 @@ const ResultsDashboard: React.FC = () => {
             </div>
 
             {/* MAIN CONTENT GRID */}
-            <div className="grid lg:grid-cols-3 gap-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
 
                 {/* COL 1: RECAP WIDGETS */}
                 <div className="lg:col-span-1 flex flex-col gap-4">
                     <div className="bg-gray-900/30 border border-gray-800 rounded-3xl p-6 flex-1 flex flex-col">
-                        <h3 className="text-white font-black uppercase tracking-widest mb-6 border-b border-gray-800 pb-4">Performance Recap</h3>
+                        <h3 className="text-white font-black uppercase tracking-widest mb-6 border-b border-gray-800 pb-4">{t('resultsDashboard', 'PerformanceRecap')}</h3>
 
                         <div className="space-y-6 flex-1">
                             {recaps.map((recap, i) => (
                                 <div key={i} className={`p-4 rounded-2xl border ${recap.border} ${recap.bg}`}>
-                                    <div className="flex justify-between items-center mb-2">
+                                    <div className="flex justify-between items-center mb-4">
                                         <span className={`text-xs font-black uppercase ${recap.color}`}>{recap.name}</span>
                                         <Activity size={16} className={recap.color} />
                                     </div>
-                                    <div className="flex justify-between items-end">
-                                        <div>
-                                            <div className="text-[10px] text-gray-400 uppercase">Profit</div>
-                                            <div className="text-xl font-black text-white">{recap.units} u</div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="text-[10px] text-gray-400 uppercase">ROI</div>
-                                            <div className="text-sm font-bold text-gray-300">{recap.roi}</div>
-                                        </div>
+                                    <div>
+                                        <div className="text-[10px] text-gray-400 uppercase mb-1">{t('resultsDashboard', 'Profit')}</div>
+                                        <div className="text-3xl font-black text-white">{recap.units} u</div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <button className="w-full mt-6 py-4 bg-black border border-gray-700 rounded-xl text-xs font-bold text-white hover:bg-gray-800 transition-colors uppercase tracking-wider flex items-center justify-center gap-2 group">
+                        <a
+                            href="https://docs.google.com/spreadsheets/d/1nphrBl9VmISc1k5IpPQ7h4vVhcAf4Go3i5ai_WuCyRo/edit?gid=0#gid=0"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full mt-6 py-4 bg-black border border-gray-700 rounded-xl text-xs font-bold text-white hover:bg-gray-800 transition-colors uppercase tracking-wider flex items-center justify-center gap-2 group"
+                        >
                             {t('resultsDashboard', 'ViewFullLog')} <Activity size={14} className="group-hover:text-purple-400 transition-colors" />
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -202,7 +203,7 @@ const ResultsDashboard: React.FC = () => {
                         {/* NEW UNIT BETTOR TABLES */}
                         <div className="flex flex-col gap-4">
                             <UnitTable
-                                title="A _ Unit Bettor Is Up: Last 30 Days"
+                                title={t('resultsDashboard', 'Table30Days')}
                                 profitPoints={[
                                     { unit: 20, profit: 2492 },
                                     { unit: 50, profit: 6230 },
@@ -211,7 +212,7 @@ const ResultsDashboard: React.FC = () => {
                                 ]}
                             />
                             <UnitTable
-                                title="A _ Unit Bettor Is Up: YTD"
+                                title={t('resultsDashboard', 'TableYTD')}
                                 profitPoints={[
                                     { unit: 20, profit: 12846 },
                                     { unit: 50, profit: 32115 },

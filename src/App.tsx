@@ -1,7 +1,7 @@
 'use client'; // Ensures Next.js compatibility
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import { ChevronDown, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, Sparkles, Send, ArrowUpRight, Smartphone, Wallet, LineChart, ArrowRight, Lock } from 'lucide-react';
+import { ChevronDown, ChevronUp, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, Sparkles, Send, ArrowUpRight, Smartphone, Wallet, LineChart, ArrowRight, Lock } from 'lucide-react';
 
 // Firebase Imports
 import { initializeApp, FirebaseApp } from 'firebase/app';
@@ -53,7 +53,7 @@ interface NavbarProps {
 }
 
 interface HomePageProps {
-  // No props needed
+  setView: (view: string) => void;
 }
 
 // --- GEMINI API CONFIGURATION ---
@@ -235,10 +235,10 @@ const ROICalculator: React.FC = () => {
           <div className="flex justify-between items-end mb-4">
             <div>
               <div className="text-gray-400 font-bold text-xs uppercase tracking-widest font-heading mb-1">
-                Unit Size
+                {t('roi', 'UnitSize')}
               </div>
               <div className="text-xs text-gray-500">
-                A unit is how much you will wager each bet
+                {t('roi', 'UnitDefinition')}
               </div>
             </div>
             <div className="text-3xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
@@ -256,8 +256,8 @@ const ROICalculator: React.FC = () => {
             className="w-full h-3 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)]"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-3 font-medium">
-            <span>$10</span>
-            <span>$500+</span>
+            <span>{t('roi', 'Min')}</span>
+            <span>{t('roi', 'Max')}</span>
           </div>
         </div>
 
@@ -299,22 +299,40 @@ const ROICalculator: React.FC = () => {
 const FomoNotification: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState<FomoData>({ name: '', action: '' });
+  const { t } = useLanguage();
 
-  const names = ['Alex M.', 'Sarah K.', 'Davon J.', 'Mike R.', 'Chris P.'];
-  const actions = ['joined the Free Server', 'hit a 5-leg parlay', 'upgraded to Lifetime', 'won $1,200 today'];
+  const names = [
+    'Alex M.', 'Sarah K.', 'Davon J.', 'Mike R.', 'Chris P.',
+    'Jordan T.', 'Emily W.', 'Marcus B.', 'Jessica L.', 'Ryan H.',
+    'Kevin D.', 'Amanda S.', 'Tyler C.', 'Brandon M.', 'Ashley G.',
+    'Justin F.', 'Rachel P.', 'Eric L.', 'Nicole K.', 'Matthew B.',
+    'Daniel R.', 'Lauren H.', 'Joshua W.', 'Megan T.', 'Andrew S.'
+  ];
 
   useEffect(() => {
     const trigger = () => {
       const randomName = names[Math.floor(Math.random() * names.length)];
-      const randomAction = actions[Math.floor(Math.random() * actions.length)];
+      // @ts-ignore
+      const randomActionKey = `Action${Math.floor(Math.random() * 8) + 1}`;
+      // @ts-ignore
+      const randomAction = t('fomo', randomActionKey);
+
       setData({ name: randomName, action: randomAction });
       setVisible(true);
-      setTimeout(() => setVisible(false), 4000);
+      setTimeout(() => setVisible(false), 5000);
     };
 
-    const interval = setInterval(trigger, 30000 + Math.random() * 15000);
-    return () => clearInterval(interval);
-  }, []);
+    // Initial trigger fast
+    const initialTimer = setTimeout(trigger, 5000);
+
+    // Then interval
+    const interval = setInterval(trigger, 12000 + Math.random() * 8000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
+  }, [t]);
 
   if (!visible) return null;
 
@@ -327,7 +345,7 @@ const FomoNotification: React.FC = () => {
         <div className="text-sm font-bold text-gray-900 dark:text-white">{data.name}</div>
         <div className="text-xs text-gray-500 dark:text-gray-400">{data.action}</div>
       </div>
-      <div className="text-xs text-gray-400 ml-auto">Just now</div>
+      <div className="text-xs text-gray-400 ml-auto">{t('fomo', 'JustNow')}</div>
     </div>
   );
 };
@@ -433,6 +451,8 @@ interface NavbarInternalProps extends NavbarProps {
 
 const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMobileMenuOpen, currentView }) => {
   const { language, setLanguage, t } = useLanguage();
+  const [activeSection, setActiveSection] = useState<string>('');
+  const [resourcesOpen, setResourcesOpen] = useState(false);
 
   const toggleLanguage = () => {
     // Cycle through EN -> FR -> ES -> EN
@@ -466,6 +486,41 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
     setMobileMenuOpen(false);
   };
 
+  // Scroll Spy Effect
+  useEffect(() => {
+    if (currentView !== 'Home') {
+      setActiveSection('');
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 120; // Offset for header height
+
+      const sections = navLinks
+        .filter(link => link.type === 'scroll' && link.anchor)
+        .map(link => link.anchor as string);
+
+      for (const sectionId of sections) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const top = element.offsetTop;
+          const height = element.offsetHeight;
+
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(sectionId);
+            return; // Found the active section
+          }
+        }
+      }
+      // If we scroll past the last section or before the first relevant one
+      // Optionally handle 'hero' or clear active section
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check on mount
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [currentView]); // Re-run when view changes
+
   const goHome = () => {
     setView('Home');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -476,8 +531,15 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
     { name: t('nav', 'HowItWorks'), anchor: 'how-it-works', type: 'scroll' },
     { name: t('nav', 'Guarantee'), anchor: 'guarantee', type: 'scroll' },
     { name: t('nav', 'Result'), page: 'Results', type: 'page' },
-    { name: t('nav', 'Calculators'), page: 'Calculators', type: 'page' },
-    { name: t('nav', 'FAQ'), page: 'FAQ', type: 'page' },
+    {
+      name: t('nav', 'Resources'),
+      type: 'dropdown',
+      subItems: [
+        { name: t('nav', 'Calculators'), page: 'Calculators', type: 'page' },
+        { name: t('nav', 'FAQ'), page: 'FAQ', type: 'page' },
+        { name: t('nav', 'Legal'), page: 'Legal', type: 'page' },
+      ]
+    },
   ];
 
   const handleNavClick = (link: typeof navLinks[0]) => {
@@ -490,8 +552,7 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
   };
 
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur-xl border-b border-white/10">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/5 via-black/10 to-pink-900/5 pointer-events-none"></div>
+    <nav className="fixed top-0 w-full z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative z-10">
         {/* Left: P Icon */}
         <div className="flex items-center">
@@ -500,31 +561,62 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
           </div>
         </div>
 
-        <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <button
-              key={link.anchor || link.page}
-              onClick={() => handleNavClick(link)}
-              className="text-gray-300 hover:text-white text-sm font-semibold transition-all hover:scale-105 relative group"
-            >
-              {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-600 transition-all group-hover:w-full"></span>
-            </button>
-          ))}
-          <button
-            onClick={() => setView('Legal')}
-            className="text-gray-300 hover:text-white text-sm font-semibold transition-all hover:scale-105 relative group"
-          >
-            {t('nav', 'Legal')}
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-600 transition-all group-hover:w-full"></span>
-          </button>
+        <div className="hidden lg:flex items-center gap-6">
+          {navLinks.map((link) => {
+            if (link.type === 'dropdown' && link.subItems) {
+              return (
+                <div key={link.name} className="relative group">
+                  <button
+                    className={`text-sm font-semibold transition-all hover:scale-105 flex items-center gap-1 text-gray-300 hover:text-white group-hover:text-white`}
+                  >
+                    {link.name}
+                    <ChevronDown size={14} className="group-hover:rotate-180 transition-transform" />
+                  </button>
+                  {/* Dropdown Menu */}
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-xl border border-gray-800 rounded-xl overflow-hidden shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    <div className="flex flex-col p-1">
+                      {link.subItems.map((sub) => (
+                        <button
+                          key={sub.page}
+                          onClick={() => { setView(sub.page!); }}
+                          className={`text-left px-4 py-3 text-sm font-semibold hover:bg-white/10 rounded-lg transition-colors ${currentView === sub.page ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white'}`}
+                        >
+                          {sub.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            const isActive = link.type === 'scroll'
+              ? activeSection === link.anchor
+              : currentView === link.page;
+
+            return (
+              <button
+                key={link.anchor || link.page}
+                onClick={() => handleNavClick(link as any)}
+                className={`text-sm font-semibold transition-all hover:scale-105 relative group ${isActive
+                  ? 'text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]'
+                  : 'text-gray-300 hover:text-white'
+                  }`}
+              >
+                {link.name}
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}></span>
+              </button>
+            );
+          })}
         </div>
+
 
         <div className="hidden md:flex items-center gap-4">
           <button onClick={toggleLanguage} className="px-3 py-1.5 text-gray-300 hover:text-white transition-all flex items-center gap-2 font-semibold text-sm uppercase bg-white/5 rounded-lg hover:bg-white/10 border border-purple-500/20">
             <Globe size={16} /> {language === 'en' ? 'EN' : language === 'fr' ? 'FR' : 'ES'}
           </button>
-          <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105">
+          <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105">
             {t('nav', 'JoinDiscord')}
           </button>
           <button onClick={() => scrollToSection('pricing')} className="px-5 py-2 bg-gradient-to-r from-amber-500/10 to-yellow-600/10 backdrop-blur-sm border border-amber-500/30 text-amber-200 text-sm font-bold rounded-lg hover:bg-amber-500/20 transition-all hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]">
@@ -538,27 +630,56 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
       </div>
 
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-black/60 backdrop-blur-2xl border-t border-purple-500/20 absolute w-full left-0 top-20 p-4 flex flex-col gap-3 animate-fade-in-up max-h-[calc(100vh-5rem)] overflow-y-auto">
-          {navLinks.map(link => (
-            <button
-              key={link.anchor || link.page}
-              onClick={() => handleNavClick(link)}
-              className="text-gray-300 hover:text-white hover:bg-white/10 rounded-lg text-sm p-3 text-left font-semibold transition-all"
-            >
-              {link.name}
+        <div className="lg:hidden bg-black/95 backdrop-blur-3xl border-t border-purple-500/20 absolute w-full left-0 top-20 p-6 flex flex-col gap-4 animate-fade-in-up h-[calc(100vh-5rem)] overflow-y-auto z-50">
+          {navLinks.map(link => {
+            if (link.type === 'dropdown' && link.subItems) {
+              return (
+                <div key={link.name} className="flex flex-col">
+                  <button
+                    onClick={() => setResourcesOpen(!resourcesOpen)}
+                    className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5 flex justify-between items-center"
+                  >
+                    {link.name}
+                    {resourcesOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </button>
+
+                  {resourcesOpen && (
+                    <div className="flex flex-col ml-4 border-l border-gray-800 pl-4 mt-2 gap-2">
+                      {link.subItems.map(sub => (
+                        <button
+                          key={sub.page}
+                          onClick={() => { setView(sub.page!); setMobileMenuOpen(false); }}
+                          className="text-gray-400 hover:text-white text-base p-3 text-left font-semibold hover:bg-white/5 rounded-lg transition-all"
+                        >
+                          {sub.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <button
+                key={link.anchor || link.page}
+                onClick={() => handleNavClick(link as any)}
+                className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5"
+              >
+                {link.name}
+              </button>
+            );
+          })}
+
+
+          <div className="mt-auto pb-8 flex flex-col gap-4">
+            <button onClick={toggleLanguage} className="w-full py-4 text-white font-bold bg-white/5 rounded-xl border border-white/10 flex items-center justify-center gap-2">
+              <Globe size={20} /> {language === 'en' ? 'English' : language === 'fr' ? 'Français' : 'Español'}
             </button>
-          ))}
-          <button
-            onClick={() => { setView('Legal'); setMobileMenuOpen(false); }}
-            className="text-gray-300 hover:text-white hover:bg-white/10 rounded-lg text-sm p-3 text-left font-semibold transition-all"
-          >
-            {t('nav', 'Legal')}
-          </button>
-          <div className="mt-4 pt-4 border-t border-purple-500/20 flex flex-col gap-3">
-            <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all">
+            <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20">
               {t('nav', 'JoinDiscord')}
             </button>
-            <button onClick={() => scrollToSection('pricing')} className="w-full py-3 bg-white text-black font-bold rounded-xl">
+            <button onClick={() => scrollToSection('pricing')} className="w-full py-4 bg-white text-black font-bold rounded-xl shadow-lg">
               {t('nav', 'ViewPricing')}
             </button>
           </div>
@@ -575,7 +696,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Newsletter Section */}
         <div className="mb-16 border-b border-gray-800 pb-16">
-          <h2 className="text-3xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600 tracking-tight">
             {t('newsletter', 'Headline')}
           </h2>
           <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
@@ -590,7 +711,7 @@ const Footer: React.FC = () => {
             />
             <button
               type="submit"
-              className="absolute right-2 top-2 bottom-2 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-full font-bold transition-all flex items-center gap-2 text-sm shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]"
+              className="absolute right-2 top-2 bottom-2 px-6 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center gap-2 text-sm shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]"
             >
               {t('newsletter', 'Button')}
               <ArrowRight className="w-4 h-4" />
@@ -609,34 +730,35 @@ const Footer: React.FC = () => {
 
 // --- 4. HOMEPAGE COMPONENT ---
 
-const HomePage: React.FC<HomePageProps> = () => {
+const HomePage: React.FC<HomePageProps> = ({ setView }) => {
   const [unitsRef, unitsVal] = useCountUp(214.5, 2000);
+  const [membersRef, membersVal] = useCountUp(1250, 2000);
   const { t } = useLanguage();
 
   return (
     <div className="overflow-x-hidden">
       {/* 1. HERO SECTION */}
-      <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-black">
+      <section id="hero" className="relative min-h-screen flex items-center pt-24 md:pt-20 overflow-hidden bg-black">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
         <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-600/30 rounded-full blur-[80px] md:blur-[120px] pointer-events-none animate-pulse-slow"></div>
         <HeroBackgroundIcons />
 
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
           {/* Left: Copy & CTA */}
-          <div className="text-left space-y-8 pt-10 lg:pt-0">
+          <div className="text-left space-y-6 md:space-y-8 pt-10 lg:pt-0">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/50 text-cyan-300 text-xs font-bold uppercase tracking-widest font-heading animate-fade-in-up shadow-[0_0_15px_rgba(34,211,238,0.2)]">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></span>
               {t('hero', 'SystemLive')}
             </div>
 
-            <h1 className="text-6xl md:text-8xl font-black text-white leading-[0.9] tracking-tight animate-fade-in-up delay-100">
-              Bet With <span className="text-green-500 animate-glow-vertical">Proof</span>,<br />
-              Not <span className="text-gray-500 animate-glitch-text">Promises.</span>
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black text-white leading-[0.95] md:leading-[0.9] tracking-tight animate-fade-in-up delay-100">
+              {t('proofSection', 'HeadlineStart')} <span className="text-green-500 animate-glow-vertical">{t('proofSection', 'HeadlineProof')}</span>,<br />
+              {t('proofSection', 'HeadlineNot')} <span className="text-red-500 animate-glow-vertical-red">{t('proofSection', 'HeadlinePromises')}.</span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-lg leading-relaxed animate-fade-in-up delay-200">
-              Every pick is tracked, timestamped, and publicly verified, so you never have to "trust us," you can see the results yourself.
+            <p className="text-xl text-purple-200 max-w-lg leading-relaxed animate-fade-in-up delay-200 animate-ambient-glow">
+              {t('proofSection', 'Subheadline')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
@@ -650,7 +772,7 @@ const HomePage: React.FC<HomePageProps> = () => {
                 {t('hero', 'StartFreeTrial')} <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </button>
               <button
-                onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+                onClick={() => setView('Results')}
                 className="px-8 py-4 bg-transparent border border-gray-700 text-white rounded-full font-bold text-lg hover:bg-gray-900 hover:border-white transition-all flex items-center justify-center gap-2"
               >
                 <Shield size={20} fill="currentColor" /> {t('hero', 'WatchDemo')}
@@ -681,12 +803,15 @@ const HomePage: React.FC<HomePageProps> = () => {
             <p className="text-gray-400 text-lg mb-8 leading-relaxed">
               {t('roi', 'Subheadline')}
             </p>
-            <div className="flex gap-8">
+            <div className="flex gap-12">
               <div>
-                <div className="text-4xl font-bold text-white mb-1" ref={unitsRef}>+{unitsVal.toFixed(1)}u</div>
-                <div className="text-sm text-gray-500 uppercase tracking-widest font-heading">{t('roi', 'ProfitYTD')}</div>
+                <div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={unitsRef}>+{unitsVal.toFixed(1)}u</div>
+                <div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'ProfitYTD')}</div>
               </div>
-
+              <div>
+                <div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={membersRef}>{Math.floor(membersVal).toLocaleString()}+</div>
+                <div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'ActiveMembers')}</div>
+              </div>
             </div>
           </div>
           <div className="relative">
@@ -702,10 +827,10 @@ const HomePage: React.FC<HomePageProps> = () => {
 
         <div className="text-center mb-16 relative z-10">
           <div className="inline-block px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 font-bold text-xs uppercase tracking-widest mb-4">
-            Community Verified
+            {t('testimonials', 'Badge')}
           </div>
           <h3 className="text-4xl md:text-5xl font-black text-white mb-6">
-            Join the <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 animate-text-shimmer">Winning Side</span>
+            {t('testimonials', 'HeadlineStart')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-600 animate-text-shimmer">{t('testimonials', 'HeadlineHighlight')}</span>
           </h3>
         </div>
 
@@ -724,15 +849,15 @@ const HomePage: React.FC<HomePageProps> = () => {
                       </div>
                       <div>
                         <div className="text-white font-bold text-base flex items-center gap-2">
-                          {review.user}
+                          {review.user.replace('Discord User', t('testimonials', 'DiscordUser'))}
                           {review.verified && <CheckCircle size={16} className="text-blue-500" />}
                         </div>
-                        <div className="text-gray-500 text-xs uppercase tracking-wide font-bold">Verified Member</div>
+                        <div className="text-gray-500 text-xs uppercase tracking-wide font-bold">{t('testimonials', 'Verified')}</div>
                       </div>
                     </div>
 
                     <p className="text-gray-300 text-lg leading-relaxed whitespace-normal mb-6 group-hover/card:text-white transition-colors">
-                      "{review.content}"
+                      "{t('testimonials', `Review${review.id}`)}"
                     </p>
 
                     <div className="flex gap-1">
@@ -755,60 +880,7 @@ const HomePage: React.FC<HomePageProps> = () => {
       {/* 5. FEATURE TILES */}
       <FeatureTiles />
 
-      {/* 5. LEARNING SECTION */}
-      <section className="py-24 bg-black relative overflow-hidden border-t border-gray-900">
-        <div className="absolute inset-0 bg-purple-900/5 pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Image with Automation/Tilt */}
-          <div className="order-2 lg:order-1 relative group">
-            <EducationVisual />
-          </div>
 
-          {/* Right: Content */}
-          <div className="order-1 lg:order-2 space-y-8">
-            <Reveal>
-              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight whitespace-pre-line">
-                {t('learning', 'Headline')}
-              </h2>
-            </Reveal>
-            <Reveal delay={200}>
-              <p className="text-xl text-gray-400 leading-relaxed">
-                {t('learning', 'Subheadline')}
-              </p>
-            </Reveal>
-
-            <div className="space-y-6">
-              {[
-                {
-                  icon: <Wallet className="text-green-400" size={24} />,
-                  title: t('learning', 'BankrollTitle'),
-                  desc: t('learning', 'BankrollDesc')
-                },
-                {
-                  icon: <LineChart className="text-blue-400" size={24} />,
-                  title: t('learning', 'EdgeTitle'),
-                  desc: t('learning', 'EdgeDesc')
-                },
-                {
-                  icon: <Users className="text-purple-400" size={24} />,
-                  title: t('learning', 'StrategyTitle'),
-                  desc: t('learning', 'StrategyDesc')
-                }
-              ].map((feature, i) => (
-                <Reveal key={i} delay={300 + (i * 100)} className="flex gap-4 p-4 rounded-2xl hover:bg-gray-900/50 transition-colors border border-transparent hover:border-gray-800">
-                  <div className="shrink-0 mt-1 w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center">
-                    {feature.icon}
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-bold text-white mb-1">{feature.title}</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
 
       {/* 7. PRICING SECTION */}
@@ -819,14 +891,13 @@ const HomePage: React.FC<HomePageProps> = () => {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <Reveal>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
-                Seeing the Results Is <span className="text-green-400">Free</span>. <br />
-                Committing is <span className="text-purple-400">Profitable</span>.
+                {t('membershipComparison', 'HeadlineStart')} <span className="text-green-400">{t('membershipComparison', 'HeadlineFree')}</span>. <br />
+                {t('membershipComparison', 'HeadlineCommitting')} <span className="text-purple-400">{t('membershipComparison', 'HeadlineProfitable')}</span>.
               </h2>
             </Reveal>
             <Reveal delay={200}>
               <p className="text-gray-400 text-lg leading-relaxed">
-                Results are public and fully transparent. <br className="hidden md:block" />
-                Pro members get the context, discussion, and discipline that turns results into repeatable profit.
+                {t('membershipComparison', 'Subheadline')}
               </p>
             </Reveal>
           </div>
@@ -836,67 +907,67 @@ const HomePage: React.FC<HomePageProps> = () => {
 
             {/* TIER 1: Community Access (Free) */}
             <Reveal delay={100} className="flex flex-col h-full p-8 rounded-[2rem] border border-white/10 bg-[#0f1014] hover:border-white/20 transition-all duration-300 relative group">
-              <div className="text-gray-400 font-bold uppercase tracking-wider text-xs mb-4">Community Access</div>
-              <div className="text-4xl font-black text-white mb-2">Free</div>
-              <p className="text-gray-500 text-sm mb-8 h-12">For bettors who want to observe the system before committing.</p>
+              <div className="text-gray-400 font-bold uppercase tracking-wider text-xs mb-4">{t('membershipComparison', 'CommunityAccess')}</div>
+              <div className="text-4xl font-black text-white mb-2">{t('membershipComparison', 'Free')}</div>
+              <p className="text-gray-500 text-sm mb-8 h-12">{t('membershipComparison', 'FreeDesc')}</p>
 
               <div className="space-y-4 mb-8 flex-1">
                 <div className="flex gap-3 text-sm text-gray-300">
                   <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
-                  <span>Full access to public results tracker</span>
+                  <span>{t('membershipComparison', 'FreeFeature1')}</span>
                 </div>
                 <div className="flex gap-3 text-sm text-gray-300">
                   <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
-                  <span>Limited picks</span>
+                  <span>{t('membershipComparison', 'FreeFeature2')}</span>
                 </div>
                 <div className="flex gap-3 text-sm text-gray-300">
                   <CheckCircle size={18} className="text-green-500 shrink-0 mt-0.5" />
-                  <span>Eligibility for community rewards</span>
+                  <span>{t('membershipComparison', 'FreeFeature3')}</span>
                 </div>
               </div>
 
               <div className="mt-auto">
                 <button className="w-full py-4 rounded-xl bg-white/5 text-white font-bold border border-white/10 hover:bg-white/10 hover:scale-[1.02] transition-all">
-                  Preview the System →
+                  {t('membershipComparison', 'FreeCTA')} →
                 </button>
-                <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">No card required. Upgrade anytime.</p>
+                <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'FreeFooter')}</p>
               </div>
             </Reveal>
 
             {/* TIER 2: Pro Access - Monthly */}
             <Reveal delay={200} className="flex flex-col h-full p-8 rounded-[2rem] border-2 border-purple-500/20 bg-[#0f1014] hover:border-purple-500/40 hover:shadow-[0_0_40px_rgba(168,85,247,0.1)] transition-all duration-300 relative group">
-              <div className="text-purple-400 font-bold uppercase tracking-wider text-xs mb-4">Pro Access • Monthly</div>
+              <div className="text-purple-400 font-bold uppercase tracking-wider text-xs mb-4">{t('membershipComparison', 'ProMonthly')}</div>
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-black text-white">$74.99</span>
+                <span className="text-4xl font-black text-white">{t('membershipComparison', 'ProMonthlyCost')}</span>
                 <span className="text-gray-500 text-sm">/mo</span>
               </div>
-              <p className="text-gray-400 text-sm mb-8 h-12">For bettors who want full access without a long-term commitment.</p>
+              <p className="text-gray-400 text-sm mb-8 h-12">{t('membershipComparison', 'ProMonthlyDesc')}</p>
 
               <div className="space-y-4 mb-8 flex-1">
                 <div className="flex gap-3 text-sm text-white font-medium">
                   <Zap size={18} className="text-purple-500 shrink-0 mt-0.5" />
-                  <span>All picks, posted in real time</span>
+                  <span>{t('membershipComparison', 'ProFeature1')}</span>
                 </div>
                 <div className="flex gap-3 text-sm text-white font-medium">
                   <MessageSquare size={18} className="text-purple-500 shrink-0 mt-0.5" />
-                  <span>Member-only Discord chat access</span>
+                  <span>{t('membershipComparison', 'ProFeature2')}</span>
                 </div>
                 <div className="flex gap-3 text-sm text-white font-medium">
                   <Users size={18} className="text-purple-500 shrink-0 mt-0.5" />
-                  <span>Access to 1-1 private pick breakdowns</span>
+                  <span>{t('membershipComparison', 'ProFeature3')}</span>
                 </div>
                 <div className="flex gap-3 text-sm text-white font-medium">
                   <BookOpen size={18} className="text-purple-500 shrink-0 mt-0.5" />
-                  <span>Education hub (9+ Complete Guides)</span>
+                  <span>{t('membershipComparison', 'ProFeature4')}</span>
                 </div>
-                <p className="text-xs text-purple-400 italic pt-2">"This is where bettors stop guessing and start understanding."</p>
+                <p className="text-xs text-purple-400 italic pt-2">{t('membershipComparison', 'ProQuote')}</p>
               </div>
 
               <div className="mt-auto">
-                <button className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-[1.02] transition-all">
-                  Unlock Pro Access →
+                <button className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-[1.02] transition-all">
+                  {t('membershipComparison', 'ProMonthlyCTA')} →
                 </button>
-                <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">Cancel anytime. No hidden conditions.</p>
+                <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'ProMonthlyFooter')}</p>
               </div>
             </Reveal>
 
@@ -904,37 +975,37 @@ const HomePage: React.FC<HomePageProps> = () => {
             <Reveal delay={300} className="flex flex-col h-full p-8 rounded-[2rem] border border-amber-500/20 bg-[#0f1014] hover:border-amber-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.1)] transition-all duration-300 relative group overflow-hidden">
               {/* Badge */}
               <div className="absolute top-0 right-0 bg-amber-500 text-black text-[10px] font-black uppercase px-3 py-1.5 rounded-bl-xl">
-                Most Disciplined Choice
+                {t('membershipComparison', 'ProYearlyBadge')}
               </div>
 
-              <div className="text-amber-400 font-bold uppercase tracking-wider text-xs mb-4">Pro Access • Yearly</div>
+              <div className="text-amber-400 font-bold uppercase tracking-wider text-xs mb-4">{t('membershipComparison', 'ProYearly')}</div>
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-black text-white">$649</span>
+                <span className="text-4xl font-black text-white">{t('membershipComparison', 'ProYearlyCost')}</span>
                 <span className="text-gray-500 text-sm">/yr</span>
               </div>
-              <p className="text-gray-400 text-sm mb-8 h-12">For bettors focused on long-term bankroll growth, not short-term swings.</p>
+              <p className="text-gray-400 text-sm mb-8 h-12">{t('membershipComparison', 'ProYearlyDesc')}</p>
 
               <div className="space-y-4 mb-8 flex-1">
                 <div className="flex gap-3 text-sm text-white font-medium">
                   <CheckCircle size={18} className="text-amber-500 shrink-0 mt-0.5" />
-                  <span>Everything in Pro Access</span>
+                  <span>{t('membershipComparison', 'ProYearlyFeature1')}</span>
                 </div>
                 <div className="flex gap-3 text-sm text-white font-medium">
                   <Lock size={18} className="text-amber-500 shrink-0 mt-0.5" />
-                  <span>Locked-in pricing for 12 months</span>
+                  <span>{t('membershipComparison', 'ProYearlyFeature2')}</span>
                 </div>
                 <div className="flex gap-3 text-sm text-white font-medium">
                   <Target size={18} className="text-amber-500 shrink-0 mt-0.5" />
-                  <span>Best alignment with unit-based strategy</span>
+                  <span>{t('membershipComparison', 'ProYearlyFeature3')}</span>
                 </div>
-                <p className="text-xs text-amber-500/80 italic pt-2">Most members who stay profitable long-term choose this option.</p>
+                <p className="text-xs text-amber-500/80 italic pt-2">{t('membershipComparison', 'ProYearlyQuote')}</p>
               </div>
 
               <div className="mt-auto">
                 <button className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02] transition-all">
-                  Commit to the System →
+                  {t('membershipComparison', 'ProYearlyCTA')} →
                 </button>
-                <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">Built for long-term bettors.</p>
+                <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'ProYearlyFooter')}</p>
               </div>
             </Reveal>
 
@@ -950,34 +1021,33 @@ const HomePage: React.FC<HomePageProps> = () => {
           <div className="space-y-8">
             <Reveal>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                Community <span className="text-yellow-400">Reward Pool</span>
+                {t('rewardPool', 'Title')} <span className="text-yellow-400">{t('rewardPool', 'TitleHighlight')}</span>
               </h2>
               <p className="text-lg text-gray-400 leading-relaxed">
-                A small bonus we run for the community, free or paid. <br />
-                When we win, you should too.
+                {t('rewardPool', 'Description')}
               </p>
             </Reveal>
 
             <Reveal delay={200} className="space-y-6">
               <div className="bg-[#0f1014] border border-white/5 p-6 rounded-2xl group hover:border-purple-500/20 transition-colors">
                 <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <Gift size={20} className="text-purple-400" /> What It Is
+                  <Gift size={20} className="text-purple-400" /> {t('rewardPool', 'WhatItIs')}
                 </h3>
                 <ul className="space-y-3 text-sm text-gray-400">
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> Each month, 50% of Propickz’s own profits are set aside</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> One active community member is selected, every month</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> Both free and paid members are eligible</li>
+                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs1')}</li>
+                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs2')}</li>
+                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs3')}</li>
                 </ul>
               </div>
 
               <div className="bg-[#0f1014] border border-white/5 p-6 rounded-2xl group hover:border-red-500/20 transition-colors">
                 <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <AlertCircle size={20} className="text-red-400" /> What It’s NOT
+                  <AlertCircle size={20} className="text-red-400" /> {t('rewardPool', 'WhatNot')}
                 </h3>
                 <ul className="space-y-3 text-sm text-gray-400">
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> Not a betting strategy</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> Not the reason members are profitable</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> Not a replacement for our system</li>
+                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot1')}</li>
+                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot2')}</li>
+                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot3')}</li>
                 </ul>
               </div>
             </Reveal>
@@ -987,31 +1057,31 @@ const HomePage: React.FC<HomePageProps> = () => {
           <Reveal delay={300}>
             <div className="bg-gradient-to-br from-gray-900 to-black p-8 rounded-[2rem] border border-yellow-500/20 relative overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.1)] group hover:shadow-[0_0_80px_rgba(234,179,8,0.2)] transition-all duration-500">
               <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] font-black uppercase px-3 py-1.5 rounded-bl-xl font-heading tracking-wider">
-                Live Tracker
+                {t('rewardPool', 'LiveTracker')}
               </div>
 
               <div className="text-center mb-10 pt-6">
-                <div className="text-yellow-500/80 font-bold text-xs uppercase tracking-[0.2em] mb-3">Current Month's Pot</div>
+                <div className="text-yellow-500/80 font-bold text-xs uppercase tracking-[0.2em] mb-3">{t('rewardPool', 'CurrentPot')}</div>
                 <div className="text-6xl md:text-7xl font-black text-white mb-3 drop-shadow-[0_0_25px_rgba(234,179,8,0.4)] font-heading">
                   $4,250
                 </div>
-                <div className="text-gray-500 text-[10px] uppercase tracking-wide font-medium">Growing daily with every winning slip</div>
+                <div className="text-gray-500 text-[10px] uppercase tracking-wide font-medium">{t('rewardPool', 'GrowingDaily')}</div>
               </div>
 
               <div className="space-y-3">
                 <div className="bg-white/5 rounded-xl p-4 flex justify-between items-center border border-white/5 hover:bg-white/10 transition-colors">
-                  <span className="text-gray-400 text-sm font-medium">Last Winner</span>
+                  <span className="text-gray-400 text-sm font-medium">{t('rewardPool', 'LastWinner')}</span>
                   <span className="text-white font-mono font-bold">@jason_k <span className="text-green-400 ml-1">(+$2,100)</span></span>
                 </div>
                 <div className="bg-white/5 rounded-xl p-4 flex justify-between items-center border border-white/5 hover:bg-white/10 transition-colors">
-                  <span className="text-gray-400 text-sm font-medium">Next Draw</span>
-                  <span className="text-yellow-400 font-bold flex items-center gap-2"><Clock size={16} /> in 4 Days</span>
+                  <span className="text-gray-400 text-sm font-medium">{t('rewardPool', 'NextDraw')}</span>
+                  <span className="text-yellow-400 font-bold flex items-center gap-2"><Clock size={16} /> {t('rewardPool', 'DrawTime')}</span>
                 </div>
               </div>
 
               <div className="mt-8 pt-6 border-t border-white/5 text-center">
                 <p className="text-xs text-gray-500 italic max-w-sm mx-auto leading-relaxed">
-                  "Members don’t win because of the reward pool. The reward pool exists because members win."
+                  {t('rewardPool', 'Quote')}
                 </p>
               </div>
             </div>
@@ -1020,38 +1090,20 @@ const HomePage: React.FC<HomePageProps> = () => {
       </section>
 
 
-      {/* 9. RESULTS SECTION */}
-      <section id="results" className="py-24 bg-gradient-to-b from-black to-gray-900 relative">
-        <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
-          <Reveal>
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-6">
-              {t('homeResults', 'Headline')} <span className="text-green-500">{t('homeResults', 'HeadlineResults')}</span>
-            </h2>
-          </Reveal>
-          <Reveal delay={200}>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
-              {t('homeResults', 'Subheadline')}
-            </p>
-          </Reveal>
-          <ResultsDashboard />
-          <div className="mt-16">
-            <WinningSlips />
-          </div>
-        </div>
-      </section>
+
 
       {/* 10. ENGINE / HOW IT WORKS SECTION */}
       <section id="how-it-works" className="py-24 bg-black relative overflow-hidden text-center md:text-left">
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-24 max-w-3xl mx-auto">
             <Reveal>
-              <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
-                The Engine Behind the <span className="text-purple-500">Edge.</span>
-              </h2>
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+                {t('engineSection', 'Title')} <span className="text-purple-500">{t('engineSection', 'TitleHighlight')}</span>
+              </h1>
             </Reveal>
             <Reveal delay={200}>
               <p className="text-xl text-gray-400">
-                We don't guess. We scrape millions of data points in real-time to find where the books are wrong. Here is exactly how we print money.
+                {t('engineSection', 'Description')}
               </p>
             </Reveal>
           </div>
@@ -1071,26 +1123,54 @@ const HomePage: React.FC<HomePageProps> = () => {
                   <div className="absolute right-[-3rem] top-1/2 w-4 h-4 bg-purple-500 rounded-full shadow-[0_0_20px_rgba(168,85,247,1)] hidden md:block"></div>
 
                   {/* Visual: Scanning Feed */}
-                  <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-3 text-[10px] text-green-500 font-mono animate-pulse flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> Scanning...</div>
-                    <div className="space-y-3 mt-4">
-                      <div className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center opacity-40">
-                        <div className="text-xs text-gray-400">NBA: LAL vs GSW</div>
-                        <div className="text-[10px] text-gray-600">Checking...</div>
+                  <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-0 relative overflow-hidden group shadow-2xl">
+                    {/* Header */}
+                    <div className="bg-gray-900/80 backdrop-blur-md p-3 border-b border-gray-800 flex justify-between items-center">
+                      <div className="flex gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
                       </div>
-                      <div className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center opacity-40">
-                        <div className="text-xs text-gray-400">NFL: KC vs BUF</div>
-                        <div className="text-[10px] text-gray-600">Checking...</div>
+                      <div className="text-[10px] text-green-500 font-mono animate-pulse flex items-center gap-1.5 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> {t('engineSection', 'Scanning')}
                       </div>
-                      <div className="bg-purple-900/10 p-4 rounded-xl border border-purple-500/30 flex justify-between items-center shadow-[0_0_30px_rgba(168,85,247,0.1)] relative">
-                        <div className="absolute left-0 h-full w-1 bg-purple-500 top-0 rounded-l-xl"></div>
-                        <div>
-                          <div className="text-white font-bold text-sm">LeBron James</div>
-                          <div className="text-xs text-blue-400">Over 25.5 Points</div>
+                    </div>
+
+                    {/* Terminal Body */}
+                    <div className="p-4 space-y-2 font-mono text-[10px] md:text-xs relative min-h-[160px]">
+                      {/* Background Scan Lines */}
+                      <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-0 pointer-events-none bg-[length:100%_4px,3px_100%]"></div>
+
+                      <div className="relative z-10 space-y-2">
+                        <div className="flex justify-between text-gray-600 opacity-50">
+                          <span>&gt; SCANNING MARKET: NBA</span>
+                          <span>[OK]</span>
                         </div>
-                        <div className="text-right">
-                          <div className="text-white font-bold">-110</div>
-                          <div className="text-[9px] text-green-400 font-bold uppercase tracking-wide">Discrepancy Found</div>
+                        <div className="flex justify-between text-gray-600 opacity-50">
+                          <span>&gt; CHECKING: LAL vs GSW</span>
+                          <span>...</span>
+                        </div>
+
+                        {/* Active Hit */}
+                        <div className="bg-gradient-to-r from-purple-900/20 to-transparent border-l-2 border-purple-500 pl-3 py-1 animate-pulse-slow">
+                          <div className="flex justify-between items-center">
+                            <span className="text-purple-300">&gt; DISCREPANCY DETECTED</span>
+                            <span className="text-purple-500 font-bold">98% CONFIDENCE</span>
+                          </div>
+                          <div className="ml-2 mt-1 text-white font-bold flex gap-2">
+                            <span>LeBron James</span>
+                            <span className="text-blue-400">Over 25.5 Pts</span>
+                            <span className="text-gray-400">@ -110</span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between text-gray-600 opacity-50">
+                          <span>&gt; CHECKING: NFL KANSAS CITY</span>
+                          <span>...</span>
+                        </div>
+                        <div className="flex justify-between text-gray-600 opacity-50">
+                          <span>&gt; ANALYSIS COMPLETE</span>
+                          <span>[WAITING]</span>
                         </div>
                       </div>
                     </div>
@@ -1101,9 +1181,9 @@ const HomePage: React.FC<HomePageProps> = () => {
                     <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20 text-blue-400">
                       <TrendingUp size={24} />
                     </div>
-                    <h3 className="text-3xl font-black text-white mb-4">1. Smart Scanning</h3>
+                    <h3 className="text-3xl font-black text-white mb-4">{t('engineSection', 'Step1Title')}</h3>
                     <p className="text-gray-400 leading-relaxed">
-                      Imagine having 1,000 eyes watching every sportsbook at once. Our system scans millions of odds in real-time, looking for lines that are "off" compared to the rest of the market.
+                      {t('engineSection', 'Step1Desc')}
                     </p>
                   </Reveal>
                 </div>
@@ -1117,24 +1197,24 @@ const HomePage: React.FC<HomePageProps> = () => {
 
                   {/* Visual: AI + Analyst */}
                   <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-6 relative">
-                    <div className="text-center text-[10px] text-purple-400 font-mono mb-4 tracking-widest">-- HYBRID_MODEL_ACTIVE --</div>
+                    <div className="text-center text-[10px] text-purple-400 font-mono mb-4 tracking-widest">{t('engineSection', 'HybridActive')}</div>
                     <div className="flex justify-between items-center mb-6 px-4">
                       <div className="text-center">
-                        <div className="text-[10px] text-gray-500 mb-1">AI Projection</div>
+                        <div className="text-[10px] text-gray-500 mb-1">{t('engineSection', 'AiProjection')}</div>
                         <div className="text-white font-bold">Lakers -4</div>
-                        <div className="text-[9px] text-gray-600">(Data Only)</div>
+                        <div className="text-[9px] text-gray-600">{t('engineSection', 'DataOnly')}</div>
                       </div>
                       <div className="h-px bg-gray-800 w-12"></div>
                       <div className="text-center">
-                        <div className="text-[10px] text-gray-500 mb-1">Analyst Adjustment</div>
-                        <div className="text-blue-400 font-bold">-1.5 Adj</div>
-                        <div className="text-[9px] text-gray-600">(Injury Factor)</div>
+                        <div className="text-[10px] text-gray-500 mb-1">{t('engineSection', 'AnalystAdj')}</div>
+                        <div className="text-blue-400 font-bold">{t('engineSection', 'AdjValue')}</div>
+                        <div className="text-[9px] text-gray-600">{t('engineSection', 'InjuryFactor')}</div>
                       </div>
                     </div>
                     <div className="bg-gradient-to-r from-purple-900/40 to-blue-900/40 border border-purple-500/30 p-4 rounded-xl text-center">
-                      <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Final Verdict</div>
+                      <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">{t('engineSection', 'FinalVerdict')}</div>
                       <div className="text-xl font-black text-white mb-1">Lakers -5.5</div>
-                      <div className="text-[9px] text-green-400">Confirmed by Data & Human Expertise</div>
+                      <div className="text-[9px] text-green-400">{t('engineSection', 'ConfirmedBy')}</div>
                     </div>
                   </Reveal>
                 </div>
@@ -1143,9 +1223,9 @@ const HomePage: React.FC<HomePageProps> = () => {
                     <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6 border border-purple-500/20 text-purple-400 md:ml-auto">
                       <Zap size={24} />
                     </div>
-                    <h3 className="text-3xl font-black text-white mb-4">2. The Hybrid Advantage</h3>
+                    <h3 className="text-3xl font-black text-white mb-4">{t('engineSection', 'Step2Title')}</h3>
                     <p className="text-gray-400 leading-relaxed">
-                      We don't rely on just data or just gut feeling. We combine AI-driven efficiencies with professional analyst intervention. The result? A system that adapts to markets faster than the books can adjust.
+                      {t('engineSection', 'Step2Desc')}
                     </p>
                   </Reveal>
                 </div>
@@ -1160,22 +1240,22 @@ const HomePage: React.FC<HomePageProps> = () => {
                   {/* Visual: Bot Notification */}
                   <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-6 relative shadow-lg">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-purple-600 p-0.5 overflow-hidden">
-                        <img src={propickzLogo} alt="ProPickz Bot" className="w-full h-full object-cover" />
+                      <div className="w-10 h-10 rounded-full bg-transparent overflow-hidden">
+                        <img src={pIcon} alt="ProPickz Bot" className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <div className="text-white font-bold text-sm flex items-center gap-2">
-                          ProPickz Bot <span className="bg-blue-600 text-[9px] px-1.5 rounded text-white">BOT</span>
+                          {t('engineSection', 'BotName')} <span className="bg-blue-600 text-[9px] px-1.5 rounded text-white">BOT</span>
                         </div>
-                        <div className="text-[10px] text-gray-500">Today at 4:42 PM</div>
+                        <div className="text-[10px] text-gray-500">{t('engineSection', 'BotTime')}</div>
                       </div>
                     </div>
                     <div className="pl-12">
                       <div className="bg-[#1e1f25] border-l-4 border-green-500 rounded-r-lg p-3 text-sm">
-                        <div className="text-green-400 font-bold mb-1 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div> WHALE PLAY DETECTED</div>
+                        <div className="text-green-400 font-bold mb-1 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div> 💎 {t('engineSection', 'WhalePlay')}</div>
                         <div className="text-white font-bold mb-0.5">LeBron James Over 25.5 Pts</div>
-                        <div className="text-gray-400 text-xs mb-1">Odds: -110 (Implied: ~45%)</div>
-                        <div className="text-purple-400 text-xs font-mono">Hybrid Score: 9.8/10</div>
+                        <div className="text-gray-400 text-xs mb-1">{t('engineSection', 'OddsExample')}</div>
+                        <div className="text-purple-400 text-xs font-mono">{t('engineSection', 'HybridScore')}</div>
                       </div>
                     </div>
                   </Reveal>
@@ -1185,9 +1265,9 @@ const HomePage: React.FC<HomePageProps> = () => {
                     <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6 border border-green-500/20 text-green-400">
                       <Smartphone size={24} />
                     </div>
-                    <h3 className="text-3xl font-black text-white mb-4">3. Instant Delivery</h3>
+                    <h3 className="text-3xl font-black text-white mb-4">{t('engineSection', 'Step3Title')}</h3>
                     <p className="text-gray-400 leading-relaxed">
-                      The second a play is confirmed, our bot blasts it to the Discord. You get the notification, place the bet, and lock in the value. Speed is everything.
+                      {t('engineSection', 'Step3Desc')}
                     </p>
                   </Reveal>
                 </div>
@@ -1204,12 +1284,12 @@ const HomePage: React.FC<HomePageProps> = () => {
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <Reveal>
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              Our 30-Day Platform <span className="text-purple-500">Guarantee</span>
+              {t('guaranteeDetailed', 'Headline')}
             </h2>
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">
-              If you follow our picks for a full month and finish negative, we refund that month’s subscription fee.
+              {t('guaranteeDetailed', 'Subheadline')}
             </p>
           </Reveal>
 
@@ -1219,44 +1299,44 @@ const HomePage: React.FC<HomePageProps> = () => {
               <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
               <h3 className="text-2xl font-bold text-white mb-10 flex items-center justify-center gap-3 relative z-10">
-                <Shield size={28} className="text-purple-500" /> How the Guarantee Works
+                <Shield size={28} className="text-purple-500" /> {t('guaranteeDetailed', 'HowItWorks')}
               </h3>
 
               <div className="grid md:grid-cols-2 gap-8 text-left max-w-3xl mx-auto relative z-10">
                 <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">1</div>
-                    Step 1
+                    {t('guaranteeDetailed', 'Step1Title')}
                   </div>
-                  <p className="text-gray-300 text-sm leading-relaxed">Join Pro and follow our posted picks for 30 days using our unit sizing.</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step1Desc')}</p>
                 </div>
                 <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">2</div>
-                    Step 2
+                    {t('guaranteeDetailed', 'Step2Title')}
                   </div>
-                  <p className="text-gray-300 text-sm leading-relaxed">All picks are publicly logged by us with timestamps, odds, and results.</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step2Desc')}</p>
                 </div>
                 <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">3</div>
-                    Step 3
+                    {t('guaranteeDetailed', 'Step3Title')}
                   </div>
-                  <p className="text-gray-300 text-sm leading-relaxed">At the end of your billing cycle, we verify performance against our public results log.</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step3Desc')}</p>
                 </div>
                 <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">4</div>
-                    Step 4
+                    {t('guaranteeDetailed', 'Step4Title')}
                   </div>
-                  <p className="text-gray-300 text-sm leading-relaxed">If the net result for that period is negative, we refund your subscription fee for that month.</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step4Desc')}</p>
                 </div>
               </div>
 
               <div className="mt-12 bg-[#0a0a0a] rounded-xl p-6 border border-gray-800 relative z-10 text-center">
-                <p className="text-gray-400 text-sm italic mb-4">"No questions. No confusion. That’s how much we trust our system."</p>
-                <a href="https://discord.gg/propickz" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold hover:text-purple-400 transition-colors border-b border-transparent hover:border-purple-400 pb-0.5">
-                  View Guarantee Terms <ArrowRight size={16} />
+                <p className="text-gray-400 text-sm italic mb-4">{t('guaranteeDetailed', 'Quote')}</p>
+                <a href="https://discord.gg/propickz" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold bg-purple-600/20 px-6 py-3 rounded-full border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:bg-purple-600/30 transition-all duration-300">
+                  {t('guaranteeDetailed', 'CTA')} <ArrowRight size={16} />
                 </a>
               </div>
             </div>
@@ -1270,12 +1350,12 @@ const HomePage: React.FC<HomePageProps> = () => {
         <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
           <Reveal>
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              Total Market <span className="text-green-500">Dominance.</span>
+              {t('dominanceSection', 'Headline')} <span className="text-green-500">{t('dominanceSection', 'HeadlineHighlight')}</span>
             </h2>
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
-              We don't just stick to one lane. Our algorithms scan every major league to find value wherever it hides.
+              {t('dominanceSection', 'Subheadline')}
             </p>
           </Reveal>
 
@@ -1444,12 +1524,12 @@ const HowItWorksPage: React.FC = () => {
         <div className="text-center mb-24 pt-12 border-t border-gray-800/50">
           <Reveal>
             <h1 className="text-3xl md:text-5xl font-black text-white mb-6 text-gray-400">
-              {t('steps', 'EngineTitle')}
+              {t('engineSection', 'Title')} <span className="text-white">{t('engineSection', 'TitleHighlight')}</span>
             </h1>
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">
-              {t('steps', 'EngineDesc')}
+              {t('engineSection', 'Description')}
             </p>
           </Reveal>
         </div>
@@ -1465,9 +1545,9 @@ const HowItWorksPage: React.FC = () => {
               <div className="inline-block p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 mb-4">
                 <TrendingUp size={32} className="text-blue-400" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">{t('steps', 'Step1Title')}</h3>
+              <h3 className="text-3xl font-bold text-white mb-4">{t('engineSection', 'Step1Title')}</h3>
               <p className="text-gray-400 leading-relaxed">
-                {t('steps', 'Step1Desc')}
+                {t('engineSection', 'Step1Desc')}
               </p>
             </div>
             <div className="order-1 md:order-2 relative">
@@ -1475,29 +1555,29 @@ const HowItWorksPage: React.FC = () => {
               <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-slide-in-left"></div>
                 <div className="flex items-center justify-between mb-4 border-b border-gray-800 pb-2">
-                  <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Live Market Feed</span>
+                  <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">{t('engineSection', 'LiveMarketFeed')}</span>
                   <div className="flex gap-1">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-xs text-gray-500">Scanning...</span>
+                    <span className="text-xs text-gray-500">{t('engineSection', 'Scanning')}</span>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-2 rounded bg-gray-800/30 opacity-50">
                     <span className="text-gray-400 text-sm">NBA: LAL vs GSW</span>
-                    <span className="text-gray-600 text-xs">Checking...</span>
+                    <span className="text-gray-600 text-xs">{t('engineSection', 'Checking')}</span>
                   </div>
                   <div className="flex items-center justify-between p-2 rounded bg-gray-800/30 opacity-50">
                     <span className="text-gray-400 text-sm">NFL: KC vs BUF</span>
-                    <span className="text-gray-600 text-xs">Checking...</span>
+                    <span className="text-gray-600 text-xs">{t('engineSection', 'Checking')}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded bg-blue-500/10 border border-blue-500/30 transform scale-105 transition-all">
                     <div className="flex flex-col">
                       <span className="text-white font-bold text-sm">LeBron James</span>
-                      <span className="text-blue-300 text-xs">Over 25.5 Points</span>
+                      <span className="text-blue-300 text-xs">{t('engineSection', 'OverPoints').replace('{points}', '25.5')}</span>
                     </div>
                     <div className="text-right">
                       <span className="block text-white font-bold">-110</span>
-                      <span className="text-green-400 text-xs font-bold">DISCREPANCY FOUND</span>
+                      <span className="text-green-400 text-xs font-bold">{t('engineSection', 'DiscrepancyFound')}</span>
                     </div>
                   </div>
                 </div>
@@ -1510,24 +1590,24 @@ const HowItWorksPage: React.FC = () => {
             <div className="order-2">
               <div className="absolute right-0 top-1/2 translate-x-1/2 w-4 h-4 bg-purple-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(168,85,247,0.5)]"></div>
               <div className="bg-gray-900/50 border border-gray-800 p-8 rounded-3xl backdrop-blur-sm">
-                <div className="font-mono text-xs text-purple-300 mb-4 text-center">&gt;&gt; HYBRID_MODEL_ACTIVE...</div>
+                <div className="font-mono text-xs text-purple-300 mb-4 text-center">&gt;&gt; {t('engineSection', 'HybridActive')}</div>
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="text-center">
-                      <div className="text-gray-500 text-xs mb-1">AI Projection</div>
+                      <div className="text-gray-500 text-xs mb-1">{t('engineSection', 'AiProjection')}</div>
                       <div className="text-lg font-bold text-white">Lakers -4</div>
-                      <div className="text-xs text-gray-600">(Data Only)</div>
+                      <div className="text-xs text-gray-600">{t('engineSection', 'DataOnly')}</div>
                     </div>
                     <div className="h-px w-12 bg-gray-700"></div>
                     <div className="text-center">
-                      <div className="text-gray-500 text-xs mb-1">Analyst Adjustment</div>
-                      <div className="text-lg font-bold text-blue-400">-1.5 Adjustment</div>
-                      <div className="text-xs text-gray-600">(Injury Factor)</div>
+                      <div className="text-gray-500 text-xs mb-1">{t('engineSection', 'AnalystAdj')}</div>
+                      <div className="text-lg font-bold text-blue-400">{t('engineSection', 'AdjValue')}</div>
+                      <div className="text-xs text-gray-600">{t('engineSection', 'InjuryFactor')}</div>
                     </div>
                   </div>
                   <div className="bg-purple-500/10 border border-purple-500/30 p-3 rounded-xl text-center">
-                    <div className="text-purple-400 font-bold text-sm">FINAL VERDICT: LAKERS -5.5</div>
-                    <div className="text-gray-400 text-xs mt-1">Confirmed by Data & Human Expertise.</div>
+                    <div className="text-purple-400 font-bold text-sm">{t('engineSection', 'FinalVerdict')}: LAKERS -5.5</div>
+                    <div className="text-gray-400 text-xs mt-1">{t('engineSection', 'ConfirmedBy')}</div>
                   </div>
                 </div>
               </div>
@@ -1536,9 +1616,9 @@ const HowItWorksPage: React.FC = () => {
               <div className="inline-block p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 mb-4">
                 <Zap size={32} className="text-purple-400" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">{t('steps', 'Step2Title')}</h3>
+              <h3 className="text-3xl font-bold text-white mb-4">{t('engineSection', 'Step2Title')}</h3>
               <p className="text-gray-400 leading-relaxed">
-                {t('steps', 'Step2Desc')}
+                {t('engineSection', 'Step2Desc')}
               </p>
             </div>
           </Reveal>
@@ -1549,28 +1629,26 @@ const HowItWorksPage: React.FC = () => {
               <div className="inline-block p-3 rounded-2xl bg-green-500/10 border border-green-500/30 mb-4">
                 <Smartphone size={32} className="text-green-400" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">{t('steps', 'Step3Title')}</h3>
+              <h3 className="text-3xl font-bold text-white mb-4">{t('engineSection', 'Step3Title')}</h3>
               <p className="text-gray-400 leading-relaxed">
-                {t('steps', 'Step3Desc')}
+                {t('engineSection', 'Step3Desc')}
               </p>
             </div>
             <div className="order-1 md:order-2 relative">
               <div className="absolute left-0 top-1/2 -translate-x-1/2 w-4 h-4 bg-green-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(34,197,94,0.5)]"></div>
               <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm max-w-sm mx-auto md:mx-0">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-                    <Sparkles size={20} className="text-white" />
-                  </div>
+                  <img src={pIcon} alt="Bot" className="w-10 h-10 rounded-full object-cover" />
                   <div>
-                    <div className="text-white font-bold text-sm">Propickz Bot</div>
-                    <div className="text-gray-500 text-xs">Today at 7:42 PM</div>
+                    <div className="text-white font-bold text-sm">{t('engineSection', 'BotName')}</div>
+                    <div className="text-gray-500 text-xs">{t('engineSection', 'BotTime')}</div>
                   </div>
                 </div>
                 <div className="bg-gray-800/50 p-3 rounded-lg border-l-4 border-green-500 mb-2">
-                  <div className="text-green-400 font-bold text-sm mb-1">💎 WHALE PLAY DETECTED</div>
+                  <div className="text-green-400 font-bold text-sm mb-1">💎 {t('engineSection', 'WhalePlay')}</div>
                   <div className="text-white text-sm">LeBron James Over 25.5 Pts</div>
-                  <div className="text-gray-400 text-xs mt-1">Odds: -110 (Implied: -145)</div>
-                  <div className="text-purple-400 text-xs font-bold mt-1">Hybrid Score: 9.8/10</div>
+                  <div className="text-gray-400 text-xs mt-1">{t('engineSection', 'OddsExample')}</div>
+                  <div className="text-purple-400 text-xs font-bold mt-1">{t('engineSection', 'HybridScore')}</div>
                 </div>
               </div>
             </div>
@@ -1588,6 +1666,7 @@ const HowItWorksPage: React.FC = () => {
 // --- 10. SUPPORTED SPORTS PAGE COMPONENT ---
 
 const SupportedSportsPage: React.FC = () => {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
@@ -1596,12 +1675,12 @@ const SupportedSportsPage: React.FC = () => {
         <div className="mb-12">
           <Reveal>
             <h1 className="text-4xl md:text-6xl font-black text-white mb-6">
-              Total Market <span className="text-green-500">Dominance.</span>
+              {t('dominanceSection', 'Headline')} <span className="text-green-500">{t('dominanceSection', 'HeadlineHighlight')}</span>
             </h1>
           </Reveal>
           <Reveal delay={200}>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              We don't just stick to one lane. Our algorithms scan every major league to find value wherever it hides.
+              {t('dominanceSection', 'Subheadline')}
             </p>
           </Reveal>
         </div>
@@ -2083,7 +2162,7 @@ const TrustPage: React.FC = () => {
               <TrendingUp className="text-green-500" size={24} />
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">Transparency</h3>
-            <p className="text-gray-400 mb-6 leading-relaxed">
+            <p className="text-purple-200 mb-6 leading-relaxed animate-ambient-glow">
               Every pick is tracked and performance is openly reported. You see what we make. No hidden plays, no deleting history.
             </p>
             <button
@@ -2167,7 +2246,7 @@ const App: React.FC = () => {
 
   const renderView = () => {
     switch (view) {
-      case 'Home': return <HomePage />;
+      case 'Home': return <HomePage setView={setView} />;
       case 'Contact': return <ContactPage />;
       case 'Pricing': return <PricingPage />;
       case 'FreeTrial': return <FreeTrialPage />;

@@ -33,7 +33,7 @@ const ContactPage: React.FC = () => {
                         <div className="glass-card p-8 rounded-3xl">
                             <h3 className="text-2xl font-bold text-white mb-6">{t('contact', 'DiscordCTA')}</h3>
                             <p className="text-gray-400 mb-8">
-                                Our team is most active on Discord. Open a ticket for immediate assistance with billing, picks, or general inquiries.
+                                {t('contact', 'DiscordText')}
                             </p>
                             <button
                                 onClick={() => window.open('https://discord.gg/propickz', '_blank')}
@@ -50,7 +50,7 @@ const ContactPage: React.FC = () => {
                                         <Mail size={24} />
                                     </div>
                                     <div>
-                                        <div className="text-sm text-gray-500 font-bold uppercase">Email</div>
+                                        <div className="text-sm text-gray-500 font-bold uppercase">{t('contact', 'EmailLabel')}</div>
                                         <div className="text-white">support@propickz.com</div>
                                     </div>
                                 </div>
@@ -59,8 +59,8 @@ const ContactPage: React.FC = () => {
                                         <MapPin size={24} />
                                     </div>
                                     <div>
-                                        <div className="text-sm text-gray-500 font-bold uppercase">Location</div>
-                                        <div className="text-white">Las Vegas, NV</div>
+                                        <div className="text-sm text-gray-500 font-bold uppercase">{t('contact', 'LocationLabel')}</div>
+                                        <div className="text-white">{t('contact', 'LocationValue')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@ const ContactPage: React.FC = () => {
                                 <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6 animate-scale-in">
                                     <CheckCircle size={40} className="text-green-500" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+                                <h3 className="text-2xl font-bold text-white mb-2">{t('contact', 'MessageSentTitle')}</h3>
                                 <p className="text-gray-400">{t('contact', 'Success')}</p>
                             </div>
                         ) : (
@@ -98,10 +98,10 @@ const ContactPage: React.FC = () => {
                                 <div>
                                     <label className="block text-sm font-bold text-gray-400 mb-2">{t('contact', 'Subject')}</label>
                                     <select className="w-full bg-black/50 border border-gray-800 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors">
-                                        <option>General Inquiry</option>
-                                        <option>Billing Support</option>
-                                        <option>Technical Issue</option>
-                                        <option>Partnership</option>
+                                        <option>{t('contact', 'OptionGeneral')}</option>
+                                        <option>{t('contact', 'OptionBilling')}</option>
+                                        <option>{t('contact', 'OptionTech')}</option>
+                                        <option>{t('contact', 'OptionPartner')}</option>
                                     </select>
                                 </div>
                                 <div>

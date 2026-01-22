@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
-const sports = [
-    { name: 'NFL', full: 'National Football League', color: 'bg-blue-900/10 border-blue-500/20', image: 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&q=80' },
-    { name: 'NBA', full: 'National Basketball Association', color: 'bg-orange-900/10 border-orange-500/20', image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=80' },
-    { name: 'MLB', full: 'Major League Baseball', color: 'bg-red-900/10 border-red-500/20', image: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=600&q=80' },
-    { name: 'NHL', full: 'National Hockey League', color: 'bg-cyan-900/10 border-cyan-500/20', image: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=600&q=80' },
-    { name: 'NCAAF', full: 'College Football', color: 'bg-yellow-900/10 border-yellow-500/20', image: 'https://images.unsplash.com/photo-1731046498945-33316f26e5ca?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+const getSports = (t: (section: any, key: string) => string) => [
+    { name: 'NFL', full: t('dominanceSection', 'NFL'), color: 'bg-blue-900/10 border-blue-500/20', image: 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&q=80' },
+    { name: 'NBA', full: t('dominanceSection', 'NBA'), color: 'bg-orange-900/10 border-orange-500/20', image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=80' },
+    { name: 'MLB', full: t('dominanceSection', 'MLB'), color: 'bg-red-900/10 border-red-500/20', image: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=600&q=80' },
+    { name: 'NHL', full: t('dominanceSection', 'NHL'), color: 'bg-cyan-900/10 border-cyan-500/20', image: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=600&q=80' },
+    { name: 'NCAAF', full: t('dominanceSection', 'NCAAF'), color: 'bg-yellow-900/10 border-yellow-500/20', image: 'https://images.unsplash.com/photo-1731046498945-33316f26e5ca?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
     { name: 'UFC', full: 'Ultimate Fighting Championship', color: 'bg-red-950/20 border-red-600/20', image: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=600&q=80' },
     { name: 'WNBA', full: 'Women\'s NBA', color: 'bg-pink-900/10 border-pink-500/20', image: 'https://images.unsplash.com/photo-1518063319789-7217e6706b04?w=600&q=80' },
     { name: 'CBB', full: 'College Basketball', color: 'bg-blue-800/10 border-blue-400/20', image: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=600&q=80' },
@@ -15,7 +16,9 @@ const sports = [
 ];
 
 const SportsCarousel: React.FC = () => {
+    const { t } = useLanguage();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const sports = getSports(t);
     // Large buffer to simulate infinity without glitchy jump logic
     const infiniteSports = Array(15).fill(sports).flat();
 
@@ -82,7 +85,7 @@ const SportsCarousel: React.FC = () => {
                             <div className="w-12 h-1 bg-gray-800 rounded-full mb-8 group-hover/card:bg-gray-700 transition-colors relative z-20"></div>
 
                             <div className="px-4 py-2 bg-black/50 rounded-full border border-gray-800 text-xs font-bold text-gray-500 group-hover/card:text-white group-hover/card:border-white/20 transition-all relative z-20">
-                                ACTIVE MARKET
+                                {t('sportsCarousel', 'ActiveMarket')}
                             </div>
                         </div>
                     </div>

@@ -24,12 +24,12 @@ const AsSeenOn: React.FC = () => {
             </div>
 
             <div className="relative flex overflow-hidden group">
-                <div className="flex animate-marquee-slow whitespace-nowrap gap-20 md:gap-40 items-center">
+                <div className="flex animate-marquee-slow whitespace-nowrap gap-20 md:gap-40 items-center hover:[animation-play-state:paused] will-change-transform">
                     {/* First Set */}
                     {brands.map((brand, index) => (
                         <span
                             key={`a-${index}`}
-                            className={`text-3xl md:text-5xl font-black ${brand.color} opacity-80 hover:opacity-100 transition-all duration-300 select-none hover:scale-110`}
+                            className={`text-3xl md:text-5xl font-black ${brand.color} opacity-80 hover:opacity-100 transition-[transform,opacity] duration-300 select-none hover:scale-110 cursor-default`}
                         >
                             {brand.name}
                         </span>
@@ -39,7 +39,7 @@ const AsSeenOn: React.FC = () => {
                     {brands.map((brand, index) => (
                         <span
                             key={`b-${index}`}
-                            className={`text-3xl md:text-5xl font-black ${brand.color} opacity-80 hover:opacity-100 transition-all duration-300 select-none hover:scale-110`}
+                            className={`text-3xl md:text-5xl font-black ${brand.color} opacity-80 hover:opacity-100 transition-[transform,opacity] duration-300 select-none hover:scale-110 cursor-default`}
                         >
                             {brand.name}
                         </span>
@@ -49,7 +49,7 @@ const AsSeenOn: React.FC = () => {
                     {brands.map((brand, index) => (
                         <span
                             key={`c-${index}`}
-                            className={`text-3xl md:text-5xl font-black ${brand.color} opacity-80 hover:opacity-100 transition-all duration-300 select-none hover:scale-110`}
+                            className={`text-3xl md:text-5xl font-black ${brand.color} opacity-80 hover:opacity-100 transition-[transform,opacity] duration-300 select-none hover:scale-110 cursor-default`}
                         >
                             {brand.name}
                         </span>

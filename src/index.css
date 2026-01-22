@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'DM Sans', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(220, 200, 255, 0.95);
   background-color: #000000;
 
   font-synthesis: none;
@@ -25,7 +25,7 @@
   h4,
   h5,
   h6 {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
   }
 }
 
@@ -128,10 +128,36 @@ body {
     animation: glowVertical 2s ease-in-out infinite;
   }
 
+  .animate-glow-vertical-red {
+    display: inline-block;
+    animation: glowVerticalRed 2s ease-in-out infinite;
+  }
+
   .animate-glitch-text {
     display: inline-block;
     position: relative;
     animation: glitchText 2s infinite;
+  }
+
+  .mask-linear-fade {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+
+  .animate-ambient-glow {
+    animation: ambientGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes ambientGlow {
+
+    0%,
+    100% {
+      text-shadow: 0 0 10px rgba(168, 85, 247, 0.3), 0 0 20px rgba(168, 85, 247, 0.1);
+    }
+
+    50% {
+      text-shadow: 0 0 20px rgba(168, 85, 247, 0.6), 0 0 40px rgba(168, 85, 247, 0.3), 0 0 60px rgba(139, 92, 246, 0.2);
+    }
   }
 
   /* --- KEYFRAMES --- */
@@ -234,6 +260,20 @@ body {
 
     50% {
       filter: drop-shadow(0 0 25px rgba(34, 197, 94, 0.9));
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes glowVerticalRed {
+
+    0%,
+    100% {
+      filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.4));
+      transform: translateY(0);
+    }
+
+    50% {
+      filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.9));
       transform: translateY(-3px);
     }
   }

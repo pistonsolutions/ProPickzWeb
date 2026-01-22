@@ -15,7 +15,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const t = (section: keyof typeof translations['en'], key: string) => {
         // @ts-ignore
-        return translations[language][section]?.[key] || key;
+        return translations[language][section]?.[key] ?? key;
     };
 
     return (
