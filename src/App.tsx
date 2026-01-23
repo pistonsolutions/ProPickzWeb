@@ -1,7 +1,7 @@
 'use client'; // Ensures Next.js compatibility
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, Sparkles, Send, ArrowUpRight, Smartphone, Wallet, LineChart, ArrowRight, Lock } from 'lucide-react';
+import { ChevronDown, ChevronUp, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, Sparkles, Send, ArrowUpRight, Smartphone, ArrowRight, Lock } from 'lucide-react';
 
 // Firebase Imports
 import { initializeApp, FirebaseApp } from 'firebase/app';
@@ -14,7 +14,6 @@ import EarningsPopup from './components/EarningsPopup';
 import ContactPage from './components/ContactPage';
 import AsSeenOn from './components/AsSeenOn';
 import Hero3DPhone from './components/Hero3DPhone';
-import EducationVisual from './components/EducationVisual';
 import ResultsDashboard from './components/ResultsDashboard';
 import WinningSlips from './components/WinningSlips';
 import SportsCarousel from './components/SportsCarousel';

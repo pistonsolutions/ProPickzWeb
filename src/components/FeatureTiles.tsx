@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Shield, BookOpen, Wallet, BarChart2, TrendingUp, Wrench, Terminal, Gift, Bell } from 'lucide-react';
+import { Users, Shield, BookOpen, Wallet, BarChart2, TrendingUp, Wrench, Gift, Bell } from 'lucide-react';
 import { Reveal } from '../utils/Reveal';
 import { useLanguage } from '../contexts/LanguageContext';
 
