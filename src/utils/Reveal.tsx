@@ -10,7 +10,10 @@ const Reveal: React.FC<{ children: React.ReactNode; className?: string; delay?: 
                 setIsVisible(true);
                 observer.unobserve(entry.target);
             }
-        }, { threshold: 0.1 });
+        }, {
+            threshold: 0.05,  // Reduced from 0.1 for faster triggering
+            rootMargin: '50px' // Trigger 50px before element enters viewport
+        });
 
         if (ref.current) observer.observe(ref.current);
         return () => observer.disconnect();

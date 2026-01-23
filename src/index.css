@@ -337,20 +337,40 @@ body {
 
 /* --- CUSTOM SCROLLBAR --- */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #000000;
+  position: relative;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #a855f7 0%, #7c3aed 100%);
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+
+/* Scrollbar branding overlay */
+body::after {
+  content: 'PROPICKZ';
+  position: fixed;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: rgba(168, 85, 247, 0.4);
+  pointer-events: none;
+  z-index: 9999;
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
 }
 
 /* --- TEXT SELECTION --- */

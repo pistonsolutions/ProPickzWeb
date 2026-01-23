@@ -301,17 +301,32 @@ const FomoNotification: React.FC = () => {
   const [data, setData] = useState<FomoData>({ name: '', action: '' });
   const { t } = useLanguage();
 
-  const names = [
-    'Alex M.', 'Sarah K.', 'Davon J.', 'Mike R.', 'Chris P.',
-    'Jordan T.', 'Emily W.', 'Marcus B.', 'Jessica L.', 'Ryan H.',
-    'Kevin D.', 'Amanda S.', 'Tyler C.', 'Brandon M.', 'Ashley G.',
-    'Justin F.', 'Rachel P.', 'Eric L.', 'Nicole K.', 'Matthew B.',
-    'Daniel R.', 'Lauren H.', 'Joshua W.', 'Megan T.', 'Andrew S.'
-  ];
+  // Configuration for popup behavior
+  const FOMO_CONFIG = {
+    MAX_POPUPS: 4,           // Total popups per session
+    DISPLAY_DURATION: 5000,  // How long each popup shows (5 seconds)
+    INITIAL_DELAYS: [5000, 15000, 30000, 60000],  // Progressive delays before each popup
+    INTERVALS: [15000, 25000, 40000, 60000]       // Random range added to delays
+  };
 
   useEffect(() => {
+    // Get current popup count from session storage
+    const popupCount = parseInt(sessionStorage.getItem('fomoPopupCount') || '0');
+
+    // Stop if we've reached the maximum
+    if (popupCount >= FOMO_CONFIG.MAX_POPUPS) {
+      return;
+    }
+
     const trigger = () => {
-      const randomName = names[Math.floor(Math.random() * names.length)];
+      const currentCount = parseInt(sessionStorage.getItem('fomoPopupCount') || '0');
+
+      // Double-check we haven't exceeded the limit
+      if (currentCount >= FOMO_CONFIG.MAX_POPUPS) {
+        return;
+      }
+
+      const randomName = "User";
       // @ts-ignore
       const randomActionKey = `Action${Math.floor(Math.random() * 8) + 1}`;
       // @ts-ignore
@@ -319,18 +334,23 @@ const FomoNotification: React.FC = () => {
 
       setData({ name: randomName, action: randomAction });
       setVisible(true);
-      setTimeout(() => setVisible(false), 5000);
+
+      // Increment the counter
+      sessionStorage.setItem('fomoPopupCount', String(currentCount + 1));
+
+      // Hide after display duration
+      setTimeout(() => setVisible(false), FOMO_CONFIG.DISPLAY_DURATION);
     };
 
-    // Initial trigger fast
-    const initialTimer = setTimeout(trigger, 5000);
+    // Use progressive timing based on popup count
+    const delay = FOMO_CONFIG.INITIAL_DELAYS[popupCount] || FOMO_CONFIG.INITIAL_DELAYS[FOMO_CONFIG.INITIAL_DELAYS.length - 1];
+    const randomInterval = Math.random() * (FOMO_CONFIG.INTERVALS[popupCount] || FOMO_CONFIG.INTERVALS[FOMO_CONFIG.INTERVALS.length - 1]);
 
-    // Then interval
-    const interval = setInterval(trigger, 12000 + Math.random() * 8000);
+    // Trigger this popup after the calculated delay
+    const timer = setTimeout(trigger, delay + randomInterval);
 
     return () => {
-      clearTimeout(initialTimer);
-      clearInterval(interval);
+      clearTimeout(timer);
     };
   }, [t]);
 
