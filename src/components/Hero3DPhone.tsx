@@ -1,168 +1,213 @@
-import React, { useRef } from 'react';
-import { TrendingUp, Battery, Wifi, Signal } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Activity, Zap, TrendingUp, CheckCircle } from 'lucide-react';
 
 const Hero3DPhone: React.FC = () => {
-    const phoneRef = useRef<HTMLDivElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+    const [scanActive, setScanActive] = useState(true);
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!phoneRef.current || !containerRef.current) return;
+    useEffect(() => {
+        // Trigger the slide-in animation after a short delay for page load
+        const timer = setTimeout(() => {
+            setIsVisible(true);
+        }, 200);
 
-        const rect = containerRef.current.getBoundingClientRect();
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+        return () => clearTimeout(timer);
+    }, []);
 
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
+    // HIGH-FIDELITY 3D GENERATION
+    // Simulates a brushed titanium frame with curvature lighting
+    const layerCount = 36; // Increased layer count for smoother extrusion
+    const layers = Array.from({ length: layerCount }).map((_, i) => {
+        // Calculate "Curve Lighting":
+        // Adjust coloring to emphasize the visible Right Border thickness
 
-        const rotateX = ((mouseY - centerY) / 20).toFixed(2);
-        const rotateY = ((mouseX - centerX) / 20).toFixed(2);
+        let color = '#9ca3af'; // Base Grey
+        if (i < 4) color = '#e5e7eb'; // Front Highlight (Bright)
+        else if (i < 15) color = '#d1d5db'; // Mid-Tone
+        else if (i < 28) color = '#9ca3af'; // Shadow Curve
+        else color = '#6b7280'; // Back Edge Shadow
 
-        phoneRef.current.style.transform = `perspective(1000px) rotateX(${-parseFloat(rotateX)}deg) rotateY(${rotateY}deg) rotateZ(-6deg)`;
-    };
-
-    const handleMouseLeave = () => {
-        if (!phoneRef.current) return;
-        phoneRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) rotateZ(-6deg)';
-    };
+        // Refined border logic to ensure side visibility
+        return (
+            <div
+                key={i}
+                className="absolute inset-0 rounded-[60px] md:rounded-[68px]"
+                style={{
+                    transform: `translateZ(-${i * 1.0}px)`, // Doubled depth step (1.0px) for maximum thickness
+                    border: '1px solid',
+                    borderColor: color,
+                    background: i === layerCount - 1 ? '#374151' : 'transparent', // Only fill back plate
+                    // Use a stacked box-shadow approach to fill the gaps between layers visually
+                    boxShadow: '0 0 1px rgba(156, 163, 175, 0.3)',
+                    width: '100%',
+                    height: '100%'
+                }}
+            />
+        );
+    });
 
     return (
-        <div
-            ref={containerRef}
-            className="relative hidden lg:block perspective-1000 z-50 h-[780px] w-[380px] mx-auto"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-        >
+        <div className={`relative flex items-center justify-center h-[550px] md:h-[750px] w-full transition-all duration-1000 ease-out perspective-[2000px] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
+
+            {/* IPHONE 17 PRO MAX - ULTRA REALISTIC */}
             <div
-                ref={phoneRef}
-                className="relative transition-transform duration-100 ease-out will-change-transform"
+                className="relative w-[320px] md:w-[360px] h-[640px] md:h-[720px] z-10 transform-style-3d transition-transform duration-500 hover:rotate-y-[-32deg] hover:rotate-x-[5deg]"
                 style={{
-                    transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) rotateZ(-6deg)',
-                    transformStyle: 'preserve-3d'
+                    transform: 'rotateY(-30deg) rotateX(10deg) rotateZ(3deg)', // Increased tilt
                 }}
             >
-                {/* --- REALISTIC IPHONE FRAME --- */}
-                <div className="relative w-[380px] h-[780px] rounded-[55px] mx-auto shadow-[0_50px_100px_rgba(0,0,0,0.7),0_20px_60px_rgba(0,0,0,0.5)] bg-[#1a1a1a]">
+                {/* 1. SOLID METAL EXTRUSION (The Stack) */}
+                <div className="absolute inset-0 transform-style-3d pointer-events-none">
+                    {layers}
+                </div>
 
-                    {/* Titanium Frame Border Gradient */}
-                    <div className="absolute inset-0 rounded-[55px] bg-gradient-to-tr from-[#3a3a3a] via-[#1a1a1a] to-[#4a4a4a] p-[3px]">
-                        <div className="absolute inset-0 rounded-[52px] bg-[#000000] border-[4px] border-[#252525]/80 shadow-[inset_0_0_10px_2px_rgba(0,0,0,0.8)]"></div>
-                    </div>
+                {/* 2. MAIN FRONT CHASSIS */}
+                <div
+                    className="absolute inset-0 rounded-[60px] md:rounded-[68px] overflow-hidden transform-style-3d bg-[#d1d5db]"
+                    style={{
+                        transform: 'translateZ(0px)',
+                        boxShadow: 'inset 0 0 15px rgba(255,255,255,0.9), -20px 20px 40px rgba(0,0,0,0.4)', // Deeper shadow for 3D float
+                        border: '1px solid rgba(255,255,255,0.6)'
+                    }}
+                >
+                    {/* Inner Black Bezel (Screen Border) */}
+                    <div className="absolute inset-[5px] bg-black rounded-[55px] md:rounded-[63px] shadow-[inset_0_0_4px_rgba(255,255,255,0.1)]"></div>
 
-                    {/* Side Buttons (Left) */}
-                    <div className="absolute top-28 -left-[4px] w-[3px] h-8 bg-[#2a2a2a] rounded-l-md shadow-sm"></div>
-                    <div className="absolute top-44 -left-[4px] w-[3px] h-16 bg-[#2a2a2a] rounded-l-md shadow-sm"></div>
-                    <div className="absolute top-64 -left-[4px] w-[3px] h-16 bg-[#2a2a2a] rounded-l-md shadow-sm"></div>
+                    {/* PHYSICAL BUTTONS (3D) */}
+                    {/* Left Vol Up */}
+                    <div className="absolute -left-[4px] top-[140px] w-[4px] h-[30px] bg-[#d1d5db] rounded-l-md z-20 border-l border-white/50 shadow-md"></div>
+                    {/* Left Vol Down */}
+                    <div className="absolute -left-[4px] top-[180px] w-[4px] h-[60px] bg-[#d1d5db] rounded-l-md z-20 border-l border-white/50 shadow-md"></div>
+                    {/* Right Power */}
+                    <div className="absolute -right-[4px] top-[200px] w-[4px] h-[90px] bg-[#3a3a3c] rounded-r-md z-20 border-r border-white/20 shadow-md"></div>
 
-                    {/* Side Button (Right) */}
-                    <div className="absolute top-44 -right-[4px] w-[3px] h-24 bg-[#2a2a2a] rounded-r-md shadow-sm"></div>
+                    {/* SCREEN CONTAINER */}
+                    <div className="absolute inset-[14px] bg-[#000] rounded-[48px] md:rounded-[56px] flex flex-col items-center relative overflow-hidden">
 
-                    {/* Screen Container */}
-                    <div className="absolute inset-[6px] rounded-[48px] overflow-hidden bg-black z-10 border border-[#333]/30">
-                        {/* Dynamic Island */}
-                        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[120px] h-[35px] bg-black rounded-full z-40 flex items-center justify-between px-4 transition-all duration-300 hover:w-[130px] shadow-[0_1px_5px_rgba(255,255,255,0.05)] border border-[#1a1a1a]">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0a0a0a] to-[#222] absolute left-1 top-1/2 -translate-y-1/2 opacity-0"></div> {/* Hidden lens effect */}
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#111] border border-[#222]"></div>
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#0500FF]/20 blur-[1px]"></div>
+                        {/* CERAMIC SHIELD GLOSS (Reflection) */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-30 pointer-events-none z-50 rounded-[48px]"></div>
+
+                        {/* DYNAMIC ISLAND */}
+                        <div className="absolute top-5 bg-black rounded-full z-40 flex items-center justify-center gap-3 w-[120px] h-[35px] border border-white/10 shadow-lg">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]"></div>
+                            <div className="w-1.5 h-1.5 bg-[#3a3a3c] rounded-full"></div>
                         </div>
 
-                        {/* Top Bar Info */}
-                        <div className="absolute top-3 left-8 right-8 flex justify-between items-center z-30 text-white font-bold text-[13px]">
-                            <span>9:41</span>
-                            <div className="flex gap-1.5 items-center">
-                                <Signal size={14} className="text-white" />
-                                <Wifi size={14} className="text-white" />
-                                <Battery size={18} className="text-white" />
+                        {/* STATUS BAR */}
+                        <div className="w-full flex justify-between items-center text-white text-[13px] px-8 mt-4.5 mb-2 font-semibold tracking-wide opacity-90 h-[24px] z-30">
+                            <span className="w-12 text-center text-shadow-sm">12:30</span>
+                            <div className="w-12 flex justify-end gap-1.5 items-center">
+                                <SignalStrength />
+                                <BatteryIcon />
                             </div>
                         </div>
 
-                        {/* --- SCROLLING CONTENT: LEDGER --- */}
-                        <div className="w-full h-full bg-[#050505] flex flex-col relative">
-                            {/* Header */}
-                            <div className="pt-16 pb-4 px-6 bg-[#050505]/95 backdrop-blur-xl border-b border-white/5 sticky top-0 z-20">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-gray-400 text-xs font-bold tracking-widest uppercase">Verified Ledger</span>
-                                    <div className="flex gap-1">
-                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                                        <span className="text-green-500 text-xs font-bold shadow-green-500/20">LIVE</span>
+                        {/* CONTENT STACK - PERFECTLY CENTERED */}
+                        <div className="w-full flex-1 flex flex-col justify-center px-4 space-y-4 pb-8 z-10">
+
+                            {/* MARKET SCANNER */}
+                            <div className="bg-[#1c1c1e]/90 border border-white/10 rounded-[26px] p-4 relative overflow-hidden shadow-2xl backdrop-blur-md">
+                                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-scan-line opacity-70"></div>
+                                <div className="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
+                                    <span className="text-[11px] font-bold text-blue-400 uppercase tracking-widest pl-1">Market Scanner</span>
+                                    <span className="text-[10px] text-gray-400 flex items-center gap-1.5 bg-white/5 px-2 py-0.5 rounded-full border border-white/5">
+                                        <Activity size={10} className="text-blue-500 animate-pulse" /> Live
+                                    </span>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center text-[12px] bg-white/5 p-2.5 rounded-xl border border-white/5">
+                                        <span className="text-gray-300 font-medium">Scanning NBA...</span>
+                                        <span className="text-blue-300 font-mono font-bold">152 checked</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-[12px] bg-blue-500/10 border border-blue-500/30 p-2.5 rounded-xl text-shadow-sm">
+                                        <span className="text-white font-bold">Target Detected</span>
+                                        <span className="text-green-400 font-bold">Match Found</span>
                                     </div>
                                 </div>
-                                <h2 className="text-3xl font-black text-white italic tracking-tight">October Recap</h2>
                             </div>
 
-                            {/* List */}
-                            <div className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar relative pb-20">
-                                {/* Gradient overlay at bottom fade */}
-                                <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none z-10"></div>
-
-                                {[
-                                    { date: 'TODAY', match: 'LAL vs PHX', pick: 'LAL -3.5', odds: '-110', result: 'WIN', profit: '+$909' },
-                                    { date: 'YESTERDAY', match: 'KC vs BAL', pick: 'Over 48.5', odds: '-110', result: 'WIN', profit: '+$1,200' },
-                                    { date: 'OCT 24', match: 'MIA vs BOS', pick: 'MIA +6.5', odds: '-105', result: 'WIN', profit: '+$450' },
-                                    { date: 'OCT 23', match: 'NYY vs LAD', pick: 'NYY ML', odds: '+130', result: 'LOSS', profit: '-$500' },
-                                    { date: 'OCT 22', match: 'SF vs SEA', pick: 'SF -2', odds: '-110', result: 'WIN', profit: '+$880' },
-                                    { date: 'OCT 21', match: 'DAL vs PHI', pick: 'DAL ML', odds: '+105', result: 'WIN', profit: '+$1,050' },
-                                    { date: 'OCT 20', match: 'LIV vs CHE', pick: 'Draw', odds: '+280', result: 'WIN', profit: '+$2,800' },
-                                    { date: 'OCT 19', match: 'UFC 294', pick: 'Makhachev KO', odds: '+150', result: 'WIN', profit: '+$750' },
-                                ].map((bet, i) => (
-                                    <div key={i} className={`flex items-center justify-between p-4 rounded-2xl border ${bet.result === 'WIN' ? 'bg-[#111] border-green-500/20 hover:border-green-500/40' : 'bg-[#111] border-red-500/10'} mb-2 transition-colors relative overflow-hidden`}>
-                                        {bet.result === 'WIN' && (
-                                            <div className="absolute inset-0 bg-green-500/5 pointer-events-none"></div>
-                                        )}
-                                        <div className="relative z-10">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="text-[10px] font-bold text-gray-500 uppercase">{bet.date}</span>
-                                                {bet.result === 'WIN' ? <TrendingUp size={12} className="text-green-500" /> : null}
-                                            </div>
-                                            <div className="text-white font-bold text-sm">{bet.match}</div>
-                                            <div className="text-gray-400 text-xs">{bet.pick} ({bet.odds})</div>
+                            {/* HYBRID ANALYSIS */}
+                            <div className="bg-[#1c1c1e]/90 border border-white/10 rounded-[26px] p-4 shadow-2xl backdrop-blur-md">
+                                <div className="flex justify-between items-center mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30">
+                                            <Zap size={12} className="text-purple-400" />
                                         </div>
-                                        <div className="text-right relative z-10">
-                                            <div className={`text-sm font-black ${bet.result === 'WIN' ? 'text-green-400 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : 'text-gray-500 line-through decoration-red-500/50'}`}>
-                                                {bet.result === 'WIN' ? bet.profit : bet.profit}
-                                            </div>
-                                            <div className={`text-[10px] font-bold tracking-wider ${bet.result === 'WIN' ? 'text-green-600' : 'text-red-900/50'}`}>{bet.result}</div>
-                                        </div>
+                                        <span className="text-[12px] font-bold text-white tracking-wide">Hybrid Analysis</span>
                                     </div>
-                                ))}
+                                    <span className="text-[10px] text-purple-300 bg-purple-900/40 border border-purple-500/20 px-2.5 py-0.5 rounded-full font-bold shadow-[0_0_10px_rgba(168,85,247,0.2)]">Active</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 text-center text-[12px]">
+                                    <div className="bg-black/40 p-3 rounded-2xl border border-white/5 shadow-inner">
+                                        <div className="text-gray-400 text-[10px] mb-1 uppercase tracking-wide font-semibold">Confidence</div>
+                                        <div className="text-white font-heavy text-xl tracking-tight">94%</div>
+                                    </div>
+                                    <div className="bg-black/40 p-3 rounded-2xl border border-white/5 shadow-inner">
+                                        <div className="text-gray-400 text-[10px] mb-1 uppercase tracking-wide font-semibold">Value (EV)</div>
+                                        <div className="text-green-400 font-heavy text-xl tracking-tight">+12%</div>
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Bottom Total */}
-                            <div className="absolute bottom-6 left-4 right-4 p-5 bg-[#111]/90 backdrop-blur-xl rounded-3xl border border-white/10 z-20 shadow-2xl">
-                                <div className="flex justify-between items-end">
+                            {/* WHALE PLAY NOTIFICATION */}
+                            <div className="bg-gradient-to-br from-[#1c1c1e] to-black border border-white/10 rounded-[26px] p-4 shadow-2xl relative">
+                                {/* Top Highlight Line */}
+                                <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-9 h-9 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.15)]">
+                                        <TrendingUp size={18} className="text-green-400" />
+                                    </div>
                                     <div>
-                                        <div className="text-gray-500 text-xs font-bold uppercase mb-1">Total Profit</div>
-                                        <div className="text-3xl font-black text-white tracking-tight">$7,539</div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-green-400 font-bold text-sm bg-green-900/20 px-2 py-1 rounded-lg">+24.5%</div>
-                                        <div className="text-gray-600 text-[10px] mt-1 font-bold">ROI</div>
+                                        <div className="text-white font-bold text-[12px] leading-tight">Top Play Alert</div>
+                                        <div className="text-gray-500 text-[10px] font-medium">Just now • Premium</div>
                                     </div>
                                 </div>
+
+                                <div className="bg-[#111] rounded-2xl p-3 border border-white/5 mb-3 shadow-inner">
+                                    <div className="flex justify-between items-start mb-1.5">
+                                        <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Player Prop</div>
+                                        <div className="text-[9px] text-green-400 font-bold bg-green-500/10 border border-green-500/20 px-1.5 py-px rounded tracking-wide">HIGH VALUE</div>
+                                    </div>
+                                    <div className="text-white font-black text-[14px] mb-1 tracking-tight">J. Tatum Over 26.5 Pts</div>
+                                    <div className="flex justify-between items-center border-t border-white/5 pt-2 mt-1">
+                                        <span className="text-gray-400 text-[10px] font-medium">Celtics vs Heat</span>
+                                        <span className="text-white font-bold text-[11px]">-110</span>
+                                    </div>
+                                </div>
+
+                                <button className="w-full py-3 bg-green-600 hover:bg-green-500 text-white text-[12px] font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(34,197,94,0.4)] animate-pulse active:scale-[0.98] border border-green-400/20">
+                                    View Full Analysis
+                                </button>
                             </div>
                         </div>
 
-                        {/* Realistic Glass Glare Reflection */}
-                        <div className="absolute top-0 right-0 w-[60%] h-full bg-gradient-to-l from-white/[0.03] to-transparent pointer-events-none z-30"></div>
-                        <div className="absolute -top-20 -right-20 w-[300px] h-[300px] bg-purple-500/10 blur-[80px] pointer-events-none z-30 rounded-full mix-blend-screen"></div>
+                        {/* HOME INDICATOR */}
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-36 h-1.5 bg-white rounded-full opacity-70 shadow-[0_0_10px_rgba(255,255,255,0.3)]"></div>
+
                     </div>
                 </div>
-
-                {/* Refined Floating Badge */}
-                <div className="absolute top-28 -right-16 glass-card p-4 rounded-2xl animate-float-slow border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex items-center gap-3 backdrop-blur-2xl z-[60]">
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent rounded-2xl"></div>
-                    <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-green-500/20 to-green-900/20 flex items-center justify-center border border-green-500/20 shadow-[inset_0_0_10px_rgba(34,197,94,0.1)]">
-                        <TrendingUp size={20} className="text-green-400 drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
-                    </div>
-                    <div className="relative">
-                        <div className="text-white font-bold text-sm">3rd Party Verified</div>
-                        <div className="text-green-400 text-xs font-medium">100% Transparent</div>
-                    </div>
-                </div>
-
             </div>
+
+            {/* Back Glow Effect (Deep Purple/Titanium) */}
+            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[800px] bg-purple-600/15 blur-[150px] rounded-full"></div>
         </div>
     );
 };
 
-export default Hero3DPhone;
+// Helper Icons
+const SignalStrength = () => (
+    <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 4H19V20H21V4ZM17 8H15V20H17V8ZM13 12H11V20H13V12ZM9 16H7V20H9V16Z" />
+    </svg>
+);
+
+const BatteryIcon = () => (
+    <svg className="w-4 h-3 text-white" viewBox="0 0 24 12" fill="currentColor">
+        <rect x="1" y="1" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
+        <rect x="3" y="3" width="14" height="6" rx="1" fill="currentColor" />
+        <path d="M22 4V8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+);
+
+export default React.memo(Hero3DPhone);

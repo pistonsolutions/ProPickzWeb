@@ -1,95 +1,99 @@
-import React, { useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import React from 'react';
 
-const getSports = (t: (section: any, key: string) => string) => [
-    { name: 'NFL', full: t('dominanceSection', 'NFL'), color: 'bg-blue-900/10 border-blue-500/20', image: 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&q=80' },
-    { name: 'NBA', full: t('dominanceSection', 'NBA'), color: 'bg-orange-900/10 border-orange-500/20', image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=80' },
-    { name: 'MLB', full: t('dominanceSection', 'MLB'), color: 'bg-red-900/10 border-red-500/20', image: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=600&q=80' },
-    { name: 'NHL', full: t('dominanceSection', 'NHL'), color: 'bg-cyan-900/10 border-cyan-500/20', image: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=600&q=80' },
-    { name: 'NCAAF', full: t('dominanceSection', 'NCAAF'), color: 'bg-yellow-900/10 border-yellow-500/20', image: 'https://images.unsplash.com/photo-1731046498945-33316f26e5ca?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'UFC', full: 'Ultimate Fighting Championship', color: 'bg-red-950/20 border-red-600/20', image: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=600&q=80' },
-    { name: 'WNBA', full: 'Women\'s NBA', color: 'bg-pink-900/10 border-pink-500/20', image: 'https://images.unsplash.com/photo-1518063319789-7217e6706b04?w=600&q=80' },
-    { name: 'CBB', full: 'College Basketball', color: 'bg-blue-800/10 border-blue-400/20', image: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=600&q=80' },
-    { name: 'Horse Racing', full: 'International Racing', color: 'bg-purple-900/10 border-purple-500/20', image: 'https://images.unsplash.com/photo-1495543377553-b2aba1f925d7?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'E-Sports', full: 'Competitive Gaming', color: 'bg-green-900/10 border-green-500/20', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80' },
+const getSports = () => [
+    { name: 'NFL' },
+    { name: 'NBA' },
+    { name: 'MLB' },
+    { name: 'NHL' },
+    { name: 'NCAAF' },
+    { name: 'UFC' },
+    { name: 'WNBA' },
+    { name: 'CBB' },
+    { name: 'Horse Racing' },
+    { name: 'E-Sports' },
 ];
 
 const SportsCarousel: React.FC = () => {
-    const { t } = useLanguage();
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const sports = getSports(t);
-    // Large buffer to simulate infinity without glitchy jump logic
-    const infiniteSports = Array(15).fill(sports).flat();
+    // Use t to get translated content if needed, even if unused in current static list to maintain pattern
+    const sports = getSports();
 
-    const scroll = (direction: 'left' | 'right') => {
-        if (scrollContainerRef.current) {
-            const scrollAmount = 300;
-            scrollContainerRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
+    // Animation state
+    const [isVisible, setIsVisible] = React.useState(false);
+    const sectionRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
         }
-    };
+
+        return () => observer.disconnect();
+    }, []);
+
+    const SportCard = ({ sport, index, isMobile = false }: { sport: { name: string }, index: number, isMobile?: boolean }) => (
+        <div
+            className={`flex-shrink-0 w-[240px] md:w-[200px] h-[120px] bg-[#0f1014] border border-purple-500/30 rounded-2xl relative overflow-hidden group/card shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:border-purple-400/60 transition-all duration-300 flex items-center justify-center transform hover:scale-105 ${isMobile ? 'snap-center' : ''
+                }`}
+            style={isMobile ? {
+                transitionDelay: `${index * 100}ms`,
+                transform: isVisible ? 'translateY(0)' : 'translateY(50px)',
+                opacity: isVisible ? 1 : 0,
+                transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            } : undefined}
+        >
+            {/* Glowing Background Effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 to-transparent opacity-50 group-hover/card:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+
+            {/* Text */}
+            <h3 className="text-2xl font-black text-white tracking-tight relative z-10 group-hover/card:text-purple-100 transition-colors drop-shadow-md">
+                {sport.name}
+            </h3>
+
+            {/* Animated Border Glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent translate-x-[-100%] group-hover/card:translate-x-[100%] transition-transform duration-1000"></div>
+        </div>
+    );
 
     return (
-        <div className="relative group w-full max-w-7xl mx-auto py-8">
-
-            {/* Scroll Buttons */}
-            <button
-                onClick={() => scroll('left')}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black border border-gray-800 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-900 md:-left-6 shadow-xl"
-            >
-                <ChevronLeft size={24} />
-            </button>
-
-            <button
-                onClick={() => scroll('right')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black border border-gray-800 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-900 md:-right-6 shadow-xl"
-            >
-                <ChevronRight size={24} />
-            </button>
+        <div className="relative group w-full py-8 overflow-hidden" ref={sectionRef}>
 
             {/* Fade Gradients */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black via-black/80 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute left-0 top-0 bottom-0 w-8 md:w-32 bg-gradient-to-r from-black to-transparent z-20 pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-8 md:w-32 bg-gradient-to-l from-black to-transparent z-20 pointer-events-none"></div>
 
-            {/* Scroll Container */}
+            {/* Desktop: Marquee Container */}
+            <div className="hidden md:flex animate-marquee hover:[animation-play-state:paused] gap-6 items-center">
+                {/* Triple the list for smooth infinity loop */}
+                {[...sports, ...sports, ...sports].map((sport, i) => (
+                    <SportCard key={`desktop-${i}`} sport={sport} index={i} />
+                ))}
+            </div>
+
+            {/* Mobile: Horizontal Swipe Carousel */}
             <div
-                ref={scrollContainerRef}
-                className="flex gap-6 overflow-x-auto pb-8 pt-4 snap-x snap-mandatory hide-scrollbar px-8 md:px-4"
+                className={`flex md:hidden overflow-x-auto gap-4 px-4 pb-4 snap-x snap-mandatory scrollbar-hide transition-all duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {infiniteSports.map((sport, i) => (
-                    <div
-                        key={i}
-                        className="flex-shrink-0 w-[240px] md:w-[280px] h-[360px] snap-center bg-[#0f1014] border border-gray-800 rounded-3xl relative overflow-hidden transition-all duration-300 hover:border-gray-700 hover:bg-[#15161a] group/card"
-                    >
-                        {/* Background Image */}
-                        <div
-                            className="absolute inset-0 bg-cover bg-center transition-all duration-500 group-hover/card:scale-110 opacity-30 group-hover/card:opacity-50"
-                            style={{ backgroundImage: `url(${sport.image})` }}
-                        ></div>
-
-                        {/* Dark Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/40"></div>
-
-                        <div className={`absolute inset-0 ${sport.color} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}></div>
-
-                        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-                            {/* Just Text - No Icons */}
-
-                            <h3 className="text-3xl font-black text-white mb-3 tracking-tight relative z-20">{sport.name}</h3>
-                            <p className="text-sm text-gray-400 uppercase tracking-widest mb-8 font-medium relative z-20">{sport.full}</p>
-
-                            <div className="w-12 h-1 bg-gray-800 rounded-full mb-8 group-hover/card:bg-gray-700 transition-colors relative z-20"></div>
-
-                            <div className="px-4 py-2 bg-black/50 rounded-full border border-gray-800 text-xs font-bold text-gray-500 group-hover/card:text-white group-hover/card:border-white/20 transition-all relative z-20">
-                                {t('sportsCarousel', 'ActiveMarket')}
-                            </div>
-                        </div>
-                    </div>
+                {sports.map((sport, i) => (
+                    <SportCard key={`mobile-${i}`} sport={sport} index={i} isMobile={true} />
                 ))}
+            </div>
+
+            {/* Mobile Scroll Indicator */}
+            <div className="flex md:hidden justify-center gap-1.5 mt-2 opacity-50">
+                <div className="w-6 h-1 bg-purple-500 rounded-full"></div>
+                <div className="w-1.5 h-1 bg-gray-700 rounded-full"></div>
+                <div className="w-1.5 h-1 bg-gray-700 rounded-full"></div>
             </div>
         </div>
     );

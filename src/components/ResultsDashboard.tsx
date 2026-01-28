@@ -48,16 +48,16 @@ const ResultsDashboard: React.FC = () => {
     ];
 
     const UnitTable = ({ title, profitPoints }: { title: string, profitPoints: { unit: number, profit: number }[] }) => (
-        <div className="bg-[#0A0A0A] border border-gray-800 rounded-3xl overflow-hidden flex flex-col shadow-lg">
-            <div className="bg-[#4c1d95] p-4 text-center border-b border-white/10">
-                <h3 className="text-white font-black italic uppercase tracking-wider text-sm md:text-base">
+        <div className="bg-[#0A0A0A] border border-gray-800 rounded-2xl overflow-hidden flex flex-col shadow-lg">
+            <div className="bg-[#4c1d95] p-2 text-center border-b border-white/10">
+                <h3 className="text-white font-black italic uppercase tracking-wider text-xs md:text-sm">
                     {title}
                 </h3>
             </div>
-            <div className="p-4 bg-[#111] text-white">
-                <div className="space-y-2">
+            <div className="p-3 bg-[#111] text-white">
+                <div className="space-y-1.5">
                     {profitPoints.map((pt, i) => (
-                        <div key={i} className="flex justify-between items-center text-xs md:text-sm font-bold border-b border-white/10 last:border-0 pb-2 last:pb-0">
+                        <div key={i} className="flex justify-between items-center text-[10px] md:text-xs font-bold border-b border-white/10 last:border-0 pb-1.5 last:pb-0">
                             <span className="text-gray-400">${pt.unit} {t('resultsDashboard', 'UnitsLabel')}</span>
                             <span className="font-black text-green-400">${pt.profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
@@ -68,59 +68,59 @@ const ResultsDashboard: React.FC = () => {
     );
 
     return (
-        <div className="w-full max-w-7xl mx-auto p-4 md:p-8 bg-[#050505] rounded-3xl border border-gray-800 shadow-2xl relative overflow-hidden font-sans">
-            {/* Background Glows */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-600/10 rounded-full blur-[80px] pointer-events-none"></div>
+        <div className="w-full max-w-6xl mx-auto p-4 md:p-6 bg-[#050505] rounded-3xl border border-gray-800 shadow-2xl relative overflow-hidden font-sans">
+            {/* Background Glows (Hidden on mobile for performance) */}
+            <div className="hidden md:block absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="hidden md:block absolute bottom-0 left-0 w-64 h-64 bg-green-600/10 rounded-full blur-[80px] pointer-events-none"></div>
 
             {/* HEADER */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 relative z-10">
                 <div className="text-left">
-                    <h2 className="text-2xl font-black text-white mb-2 tracking-wide">{t('resultsDashboard', 'Title')}</h2>
-                    <p className="text-gray-500 text-sm max-w-xl">{t('resultsDashboard', 'Subtitle')}</p>
+                    <h2 className="text-xl font-black text-white mb-1 tracking-wide">{t('resultsDashboard', 'Title')}</h2>
+                    <p className="text-gray-500 text-xs max-w-xl">{t('resultsDashboard', 'Subtitle')}</p>
                 </div>
-                <div className="mt-4 md:mt-0 px-4 py-2 bg-purple-600/20 border border-purple-500/50 rounded-full text-purple-400 text-xs font-bold uppercase tracking-wider animate-pulse">
+                <div className="mt-2 md:mt-0 px-3 py-1.5 bg-purple-600/20 border border-purple-500/50 rounded-full text-purple-400 text-[10px] font-bold uppercase tracking-wider animate-pulse hidden md:block">
                     {t('resultsDashboard', 'LiveUpdates')}
                 </div>
             </div>
 
-            {/* TOP STATS ROW - REMOVED TOTAL BETS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 relative z-10">
-                <div className="bg-gray-900/40 border border-gray-800 p-6 rounded-2xl backdrop-blur-sm">
-                    <div className="text-gray-500 text-xs uppercase tracking-wider mb-2">{t('resultsDashboard', 'Last30Day')}</div>
-                    <div className="text-3xl md:text-4xl font-black text-purple-400">124.6</div>
-                    <div className="text-gray-600 text-[10px] mt-1">{t('resultsDashboard', 'UnitsProfit')}</div>
+            {/* TOP STATS ROW (Compact on mobile) */}
+            <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-6 relative z-10">
+                <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
+                    <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{t('resultsDashboard', 'Last30Day')}</div>
+                    <div className="text-lg md:text-3xl font-black text-purple-400">124.6</div>
+                    <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5">{t('resultsDashboard', 'UnitsProfit')}</div>
                 </div>
-                <div className="bg-gray-900/40 border border-gray-800 p-6 rounded-2xl backdrop-blur-sm">
-                    <div className="text-gray-500 text-xs uppercase tracking-wider mb-2">{t('resultsDashboard', 'YTDUnits')}</div>
-                    <div className="text-3xl md:text-4xl font-black text-green-400">+642.3</div>
-                    <div className="text-gray-600 text-[10px] mt-1">{t('resultsDashboard', 'TotalProfit')}</div>
+                <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
+                    <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{t('resultsDashboard', 'YTDUnits')}</div>
+                    <div className="text-lg md:text-3xl font-black text-green-400">+642.3</div>
+                    <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5">{t('resultsDashboard', 'TotalProfit')}</div>
                 </div>
-                <div className="bg-gray-900/40 border border-gray-800 p-6 rounded-2xl backdrop-blur-sm">
-                    <div className="text-gray-500 text-xs uppercase tracking-wider mb-2">{t('resultsDashboard', 'WinRate')}</div>
-                    <div className="text-3xl md:text-4xl font-black text-white">58.2%</div>
-                    <div className="text-gray-600 text-[10px] mt-1">{t('resultsDashboard', 'Consistency')}</div>
+                <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
+                    <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">ALL TIME</div>
+                    <div className="text-lg md:text-3xl font-black text-white">58.2%</div>
+                    <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5 uppercase">{t('resultsDashboard', 'WinRate')}</div>
                 </div>
             </div>
 
             {/* MAIN CONTENT GRID */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 relative z-10">
 
-                {/* COL 1: RECAP WIDGETS */}
-                <div className="lg:col-span-1 flex flex-col gap-4">
-                    <div className="bg-gray-900/30 border border-gray-800 rounded-3xl p-6 flex-1 flex flex-col">
-                        <h3 className="text-white font-black uppercase tracking-widest mb-6 border-b border-gray-800 pb-4">{t('resultsDashboard', 'PerformanceRecap')}</h3>
+                {/* COL 1: RECAP WIDGETS - Hidden on mobile */}
+                <div className="hidden lg:flex lg:col-span-1 flex-col gap-3">
+                    <div className="bg-gray-900/30 border border-gray-800 rounded-2xl p-4 flex-1 flex flex-col">
+                        <h3 className="text-white font-black uppercase tracking-widest mb-4 border-b border-gray-800 pb-2 text-xs">{t('resultsDashboard', 'PerformanceRecap')}</h3>
 
-                        <div className="space-y-6 flex-1">
+                        <div className="space-y-4 flex-1">
                             {recaps.map((recap, i) => (
-                                <div key={i} className={`p-4 rounded-2xl border ${recap.border} ${recap.bg}`}>
-                                    <div className="flex justify-between items-center mb-4">
-                                        <span className={`text-xs font-black uppercase ${recap.color}`}>{recap.name}</span>
-                                        <Activity size={16} className={recap.color} />
+                                <div key={i} className={`p-3 rounded-xl border ${recap.border} ${recap.bg}`}>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className={`text-[10px] font-black uppercase ${recap.color}`}>{recap.name}</span>
+                                        <Activity size={14} className={recap.color} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-gray-400 uppercase mb-1">{t('resultsDashboard', 'Profit')}</div>
-                                        <div className="text-3xl font-black text-white">{recap.units} u</div>
+                                        <div className="text-[10px] text-gray-400 uppercase mb-0.5">{t('resultsDashboard', 'Profit')}</div>
+                                        <div className="text-2xl font-black text-white">{recap.units} u</div>
                                     </div>
                                 </div>
                             ))}
@@ -130,23 +130,23 @@ const ResultsDashboard: React.FC = () => {
                             href="https://docs.google.com/spreadsheets/d/1nphrBl9VmISc1k5IpPQ7h4vVhcAf4Go3i5ai_WuCyRo/edit?gid=0#gid=0"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full mt-6 py-4 bg-black border border-gray-700 rounded-xl text-xs font-bold text-white hover:bg-gray-800 transition-colors uppercase tracking-wider flex items-center justify-center gap-2 group"
+                            className="w-full mt-4 py-3 bg-black border border-gray-700 rounded-lg text-[10px] font-bold text-white hover:bg-gray-800 transition-colors uppercase tracking-wider flex items-center justify-center gap-2 group"
                         >
-                            {t('resultsDashboard', 'ViewFullLog')} <Activity size={14} className="group-hover:text-purple-400 transition-colors" />
+                            {t('resultsDashboard', 'ViewFullLog')} <Activity size={12} className="group-hover:text-purple-400 transition-colors" />
                         </a>
                     </div>
                 </div>
 
                 {/* COL 2 & 3: GRAPH & NEW WIDGETS */}
-                <div className="lg:col-span-2 flex flex-col gap-6">
+                <div className="lg:col-span-2 flex flex-col gap-4">
 
-                    {/* GRAPH - Reduced height slightly to fit new widgets */}
-                    <div className="bg-gray-900/30 border border-gray-800 rounded-3xl p-6 h-[280px] flex flex-col relative">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-white font-bold">{t('resultsDashboard', 'UnitsOverTime')}</h3>
-                            <div className="flex gap-2">
+                    {/* GRAPH - Reduced height */}
+                    <div className="bg-gray-900/30 border border-gray-800 rounded-2xl p-4 h-[220px] flex flex-col relative">
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-white font-bold text-sm">{t('resultsDashboard', 'UnitsOverTime')}</h3>
+                            <div className="flex gap-1.5">
                                 {[t('resultsDashboard', 'Days30'), t('resultsDashboard', 'Days60'), t('resultsDashboard', 'YTD')].map(r => (
-                                    <button key={r} onClick={() => setTimeRange(r)} className={`px-3 py-1 text-[10px] font-bold rounded-lg ${timeRange === r ? 'bg-gray-700 text-white' : 'text-gray-600 hover:text-gray-400'}`}>{r}</button>
+                                    <button key={r} onClick={() => setTimeRange(r)} className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${timeRange === r ? 'bg-gray-700 text-white' : 'text-gray-600 hover:text-gray-400'}`}>{r}</button>
                                 ))}
                             </div>
                         </div>
@@ -177,17 +177,17 @@ const ResultsDashboard: React.FC = () => {
                     </div>
 
                     {/* SPLIT ROW: BET LOG & NEW UNIT BETTOR TABLES */}
-                    <div className="grid md:grid-cols-2 gap-6 flex-1">
+                    <div className="grid md:grid-cols-2 gap-4 flex-1">
 
                         {/* BET LOG */}
-                        <div className="bg-gray-900/30 border border-gray-800 rounded-3xl p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-white font-bold text-sm">{t('resultsDashboard', 'RecentBetLog')}</h3>
-                                <Search size={14} className="text-gray-600" />
+                        <div className="bg-gray-900/30 border border-gray-800 rounded-2xl p-4">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-white font-bold text-xs">{t('resultsDashboard', 'RecentBetLog')}</h3>
+                                <Search size={12} className="text-gray-600" />
                             </div>
-                            <div className="space-y-3">
-                                {bets.slice(0, 5).map((bet, i) => (
-                                    <div key={i} className="flex justify-between items-center text-xs p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                            <div className="space-y-2">
+                                {bets.slice(0, 4).map((bet, i) => (
+                                    <div key={i} className="flex justify-between items-center text-[10px] p-2 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
                                         <div>
                                             <div className="font-bold text-white mb-0.5">{bet.pick}</div>
                                             <div className="text-gray-500">{bet.date} • {bet.sport}</div>
@@ -200,8 +200,8 @@ const ResultsDashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* NEW UNIT BETTOR TABLES */}
-                        <div className="flex flex-col gap-4">
+                        {/* NEW UNIT BETTOR TABLES - Hidden on mobile */}
+                        <div className="hidden md:flex flex-col gap-3">
                             <UnitTable
                                 title={t('resultsDashboard', 'Table30Days')}
                                 profitPoints={[

@@ -355,7 +355,7 @@ export const translations = {
             Subheadline: "If you follow our picks for a full month and finish negative, we refund that month’s subscription fee.",
             HowItWorks: "How the Guarantee Works",
             Step1Title: "Step 1",
-            Step1Desc: "Join Pro and follow our posted picks for 30 days using our unit sizing.",
+            Step1Desc: "Join Propickz and follow our posted picks for 30 days using our unit sizing.",
             Step2Title: "Step 2",
             Step2Desc: "All picks are publicly logged by us with timestamps, odds, and results.",
             Step3Title: "Step 3",

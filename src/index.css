@@ -9,7 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(220, 200, 255, 0.95);
-  background-color: #000000;
+  background-color: #0a0a0a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -33,6 +33,10 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #0a0a0a;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23151515' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%23101010'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
+  background-size: 400px 400px;
 }
 
 @layer utilities {
@@ -168,6 +172,18 @@ body {
 
     100% {
       background-position: 100% 50%;
+    }
+  }
+
+  @keyframes dropIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
@@ -333,48 +349,219 @@ body {
       text-shadow: none;
     }
   }
+
+  /* --- BACKGROUND TEXTURES --- */
+  /* Matt Black - Pure dark background */
+  .bg-matt-black {
+    background-color: #0a0a0a;
+  }
+
+  /* Textured Matt Black - Subtle noise texture for depth */
+  .bg-textured-black {
+    background-color: #0f0f0f;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+  }
+
+  /* Alternative textured background with grain pattern */
+  .bg-grain-black {
+    background-color: #0a0a0a;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, .03) 2px, rgba(255, 255, 255, .03) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 255, 255, .03) 2px, rgba(255, 255, 255, .03) 4px);
+  }
+
+  /* Hide scrollbar for horizontal carousels */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-/* --- CUSTOM SCROLLBAR --- */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #000000;
-  position: relative;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #a855f7 0%, #7c3aed 100%);
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
-}
-
-/* Scrollbar branding overlay */
-body::after {
-  content: 'PROPICKZ';
-  position: fixed;
-  right: 2px;
-  top: 50%;
-  transform: translateY(-50%) rotate(90deg);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  color: rgba(168, 85, 247, 0.4);
-  pointer-events: none;
-  z-index: 9999;
-  font-family: 'Space Grotesk', sans-serif;
-  text-transform: uppercase;
-}
+/* Browser scrollbar - using default */
 
 /* --- TEXT SELECTION --- */
 ::selection {
   background: rgba(147, 51, 234, 0.3);
   color: #fff;
+}
+
+/* ============================================ */
+/* === MOBILE PERFORMANCE OPTIMIZATIONS === */
+/* ============================================ */
+
+@media (max-width: 768px) {
+
+  /* Disable heavy background texture on mobile */
+  body {
+    background-image: none !important;
+    background-attachment: scroll !important;
+    background-color: #0a0a0a !important;
+  }
+
+  /* CRITICAL: Disable ALL backdrop-blur - major performance killer */
+  .backdrop-blur-md,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl,
+  .backdrop-blur-sm,
+  .backdrop-blur,
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* Disable ALL blur effects */
+  [class*="blur-["],
+  [class*="blur-"],
+  .blur-sm,
+  .blur-md,
+  .blur-lg,
+  .blur-xl {
+    filter: none !important;
+    opacity: 0.2 !important;
+  }
+
+  /* Remove ALL box-shadows */
+  [class*="shadow-"],
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: none !important;
+  }
+
+  /* Disable ALL complex animations */
+  .animate-pulse-slow,
+  .animate-glow-pulse,
+  .animate-border-beam,
+  .animate-float-slow,
+  .animate-glitch-text,
+  .animate-text-shimmer,
+  .animate-text-vibrant,
+  .animate-ambient-glow,
+  .animate-glow-vertical,
+  .animate-glow-vertical-red {
+    animation: none !important;
+  }
+
+  /* Simplify essential animations */
+  .animate-pulse,
+  .animate-spin {
+    animation-duration: 2s !important;
+  }
+
+  /* Disable marquee on mobile - use static display */
+  .animate-marquee,
+  .animate-marquee-slow {
+    animation: none !important;
+  }
+
+  /* Remove ALL drop-shadows and text-shadows */
+  [class*="drop-shadow-"],
+  * {
+    filter: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Disable hover/scale effects completely */
+  .group:hover .group-hover\:scale-110,
+  .group:hover .group-hover\:scale-150,
+  .group:hover .group-hover\:scale-105,
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover,
+  .hover\:-translate-y-1:hover,
+  .hover\:-translate-y-2:hover,
+  [class*="hover:scale-"]:hover,
+  [class*="group-hover:scale-"] {
+    transform: none !important;
+  }
+
+  /* Hide scrollbar branding */
+  body::after {
+    display: none !important;
+  }
+
+  /* Simplify ALL gradients to solid colors */
+  [class*="bg-gradient-to-"],
+  .bg-gradient-to-r,
+  .bg-gradient-to-b,
+  .bg-gradient-to-br {
+    background-image: none !important;
+    background-color: rgba(0, 0, 0, 0.9) !important;
+  }
+
+  /* Disable textured backgrounds on mobile */
+  .bg-textured-black,
+  .bg-grain-black {
+    background-image: none !important;
+    background-color: #0a0a0a !important;
+  }
+
+  /* Reduce ALL transition durations */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.1s !important;
+    transition-timing-function: linear !important;
+  }
+
+  /* Disable complex overlays */
+  [class*="bg-[linear-gradient(rgba"],
+  [class*="bg-[url("] {
+    background: none !important;
+  }
+
+  /* Simplify borders */
+  [class*="border-gradient"] {
+    border: 1px solid rgba(147, 51, 234, 0.3) !important;
+    background: #09090b !important;
+  }
+
+  /* Remove transform-gpu (can cause issues on some devices) */
+  .transform-gpu {
+    transform: none !important;
+  }
+
+  /* Disable will-change (can cause memory issues) */
+  [style*="will-change"] {
+    will-change: auto !important;
+  }
+
+  /* Simplify glass cards */
+  .glass-card {
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Disable perspective effects */
+  .perspective-1000 {
+    perspective: none !important;
+  }
+
+  /* Reduce opacity transitions */
+  [class*="opacity-"] {
+    transition: none !important;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

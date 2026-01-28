@@ -6,14 +6,15 @@ const CommunityBenefits: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <div className="grid md:grid-cols-2 gap-8 mb-20">
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-8 mb-20">
 
             {/* LOTTERY WIDGET */}
             <div className="relative bg-[#0A0A0A] border border-yellow-500/30 rounded-3xl p-8 overflow-hidden group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-yellow-500/20 transition-all duration-700"></div>
 
-                <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-6">
+                <div className="relative z-10 flex flex-col">
+                    {/* Header - Order 2 on mobile, 1 on desktop */}
+                    <div className="flex items-center gap-3 mb-6 order-2 md:order-1">
                         <div className="p-3 bg-yellow-500/10 rounded-xl border border-yellow-500/30">
                             <Gift className="text-yellow-400" size={24} />
                         </div>
@@ -23,7 +24,8 @@ const CommunityBenefits: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 mb-6 text-center">
+                    {/* Pot - Order 1 on mobile, 2 on desktop */}
+                    <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 mb-6 text-center order-1 md:order-2">
                         <p className="text-gray-500 text-xs font-bold uppercase mb-2">{t('communityBenefits', 'PotTitle')}</p>
                         <div className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-lg">
                             $4,250
@@ -31,7 +33,8 @@ const CommunityBenefits: React.FC = () => {
                         <p className="text-gray-400 text-xs mt-2">{t('communityBenefits', 'PotDesc')}</p>
                     </div>
 
-                    <div className="space-y-3">
+                    {/* Info - Order 3 */}
+                    <div className="space-y-3 order-3">
                         <div className="flex items-center justify-between text-sm p-3 rounded-lg bg-white/5 border border-white/5">
                             <span className="text-gray-300">{t('communityBenefits', 'LastWinner')}</span>
                             <span className="text-white font-bold font-mono">@jason_k (+$2,100)</span>
@@ -42,7 +45,8 @@ const CommunityBenefits: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="mt-6 flex items-start gap-2 text-xs text-gray-400">
+                    {/* Footer - Order 4 */}
+                    <div className="mt-6 flex items-start gap-2 text-xs text-gray-400 order-4">
                         <Star size={12} className="text-yellow-500 mt-0.5 shrink-0" />
                         <p>{t('communityBenefits', 'LotteryFooter')}</p>
                     </div>

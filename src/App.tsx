@@ -24,6 +24,8 @@ import HeroBackgroundIcons from './components/HeroBackgroundIcons';
 import { reviews } from './data/reviews';
 import FeatureTiles from './components/FeatureTiles';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
+import LotteryCountdown from './components/LotteryCountdown';
+import ScrollProgressIndicator from './components/ScrollProgressIndicator';
 
 // --- TYPES ---
 interface Message {
@@ -132,6 +134,52 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0): [R
   return [ref, count];
 };
 
+// Hook to track scroll progress for timeline animation
+const useScrollProgress = (ref: React.RefObject<HTMLElement | null>) => {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!ref.current) {
+            ticking = false;
+            return;
+          }
+
+          const rect = ref.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          const timelineTop = rect.top;
+          const timelineHeight = rect.height;
+
+          // Start animating when section is more visible
+          const startOffset = windowHeight * 0.1;
+
+          let progressPercent = 0;
+
+          if (timelineTop < startOffset) {
+            const scrolledIntoSection = startOffset - timelineTop;
+            const totalScrollDistance = timelineHeight * 1.5;
+            progressPercent = Math.min(100, Math.max(0, (scrolledIntoSection / totalScrollDistance) * 100));
+          }
+
+          setProgress(progressPercent);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [ref]);
+
+  return progress;
+};
 
 // --- FIREBASE SERVICE ---
 
@@ -221,26 +269,27 @@ const ROICalculator: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <div className="bg-[#0f1014] border border-gray-800 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all duration-500">
-      {/* Vibrant Background Effects */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/20 rounded-full blur-[100px] group-hover:bg-purple-600/30 transition-all duration-500 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <div className="bg-gradient-to-br from-purple-900/20 via-[#0f1014] to-cyan-900/20 border-2 border-purple-500/40 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-[0_0_60px_rgba(168,85,247,0.4)] relative overflow-hidden group hover:border-purple-400/60 hover:shadow-[0_0_80px_rgba(168,85,247,0.6)] transition-all duration-500 max-w-sm md:max-w-none mx-auto">
+      {/* Vibrant Animated Background Effects */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full blur-[120px] group-hover:scale-110 transition-all duration-700 pointer-events-none animate-pulse-slow"></div>
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-green-500/25 to-emerald-400/25 rounded-full blur-[100px] group-hover:scale-110 transition-all duration-700 pointer-events-none animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-[90px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
 
       <div className="relative z-10">
-        <h3 className="text-3xl font-black text-white mb-2">{t('roi', 'Title')}</h3>
-        <p className="text-gray-400 mb-8 text-sm">{t('roi', 'Subtitle')}</p>
+        <h3 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]">{t('roi', 'Title')}</h3>
+        <p className="text-purple-200/80 mb-8 text-sm font-semibold">{t('roi', 'Subtitle')}</p>
 
         <div className="mb-8">
           <div className="flex justify-between items-end mb-4">
             <div>
-              <div className="text-gray-400 font-bold text-xs uppercase tracking-widest font-heading mb-1">
+              <div className="text-purple-300 font-bold text-xs uppercase tracking-widest font-heading mb-1">
                 {t('roi', 'UnitSize')}
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-cyan-400/80">
                 {t('roi', 'UnitDefinition')}
               </div>
             </div>
-            <div className="text-3xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+            <div className="text-4xl font-black bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(251,191,36,0.6)] animate-pulse">
               ${unitSize}
             </div>
           </div>
@@ -252,42 +301,47 @@ const ROICalculator: React.FC = () => {
             step="10"
             value={unitSize}
             onChange={(e) => setUnitSize(parseInt(e.target.value))}
-            className="w-full h-3 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)]"
+            className="w-full h-4 bg-gradient-to-r from-purple-900/50 via-pink-900/50 to-purple-900/50 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all shadow-[0_0_30px_rgba(168,85,247,0.5)] hover:shadow-[0_0_40px_rgba(168,85,247,0.7)] border border-purple-500/30"
+            style={{
+              background: 'linear-gradient(to right, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.3), rgba(147, 51, 234, 0.3))'
+            }}
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-3 font-medium">
+          <div className="flex justify-between text-xs text-purple-300 mt-3 font-bold">
             <span>{t('roi', 'Min')}</span>
             <span>{t('roi', 'Max')}</span>
           </div>
         </div>
 
-        <div className="mb-8 p-1">
+        <div className="mb-8 p-4 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-2xl border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
           <ProfitGraph bankroll={unitSize * 100} />
           {/* Scaled for graph visual */}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-gray-900 to-black p-5 rounded-2xl border border-gray-800 relative overflow-hidden group/card shadow-lg">
-            <div className="absolute inset-0 bg-green-500/5 group-hover/card:bg-green-500/10 transition-colors"></div>
+          <div className="bg-gradient-to-br from-green-600/30 via-emerald-600/20 to-green-700/30 p-6 rounded-2xl border-2 border-green-400/50 relative overflow-hidden group/card shadow-[0_0_30px_rgba(34,197,94,0.4)] hover:shadow-[0_0_50px_rgba(34,197,94,0.6)] transition-all duration-300 hover:scale-105">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-400/20 group-hover/card:from-green-400/30 group-hover/card:to-emerald-400/30 transition-colors"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-400/30 rounded-full blur-[60px] group-hover/card:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="text-green-500/80 text-xs font-black uppercase tracking-wider mb-2">{t('roi', 'MonthlyProfit')}</div>
-              <div className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300 drop-shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+              <div className="text-green-300 text-xs font-black uppercase tracking-wider mb-2 drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">{t('roi', 'MonthlyProfit')}</div>
+              <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-green-300 via-emerald-200 to-green-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(34,197,94,0.8)]">
                 ${parseInt(monthlyProfit).toLocaleString()}
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-900 to-black p-5 rounded-2xl border border-gray-800 relative overflow-hidden group/card shadow-lg">
-            <div className="absolute inset-0 bg-purple-500/5 group-hover/card:bg-purple-500/10 transition-colors"></div>
+          <div className="bg-gradient-to-br from-purple-600/30 via-pink-600/20 to-purple-700/30 p-6 rounded-2xl border-2 border-purple-400/50 relative overflow-hidden group/card shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] transition-all duration-300 hover:scale-105">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 group-hover/card:from-purple-400/30 group-hover/card:to-pink-400/30 transition-colors"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-400/30 rounded-full blur-[60px] group-hover/card:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="text-purple-400/80 text-xs font-black uppercase tracking-wider mb-2">{t('roi', 'YearlyPotential')}</div>
-              <div className="text-3xl md:text-4xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+              <div className="text-purple-300 text-xs font-black uppercase tracking-wider mb-2 drop-shadow-[0_0_10px_rgba(168,85,247,0.8)]">{t('roi', 'YearlyPotential')}</div>
+              <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-purple-200 via-pink-200 to-purple-200 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(168,85,247,0.8)]">
                 ${parseInt(yearlyPotential).toLocaleString()}
               </div>
             </div>
           </div>
         </div>
 
-        <p className="text-[10px] text-gray-600 mt-6 text-center italic border-t border-gray-800 pt-4">
+        <p className="text-[10px] text-purple-400/60 mt-6 text-center italic border-t border-purple-500/30 pt-4">
           {t('roi', 'Disclaimer')}
         </p>
       </div>
@@ -573,8 +627,14 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
   return (
     <nav className="fixed top-0 w-full z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative z-10">
-        {/* Left: P Icon */}
-        <div className="flex items-center">
+        {/* Left: Contact Us + P Icon */}
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => setView('Contact')}
+            className="text-sm font-semibold text-gray-300 hover:text-white transition-all hover:scale-105"
+          >
+            {t('nav', 'Contact')}
+          </button>
           <div className="cursor-pointer group" onClick={goHome}>
             <img src={pIcon} alt="Propickz" className="h-14 w-14 object-contain group-hover:scale-110 transition-transform drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
           </div>
@@ -722,17 +782,18 @@ const Footer: React.FC = () => {
             {t('newsletter', 'Subheadline')}
           </p>
 
-          <form className="max-w-md mx-auto relative group" onSubmit={(e) => e.preventDefault()}>
+          <form className="max-w-md mx-auto relative group flex flex-col gap-4 md:block" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
               placeholder={t('newsletter', 'Placeholder')}
-              className="w-full pl-6 pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm"
+              className="w-full pl-6 pr-6 md:pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.15)]"
             />
             <button
               type="submit"
-              className="absolute right-2 top-2 bottom-2 px-6 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center gap-2 text-sm shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]"
+              className="w-full md:w-auto md:mt-0 relative md:absolute md:right-2 md:top-2 md:bottom-2 px-8 md:px-6 py-4 md:py-0 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center justify-center md:inline-flex gap-2 text-sm shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98]"
             >
-              {t('newsletter', 'Button')}
+              <span className="md:hidden">Send My Discount</span>
+              <span className="hidden md:inline">{t('newsletter', 'Button')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -751,17 +812,21 @@ const Footer: React.FC = () => {
 
 const HomePage: React.FC<HomePageProps> = ({ setView }) => {
   const [unitsRef, unitsVal] = useCountUp(214.5, 2000);
-  const [membersRef, membersVal] = useCountUp(1250, 2000);
+  const [membersRef, membersVal] = useCountUp(900, 2000);
   const { t } = useLanguage();
+
+  // Timeline scroll animation
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const scrollProgress = useScrollProgress(timelineRef);
 
   return (
     <div className="overflow-x-hidden">
       {/* 1. HERO SECTION */}
-      <section id="hero" className="relative min-h-screen flex items-center pt-24 md:pt-20 overflow-hidden bg-black">
+      <section id="hero" className="relative min-h-screen flex items-center pt-24 md:pt-20 overflow-hidden bg-matt-black">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
         <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-600/30 rounded-full blur-[80px] md:blur-[120px] pointer-events-none animate-pulse-slow"></div>
-        <HeroBackgroundIcons />
+        {/* Background icons removed */}
 
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
           {/* Left: Copy & CTA */}
@@ -771,13 +836,14 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               {t('hero', 'SystemLive')}
             </div>
 
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black text-white leading-[0.95] md:leading-[0.9] tracking-tight animate-fade-in-up delay-100">
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black text-white leading-[0.95] md:leading-[0.9] tracking-tight animate-fade-in-up delay-100 font-heading">
               {t('proofSection', 'HeadlineStart')} <span className="text-green-500 animate-glow-vertical">{t('proofSection', 'HeadlineProof')}</span>,<br />
               {t('proofSection', 'HeadlineNot')} <span className="text-red-500 animate-glow-vertical-red">{t('proofSection', 'HeadlinePromises')}.</span>
             </h1>
 
-            <p className="text-xl text-purple-200 max-w-lg leading-relaxed animate-fade-in-up delay-200 animate-ambient-glow">
-              {t('proofSection', 'Subheadline')}
+            <p className="text-lg text-gray-400 max-w-lg leading-relaxed font-mono animate-[dropIn_0.6s_ease-out_0.3s_both] md:animate-fade-in-up md:delay-200">
+              <span className="text-purple-400">&gt;</span> picks.forEach(pick =&gt; <span className="text-green-400">verify</span>(pick.timestamp, pick.result));<br />
+              <span className="text-gray-500">// No "trust us" needed. See it yourself.</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
@@ -812,7 +878,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
 
       {/* 3. INTERACTIVE CALCULATOR */}
-      <section className="py-24 bg-gradient-to-b from-black to-purple-900/20 overflow-hidden">
+      <section className="py-24 bg-gradient-to-b from-textured-black to-purple-900/20 overflow-hidden bg-textured-black">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <div className="inline-block px-4 py-1.5 rounded-full bg-purple-900/30 text-purple-300 font-bold text-sm mb-6 border border-purple-500/30">
@@ -829,7 +895,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               </div>
               <div>
                 <div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={membersRef}>{Math.floor(membersVal).toLocaleString()}+</div>
-                <div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'ActiveMembers')}</div>
+                <div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">Days Tracked</div>
               </div>
             </div>
           </div>
@@ -839,62 +905,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
         </div>
       </section>
 
-      {/* 4. SOCIAL PROOF WALL */}
-      <section id="testimonials" className="py-24 bg-black border-y border-gray-900 overflow-hidden relative">
-        {/* Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl bg-purple-900/10 blur-[100px] pointer-events-none"></div>
-
-        <div className="text-center mb-16 relative z-10">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 font-bold text-xs uppercase tracking-widest mb-4">
-            {t('testimonials', 'Badge')}
-          </div>
-          <h3 className="text-4xl md:text-5xl font-black text-white mb-6">
-            {t('testimonials', 'HeadlineStart')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-600 animate-text-shimmer">{t('testimonials', 'HeadlineHighlight')}</span>
-          </h3>
-        </div>
-
-        <div className="relative flex overflow-x-hidden group">
-          <div className="animate-marquee whitespace-nowrap flex gap-8 group-hover:[animation-play-state:paused]">
-            {[...Array(2)].map((_, setIndex) => (
-              <React.Fragment key={setIndex}>
-                {reviews.map((review, i) => (
-                  <div
-                    key={`${setIndex}-${i}`}
-                    className="w-[400px] p-8 bg-[#0f1014] rounded-3xl border border-gray-800 flex-shrink-0 hover:border-purple-500 hover:bg-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)] cursor-default group/card"
-                  >
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className={`w-12 h-12 bg-gradient-to-br ${review.avatarColor} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
-                        {review.avatarLetter}
-                      </div>
-                      <div>
-                        <div className="text-white font-bold text-base flex items-center gap-2">
-                          {review.user.replace('Discord User', t('testimonials', 'DiscordUser'))}
-                          {review.verified && <CheckCircle size={16} className="text-blue-500" />}
-                        </div>
-                        <div className="text-gray-500 text-xs uppercase tracking-wide font-bold">{t('testimonials', 'Verified')}</div>
-                      </div>
-                    </div>
-
-                    <p className="text-gray-300 text-lg leading-relaxed whitespace-normal mb-6 group-hover/card:text-white transition-colors">
-                      "{t('testimonials', `Review${review.id}`)}"
-                    </p>
-
-                    <div className="flex gap-1">
-                      {[...Array(review.rating)].map((_, j) => (
-                        <Star key={j} size={18} className="text-yellow-500 fill-yellow-500" />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </React.Fragment>
-            ))}
-          </div>
-
-          {/* Fade Masks */}
-          <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
-        </div>
-      </section>
+      {/* Testimonials section removed - now in AsSeenOn component */}
 
       {/* 5. FEATURE TILES */}
       <FeatureTiles />
@@ -903,7 +914,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
 
       {/* 7. PRICING SECTION */}
-      <section id="pricing" className="py-24 bg-black relative border-t border-gray-900">
+      <section id="pricing" className="py-24 bg-matt-black relative border-t border-gray-900">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
         <div className="max-w-7xl mx-auto px-4">
           {/* Header */}
@@ -1034,7 +1045,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
 
       {/* 8. MEMBER LOTTERY SECTION */}
-      <section className="py-24 bg-black relative border-t border-gray-900 overflow-hidden">
+      <section className="py-24 bg-textured-black relative border-t border-gray-900 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
           {/* LEFT: Content */}
           <div className="space-y-8">
@@ -1048,26 +1059,32 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
             </Reveal>
 
             <Reveal delay={200} className="space-y-6">
-              <div className="bg-[#0f1014] border border-white/5 p-6 rounded-2xl group hover:border-purple-500/20 transition-colors">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <Gift size={20} className="text-purple-400" /> {t('rewardPool', 'WhatItIs')}
-                </h3>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs1')}</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs2')}</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs3')}</li>
-                </ul>
+              <div className="relative overflow-hidden bg-green-500/10 border border-green-500/20 p-6 rounded-2xl group transition-colors">
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+                <div className="relative z-10">
+                  <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                    <Gift size={20} className="text-green-400" /> {t('rewardPool', 'WhatItIs')}
+                  </h3>
+                  <ul className="space-y-3 text-sm text-gray-400">
+                    <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs1')}</li>
+                    <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs2')}</li>
+                    <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatItIs3')}</li>
+                  </ul>
+                </div>
               </div>
 
-              <div className="bg-[#0f1014] border border-white/5 p-6 rounded-2xl group hover:border-red-500/20 transition-colors">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <AlertCircle size={20} className="text-red-400" /> {t('rewardPool', 'WhatNot')}
-                </h3>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot1')}</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot2')}</li>
-                  <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot3')}</li>
-                </ul>
+              <div className="relative overflow-hidden bg-red-500/10 border border-red-500/20 p-6 rounded-2xl group transition-colors">
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+                <div className="relative z-10">
+                  <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                    <AlertCircle size={20} className="text-red-400" /> {t('rewardPool', 'WhatNot')}
+                  </h3>
+                  <ul className="space-y-3 text-sm text-gray-400">
+                    <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot1')}</li>
+                    <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot2')}</li>
+                    <li className="flex gap-3"><div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" /> {t('rewardPool', 'WhatNot3')}</li>
+                  </ul>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -1094,7 +1111,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
                 </div>
                 <div className="bg-white/5 rounded-xl p-4 flex justify-between items-center border border-white/5 hover:bg-white/10 transition-colors">
                   <span className="text-gray-400 text-sm font-medium">{t('rewardPool', 'NextDraw')}</span>
-                  <span className="text-yellow-400 font-bold flex items-center gap-2"><Clock size={16} /> {t('rewardPool', 'DrawTime')}</span>
+                  <LotteryCountdown />
                 </div>
               </div>
 
@@ -1112,7 +1129,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
 
       {/* 10. ENGINE / HOW IT WORKS SECTION */}
-      <section id="how-it-works" className="py-24 bg-black relative overflow-hidden text-center md:text-left">
+      <section id="how-it-works" className="py-24 bg-matt-black relative overflow-hidden text-center md:text-left">
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-24 max-w-3xl mx-auto">
             <Reveal>
@@ -1127,10 +1144,25 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
             </Reveal>
           </div>
 
-          <div className="relative">
-            {/* Central Line */}
+          <div className="relative" ref={timelineRef}>
+            {/* Central Line with Scroll Animation */}
             <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-gray-800 -translate-x-1/2 hidden md:block">
-              <div className="absolute top-0 left-0 w-full h-[60%] bg-gradient-to-b from-purple-500 to-transparent shadow-[0_0_20px_rgba(168,85,247,0.5)]"></div>
+              {/* Animated gradient fill - controlled by scroll */}
+              <div
+                className="absolute top-0 left-0 w-full bg-gradient-to-b from-purple-400 via-purple-500 to-purple-600 transition-all duration-150 ease-out"
+                style={{
+                  height: `${scrollProgress}%`,
+                  boxShadow: `0 0 ${20 + scrollProgress * 0.3}px rgba(168, 85, 247, ${0.4 + (scrollProgress / 100) * 0.6}), 0 0 ${40 + scrollProgress * 0.4}px rgba(168, 85, 247, ${(0.4 + (scrollProgress / 100) * 0.6) * 0.5})`
+                }}
+              ></div>
+              {/* Glowing tip that follows the progress */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 w-3 h-3 bg-purple-400 rounded-full transition-all duration-150 ease-out"
+                style={{
+                  top: `${scrollProgress}%`,
+                  boxShadow: '0 0 15px rgba(168, 85, 247, 1), 0 0 30px rgba(168, 85, 247, 0.8), 0 0 45px rgba(168, 85, 247, 0.6)'
+                }}
+              ></div>
             </div>
 
             <div className="space-y-24 md:space-y-32">
@@ -1297,8 +1329,9 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
         </div>
       </section>
 
+
       {/* 11. GUARANTEE SECTION */}
-      <section id="guarantee" className="py-24 bg-gradient-to-b from-black to-gray-900 border-t border-gray-900 relative overflow-hidden">
+      <section id="guarantee" className="py-24 bg-gradient-to-b from-textured-black to-gray-900 border-t border-gray-900 relative overflow-hidden bg-textured-black">
         <div className="absolute inset-0 bg-purple-900/5 pointer-events-none"></div>
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <Reveal>
@@ -1313,7 +1346,8 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
           </Reveal>
 
           <Reveal delay={300}>
-            <div className="bg-[#0f1014] border border-gray-800 rounded-[2rem] p-8 md:p-12 relative overflow-hidden shadow-2xl group hover:border-purple-500/20 transition-all duration-500">
+            <div className="bg-[#0A0A0A] border border-gray-800 rounded-[2rem] p-8 md:p-12 relative overflow-hidden shadow-2xl group hover:border-purple-500/20 transition-all duration-500">
+              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50"></div>
               <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
@@ -1365,21 +1399,38 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
       {/* FAQ SECTION (Placeholder or Remove?) */}
       {/* 12. TOTAL MARKET DOMINANCE SECTION */}
-      <section id="dominance" className="py-24 bg-black relative border-t border-gray-900 overflow-hidden">
+      <section id="dominance" className="py-24 bg-matt-black relative border-t border-gray-900 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
           <Reveal>
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
               {t('dominanceSection', 'Headline')} <span className="text-green-500">{t('dominanceSection', 'HeadlineHighlight')}</span>
             </h2>
           </Reveal>
-          <Reveal delay={200}>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16">
-              {t('dominanceSection', 'Subheadline')}
-            </p>
-          </Reveal>
-
           <Reveal delay={300}>
             <SportsCarousel />
+          </Reveal>
+
+          {/* More Leagues Section */}
+          <Reveal delay={400}>
+            <div className="mt-16 max-w-2xl mx-auto">
+              <div className="bg-gradient-to-br from-gray-900/80 to-black border border-gray-800 rounded-3xl p-8 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+                <div className="relative z-10">
+                  <h3 className="text-2xl md:text-3xl font-black text-white mb-4">
+                    More Leagues Added Constantly
+                  </h3>
+                  <p className="text-gray-400 mb-6 leading-relaxed">
+                    Our team is constantly building models for new markets including Horse Racing, E-Sports, and International Leagues. If there's an edge, we will find it.
+                  </p>
+                  <button
+                    onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+                    className="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                  >
+                    Get All Access
+                  </button>
+                </div>
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -1392,7 +1443,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 const PricingPage: React.FC = () => {
   const { t } = useLanguage();
   return (
-    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-textured-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
@@ -1532,7 +1583,7 @@ const HowItWorksPage: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-matt-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -1554,24 +1605,32 @@ const HowItWorksPage: React.FC = () => {
         </div>
 
         {/* Steps */}
-        <div className="space-y-32 relative">
-          {/* Connecting Line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent hidden md:block"></div>
+        <div className="space-y-16 md:space-y-32 relative">
+          {/* Connecting Line - Left on mobile, Center on desktop */}
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent block"></div>
 
           {/* Step 1 */}
-          <Reveal className="grid md:grid-cols-2 gap-12 items-center relative">
-            <div className="md:text-right order-2 md:order-1">
-              <div className="inline-block p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 mb-4">
-                <TrendingUp size={32} className="text-blue-400" />
+          <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
+            {/* Text Side - Always First on Mobile */}
+            <div className="md:text-right order-1 md:order-1 relative">
+              {/* Mobile Dot */}
+              <div className="absolute -left-[30px] top-6 w-3 h-3 bg-blue-500 rounded-full md:hidden shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
+
+              <div className="flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-0 mb-4 md:mb-0">
+                <div className="inline-block p-2 md:p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 md:mb-4 shrink-0">
+                  <TrendingUp size={24} className="md:w-8 md:h-8 text-blue-400" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white max-w-[200px] md:max-w-none text-left md:text-right">{t('engineSection', 'Step1Title')}</h3>
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">{t('engineSection', 'Step1Title')}</h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-gray-400 leading-relaxed text-sm md:text-base text-left md:text-right">
                 {t('engineSection', 'Step1Desc')}
               </p>
             </div>
-            <div className="order-1 md:order-2 relative">
+
+            {/* Visual Side - Order 2 on Mobile */}
+            <div className="order-2 md:order-2 relative">
               <div className="absolute left-0 top-1/2 -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
-              <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden">
+              <div className="bg-gray-900/50 border border-gray-800 p-4 md:p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden max-w-[320px] mx-auto md:max-w-none md:mx-0">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-slide-in-left"></div>
                 <div className="flex items-center justify-between mb-4 border-b border-gray-800 pb-2">
                   <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">{t('engineSection', 'LiveMarketFeed')}</span>
@@ -1582,21 +1641,21 @@ const HowItWorksPage: React.FC = () => {
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-2 rounded bg-gray-800/30 opacity-50">
-                    <span className="text-gray-400 text-sm">NBA: LAL vs GSW</span>
-                    <span className="text-gray-600 text-xs">{t('engineSection', 'Checking')}</span>
+                    <span className="text-gray-400 text-xs md:text-sm">NBA: LAL vs GSW</span>
+                    <span className="text-gray-600 text-[10px] md:text-xs">{t('engineSection', 'Checking')}</span>
                   </div>
                   <div className="flex items-center justify-between p-2 rounded bg-gray-800/30 opacity-50">
-                    <span className="text-gray-400 text-sm">NFL: KC vs BUF</span>
-                    <span className="text-gray-600 text-xs">{t('engineSection', 'Checking')}</span>
+                    <span className="text-gray-400 text-xs md:text-sm">NFL: KC vs BUF</span>
+                    <span className="text-gray-600 text-[10px] md:text-xs">{t('engineSection', 'Checking')}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded bg-blue-500/10 border border-blue-500/30 transform scale-105 transition-all">
+                  <div className="flex items-center justify-between p-3 rounded bg-blue-500/10 border border-blue-500/30 transform scale-100 md:scale-105 transition-all">
                     <div className="flex flex-col">
-                      <span className="text-white font-bold text-sm">LeBron James</span>
-                      <span className="text-blue-300 text-xs">{t('engineSection', 'OverPoints').replace('{points}', '25.5')}</span>
+                      <span className="text-white font-bold text-xs md:text-sm">LeBron James</span>
+                      <span className="text-blue-300 text-[10px] md:text-xs">{t('engineSection', 'OverPoints').replace('{points}', '25.5')}</span>
                     </div>
                     <div className="text-right">
-                      <span className="block text-white font-bold">-110</span>
-                      <span className="text-green-400 text-xs font-bold">{t('engineSection', 'DiscrepancyFound')}</span>
+                      <span className="block text-white font-bold text-sm">-110</span>
+                      <span className="text-green-400 text-[10px] md:text-xs font-bold">{t('engineSection', 'DiscrepancyFound')}</span>
                     </div>
                   </div>
                 </div>
@@ -1605,57 +1664,73 @@ const HowItWorksPage: React.FC = () => {
           </Reveal>
 
           {/* Step 2 */}
-          <Reveal className="grid md:grid-cols-2 gap-12 items-center relative">
-            <div className="order-2">
+          <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
+            {/* Visual Side - Order 2 on Mobile */}
+            <div className="order-2 relative">
               <div className="absolute right-0 top-1/2 translate-x-1/2 w-4 h-4 bg-purple-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(168,85,247,0.5)]"></div>
-              <div className="bg-gray-900/50 border border-gray-800 p-8 rounded-3xl backdrop-blur-sm">
+              <div className="bg-gray-900/50 border border-gray-800 p-6 md:p-8 rounded-3xl backdrop-blur-sm max-w-[320px] mx-auto md:max-w-none md:mx-0">
                 <div className="font-mono text-xs text-purple-300 mb-4 text-center">&gt;&gt; {t('engineSection', 'HybridActive')}</div>
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="text-center">
-                      <div className="text-gray-500 text-xs mb-1">{t('engineSection', 'AiProjection')}</div>
-                      <div className="text-lg font-bold text-white">Lakers -4</div>
-                      <div className="text-xs text-gray-600">{t('engineSection', 'DataOnly')}</div>
+                      <div className="text-gray-500 text-[10px] md:text-xs mb-1">{t('engineSection', 'AiProjection')}</div>
+                      <div className="text-base md:text-lg font-bold text-white">Lakers -4</div>
+                      <div className="text-[10px] md:text-xs text-gray-600">{t('engineSection', 'DataOnly')}</div>
                     </div>
-                    <div className="h-px w-12 bg-gray-700"></div>
+                    <div className="h-px w-8 md:w-12 bg-gray-700"></div>
                     <div className="text-center">
-                      <div className="text-gray-500 text-xs mb-1">{t('engineSection', 'AnalystAdj')}</div>
-                      <div className="text-lg font-bold text-blue-400">{t('engineSection', 'AdjValue')}</div>
-                      <div className="text-xs text-gray-600">{t('engineSection', 'InjuryFactor')}</div>
+                      <div className="text-gray-500 text-[10px] md:text-xs mb-1">{t('engineSection', 'AnalystAdj')}</div>
+                      <div className="text-base md:text-lg font-bold text-blue-400">{t('engineSection', 'AdjValue')}</div>
+                      <div className="text-[10px] md:text-xs text-gray-600">{t('engineSection', 'InjuryFactor')}</div>
                     </div>
                   </div>
                   <div className="bg-purple-500/10 border border-purple-500/30 p-3 rounded-xl text-center">
-                    <div className="text-purple-400 font-bold text-sm">{t('engineSection', 'FinalVerdict')}: LAKERS -5.5</div>
-                    <div className="text-gray-400 text-xs mt-1">{t('engineSection', 'ConfirmedBy')}</div>
+                    <div className="text-purple-400 font-bold text-xs md:text-sm">{t('engineSection', 'FinalVerdict')}: LAKERS -5.5</div>
+                    <div className="text-gray-400 text-[10px] md:text-xs mt-1">{t('engineSection', 'ConfirmedBy')}</div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="order-1 md:order-2">
-              <div className="inline-block p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 mb-4">
-                <Zap size={32} className="text-purple-400" />
+
+            {/* Text Side - Always First on Mobile */}
+            <div className="order-1 md:order-2 relative">
+              {/* Mobile Dot */}
+              <div className="absolute -left-[30px] top-6 w-3 h-3 bg-purple-500 rounded-full md:hidden shadow-[0_0_15px_rgba(168,85,247,0.5)]"></div>
+
+              <div className="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-4 md:mb-0">
+                <div className="inline-block p-2 md:p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 md:mb-4 shrink-0">
+                  <Zap size={24} className="md:w-8 md:h-8 text-purple-400" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white max-w-[200px] md:max-w-none">{t('engineSection', 'Step2Title')}</h3>
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">{t('engineSection', 'Step2Title')}</h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-gray-400 leading-relaxed text-sm md:text-base">
                 {t('engineSection', 'Step2Desc')}
               </p>
             </div>
           </Reveal>
 
           {/* Step 3 */}
-          <Reveal className="grid md:grid-cols-2 gap-12 items-center relative">
-            <div className="md:text-right order-2 md:order-1">
-              <div className="inline-block p-3 rounded-2xl bg-green-500/10 border border-green-500/30 mb-4">
-                <Smartphone size={32} className="text-green-400" />
+          <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
+            {/* Text Side - Always First on Mobile */}
+            <div className="md:text-right order-1 md:order-1 relative">
+              {/* Mobile Dot */}
+              <div className="absolute -left-[30px] top-6 w-3 h-3 bg-green-500 rounded-full md:hidden shadow-[0_0_15px_rgba(34,197,94,0.5)]"></div>
+
+              <div className="flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-0 mb-4 md:mb-0">
+                <div className="inline-block p-2 md:p-3 rounded-2xl bg-green-500/10 border border-green-500/30 md:mb-4 shrink-0">
+                  <Smartphone size={24} className="md:w-8 md:h-8 text-green-400" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white max-w-[200px] md:max-w-none text-left md:text-right">{t('engineSection', 'Step3Title')}</h3>
               </div>
-              <h3 className="text-3xl font-bold text-white mb-4">{t('engineSection', 'Step3Title')}</h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-gray-400 leading-relaxed text-sm md:text-base text-left md:text-right">
                 {t('engineSection', 'Step3Desc')}
               </p>
             </div>
-            <div className="order-1 md:order-2 relative">
+
+            {/* Visual Side - Order 2 on Mobile */}
+            <div className="order-2 md:order-2 relative">
               <div className="absolute left-0 top-1/2 -translate-x-1/2 w-4 h-4 bg-green-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(34,197,94,0.5)]"></div>
-              <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm max-w-sm mx-auto md:mx-0">
+              <div className="bg-gray-900/50 border border-gray-800 p-6 md:p-6 rounded-3xl backdrop-blur-sm max-w-[320px] mx-auto md:max-w-sm md:mx-0">
                 <div className="flex items-center gap-3 mb-4">
                   <img src={pIcon} alt="Bot" className="w-10 h-10 rounded-full object-cover" />
                   <div>
@@ -1687,7 +1762,7 @@ const HowItWorksPage: React.FC = () => {
 const SupportedSportsPage: React.FC = () => {
   const { t } = useLanguage();
   return (
-    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-textured-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
@@ -1735,7 +1810,7 @@ const FAQPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden flex flex-col items-center">
+    <div className="min-h-screen bg-matt-black pt-24 pb-20 relative overflow-hidden flex flex-col items-center">
       {/* Background - Minimal/clean to match image */}
       <div className="absolute inset-0 bg-black z-0"></div>
 
@@ -1843,7 +1918,7 @@ const LegalPage: React.FC = () => {
     <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
       <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+      {/* Purple glow removed */}
 
       <div className="max-w-4xl mx-auto px-4 relative z-10">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Legal</h1>
@@ -2304,7 +2379,10 @@ const App: React.FC = () => {
         {view === 'Home' && <FomoNotification />}
 
         {/* Chat Widget */}
-        <ChatWidget />
+        {/* ChatWidget removed for performance */}
+
+        {/* Scroll Progress Indicator */}
+        <ScrollProgressIndicator />
       </div>
     </LanguageProvider>
   );
