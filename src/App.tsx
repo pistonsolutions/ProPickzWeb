@@ -1,7 +1,7 @@
 'use client'; // Ensures Next.js compatibility
 
-import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Clock, Activity, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, Sparkles, Send, ArrowUpRight, Smartphone, ArrowRight, Lock } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronDown, ChevronUp, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, Activity, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, ArrowUpRight, Smartphone, ArrowRight, Lock } from 'lucide-react';
 
 // Firebase Imports
 import { initializeApp, FirebaseApp } from 'firebase/app';
@@ -20,18 +20,13 @@ import SportsCarousel from './components/SportsCarousel';
 import { Reveal } from './utils/Reveal';
 import CommunityBenefits from './components/CommunityBenefits';
 import AboutUsPage from './components/AboutUsPage';
-import HeroBackgroundIcons from './components/HeroBackgroundIcons';
-import { reviews } from './data/reviews';
+
 import FeatureTiles from './components/FeatureTiles';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import LotteryCountdown from './components/LotteryCountdown';
 import ScrollProgressIndicator from './components/ScrollProgressIndicator';
 
-// --- TYPES ---
-interface Message {
-  text: string;
-  sender: 'user' | 'bot';
-}
+
 
 interface FomoData {
   name: string;
@@ -57,39 +52,7 @@ interface HomePageProps {
   setView: (view: string) => void;
 }
 
-// --- GEMINI API CONFIGURATION ---
-const apiKey: string = ""; // Set API Key via environment variable in production
 
-const callGeminiAPI = async (prompt: string, systemInstruction: string = ""): Promise<string> => {
-  if (!apiKey) {
-    console.warn("Gemini API Key is missing.");
-    return "I'm offline right now (Missing API Key).";
-  }
-
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-  const payload = {
-    contents: [{ parts: [{ text: prompt }] }],
-    systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) throw new Error(`API Error: ${response.status}`);
-
-    const data = await response.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response from AI.";
-  } catch (error) {
-    console.error("Gemini API Call Failed:", error);
-    return "Sorry, I couldn't process that request right now.";
-  }
-};
 
 // --- HOOKS ---
 
@@ -423,100 +386,7 @@ const FomoNotification: React.FC = () => {
   );
 };
 
-const ChatWidget: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { t } = useLanguage();
-  const [messages, setMessages] = useState<Message[]>([{ text: t('chat', 'Welcome'), sender: 'bot' }]);
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Update initial message when language changes
-  useEffect(() => {
-    setMessages(prev => {
-      if (prev.length === 1 && prev[0].sender === 'bot') {
-        return [{ text: t('chat', 'Welcome'), sender: 'bot' }];
-      }
-      return prev;
-    });
-  }, [t]);
-
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages]);
-
-  const handleSend = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    const userMessage = input;
-    setMessages(prev => [...prev, { text: userMessage, sender: 'user' }]);
-    setInput("");
-    setIsTyping(true);
-
-    const systemPrompt = "Expert sports betting analyst tone.";
-    const aiResponse = await callGeminiAPI(userMessage, systemPrompt);
-
-    setIsTyping(false);
-    setMessages(prev => [...prev, { text: aiResponse, sender: 'bot' }]);
-  };
-
-  return (
-    <div className="fixed bottom-6 right-6 z-[60] flex flex-col items-end">
-      {isOpen && (
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl mb-4 w-80 sm:w-96 overflow-hidden animate-fade-in-up flex flex-col h-96">
-          <div className="bg-purple-600 p-4 flex justify-between items-center shrink-0">
-            <span className="text-white font-bold flex items-center gap-2">
-              <Sparkles size={16} className="text-yellow-300" />
-              {t('chat', 'Analyst')}
-            </span>
-            <button onClick={() => setIsOpen(false)} className="text-white hover:bg-purple-700 rounded-full p-1"><X size={16} /></button>
-          </div>
-
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 dark:bg-black/50">
-            {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-3 rounded-xl text-sm ${m.sender === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-gray-200 text-black dark:bg-gray-800 dark:text-gray-200 rounded-bl-none'}`}>
-                  {m.text}
-                </div>
-              </div>
-            ))}
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="bg-gray-200 dark:bg-gray-800 p-3 rounded-xl rounded-bl-none flex gap-1">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
-                </div>
-              </div>
-            )}
-            <div ref={chatEndRef} />
-          </div>
-
-          <form onSubmit={handleSend} className="p-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2 shrink-0">
-            <input
-              className="flex-1 bg-transparent text-sm p-2 outline-none text-black dark:text-white"
-              placeholder={t('chat', 'Placeholder')}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <button type="submit" className="text-purple-600 p-2 hover:bg-purple-100 dark:hover:bg-gray-800 rounded-full transition-colors" disabled={isTyping}>
-              <Send size={18} />
-            </button>
-          </form>
-        </div>
-      )}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 active:scale-95 group"
-      >
-        {isOpen ? <X size={24} /> : <MessageSquare size={24} className="group-hover:animate-pulse" />}
-      </button>
-    </div>
-  );
-};
 
 interface NavbarInternalProps extends NavbarProps {
   currentView: string;

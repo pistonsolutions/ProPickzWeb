@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
+
 import { Star } from 'lucide-react';
 
 const reviews = [
@@ -46,7 +46,7 @@ const reviews = [
 ];
 
 const AsSeenOn: React.FC = () => {
-    const { t } = useLanguage();
+
 
     return (
         <div className="py-12 bg-black border-y border-gray-900 overflow-hidden relative">

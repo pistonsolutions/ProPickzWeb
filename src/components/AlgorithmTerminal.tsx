@@ -26,7 +26,7 @@ const AlgorithmTerminal: React.FC = () => {
     const [displayedLines, setDisplayedLines] = useState<typeof codeLines>([]);
     const [currentLine, setCurrentLine] = useState(0);
     const [currentChar, setCurrentChar] = useState(0);
-    const [isTyping, setIsTyping] = useState(true);
+    const [isTyping] = useState(true);
 
     useEffect(() => {
         if (!isTyping) return;
