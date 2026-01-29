@@ -27,6 +27,10 @@
   h6 {
     font-family: 'Space Grotesk', sans-serif;
   }
+
+  .font-code {
+    font-family: 'M PLUS Code Latin', monospace;
+  }
 }
 
 body {
@@ -391,97 +395,14 @@ body {
 }
 
 /* ============================================ */
-/* === MOBILE PERFORMANCE OPTIMIZATIONS === */
+/* === MOBILE - MATCHING DESKTOP APPEARANCE === */
 /* ============================================ */
 
 @media (max-width: 768px) {
 
-  /* Disable heavy background texture on mobile */
+  /* Simplified body background for slight performance improvement */
   body {
-    background-image: none !important;
     background-attachment: scroll !important;
-    background-color: #0a0a0a !important;
-  }
-
-  /* CRITICAL: Disable ALL backdrop-blur - major performance killer */
-  .backdrop-blur-md,
-  .backdrop-blur-xl,
-  .backdrop-blur-2xl,
-  .backdrop-blur-3xl,
-  .backdrop-blur-sm,
-  .backdrop-blur,
-  [class*="backdrop-blur"] {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    background-color: rgba(0, 0, 0, 0.8) !important;
-  }
-
-  /* Disable ALL blur effects */
-  [class*="blur-["],
-  [class*="blur-"],
-  .blur-sm,
-  .blur-md,
-  .blur-lg,
-  .blur-xl {
-    filter: none !important;
-    opacity: 0.2 !important;
-  }
-
-  /* Remove ALL box-shadows */
-  [class*="shadow-"],
-  .shadow,
-  .shadow-sm,
-  .shadow-md,
-  .shadow-lg,
-  .shadow-xl,
-  .shadow-2xl {
-    box-shadow: none !important;
-  }
-
-  /* Disable ALL complex animations */
-  .animate-pulse-slow,
-  .animate-glow-pulse,
-  .animate-border-beam,
-  .animate-float-slow,
-  .animate-glitch-text,
-  .animate-text-shimmer,
-  .animate-text-vibrant,
-  .animate-ambient-glow,
-  .animate-glow-vertical,
-  .animate-glow-vertical-red {
-    animation: none !important;
-  }
-
-  /* Simplify essential animations */
-  .animate-pulse,
-  .animate-spin {
-    animation-duration: 2s !important;
-  }
-
-  /* Disable marquee on mobile - use static display */
-  .animate-marquee,
-  .animate-marquee-slow {
-    animation: none !important;
-  }
-
-  /* Remove ALL drop-shadows and text-shadows */
-  [class*="drop-shadow-"],
-  * {
-    filter: none !important;
-    text-shadow: none !important;
-  }
-
-  /* Disable hover/scale effects completely */
-  .group:hover .group-hover\:scale-110,
-  .group:hover .group-hover\:scale-150,
-  .group:hover .group-hover\:scale-105,
-  .hover\:scale-105:hover,
-  .hover\:scale-110:hover,
-  .hover\:-translate-y-1:hover,
-  .hover\:-translate-y-2:hover,
-  [class*="hover:scale-"]:hover,
-  [class*="group-hover:scale-"] {
-    transform: none !important;
   }
 
   /* Hide scrollbar branding */
@@ -489,67 +410,14 @@ body {
     display: none !important;
   }
 
-  /* Simplify ALL gradients to solid colors */
-  [class*="bg-gradient-to-"],
-  .bg-gradient-to-r,
-  .bg-gradient-to-b,
-  .bg-gradient-to-br {
-    background-image: none !important;
-    background-color: rgba(0, 0, 0, 0.9) !important;
+  /* Hide scrollbar for horizontal carousels */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  /* Disable textured backgrounds on mobile */
-  .bg-textured-black,
-  .bg-grain-black {
-    background-image: none !important;
-    background-color: #0a0a0a !important;
-  }
-
-  /* Reduce ALL transition durations */
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.1s !important;
-    transition-timing-function: linear !important;
-  }
-
-  /* Disable complex overlays */
-  [class*="bg-[linear-gradient(rgba"],
-  [class*="bg-[url("] {
-    background: none !important;
-  }
-
-  /* Simplify borders */
-  [class*="border-gradient"] {
-    border: 1px solid rgba(147, 51, 234, 0.3) !important;
-    background: #09090b !important;
-  }
-
-  /* Remove transform-gpu (can cause issues on some devices) */
-  .transform-gpu {
-    transform: none !important;
-  }
-
-  /* Disable will-change (can cause memory issues) */
-  [style*="will-change"] {
-    will-change: auto !important;
-  }
-
-  /* Simplify glass cards */
-  .glass-card {
-    background: rgba(0, 0, 0, 0.8) !important;
-    backdrop-filter: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  }
-
-  /* Disable perspective effects */
-  .perspective-1000 {
-    perspective: none !important;
-  }
-
-  /* Reduce opacity transitions */
-  [class*="opacity-"] {
-    transition: none !important;
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 

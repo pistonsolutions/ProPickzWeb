@@ -565,7 +565,7 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
           <button onClick={toggleLanguage} className="px-3 py-1.5 text-gray-300 hover:text-white transition-all flex items-center gap-2 font-semibold text-sm uppercase bg-white/5 rounded-lg hover:bg-white/10 border border-purple-500/20">
             <Globe size={16} /> {language === 'en' ? 'EN' : language === 'fr' ? 'FR' : 'ES'}
           </button>
-          <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105">
+          <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105">
             {t('nav', 'JoinDiscord')}
           </button>
           <button onClick={() => scrollToSection('pricing')} className="px-5 py-2 bg-gradient-to-r from-amber-500/10 to-yellow-600/10 backdrop-blur-sm border border-amber-500/30 text-amber-200 text-sm font-bold rounded-lg hover:bg-amber-500/20 transition-all hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]">
@@ -625,7 +625,7 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
             <button onClick={toggleLanguage} className="w-full py-4 text-white font-bold bg-white/5 rounded-xl border border-white/10 flex items-center justify-center gap-2">
               <Globe size={20} /> {language === 'en' ? 'English' : language === 'fr' ? 'Français' : 'Español'}
             </button>
-            <button onClick={() => window.open('https://discord.gg/propickz', '_blank')} className="w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20">
+            <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20">
               {t('nav', 'JoinDiscord')}
             </button>
             <button onClick={() => scrollToSection('pricing')} className="w-full py-4 bg-white text-black font-bold rounded-xl shadow-lg">
@@ -711,9 +711,8 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               {t('proofSection', 'HeadlineNot')} <span className="text-red-500 animate-glow-vertical-red">{t('proofSection', 'HeadlinePromises')}.</span>
             </h1>
 
-            <p className="text-lg text-gray-400 max-w-lg leading-relaxed font-mono animate-[dropIn_0.6s_ease-out_0.3s_both] md:animate-fade-in-up md:delay-200">
-              <span className="text-purple-400">&gt;</span> picks.forEach(pick =&gt; <span className="text-green-400">verify</span>(pick.timestamp, pick.result));<br />
-              <span className="text-gray-500">// No "trust us" needed. See it yourself.</span>
+            <p className="text-sm md:text-lg text-gray-400 max-w-lg leading-relaxed font-code animate-[dropIn_0.6s_ease-out_0.3s_both] md:animate-fade-in-up md:delay-200">
+              {t('proofSection', 'Subheadline')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
@@ -827,7 +826,9 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               </div>
 
               <div className="mt-auto">
-                <button className="w-full py-4 rounded-xl bg-white/5 text-white font-bold border border-white/10 hover:bg-white/10 hover:scale-[1.02] transition-all">
+                <button
+                  onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')}
+                  className="w-full py-4 rounded-xl bg-white/5 text-white font-bold border border-white/10 hover:bg-white/10 hover:scale-[1.02] transition-all">
                   {t('membershipComparison', 'FreeCTA')} →
                 </button>
                 <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'FreeFooter')}</p>
@@ -864,7 +865,9 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               </div>
 
               <div className="mt-auto">
-                <button className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-[1.02] transition-all">
+                <button
+                  onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')}
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-[1.02] transition-all">
                   {t('membershipComparison', 'ProMonthlyCTA')} →
                 </button>
                 <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'ProMonthlyFooter')}</p>
@@ -902,7 +905,9 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               </div>
 
               <div className="mt-auto">
-                <button className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02] transition-all">
+                <button
+                  onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')}
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02] transition-all">
                   {t('membershipComparison', 'ProYearlyCTA')} →
                 </button>
                 <p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'ProYearlyFooter')}</p>
@@ -1258,7 +1263,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
               <div className="mt-12 bg-[#0a0a0a] rounded-xl p-6 border border-gray-800 relative z-10 text-center">
                 <p className="text-gray-400 text-sm italic mb-4">{t('guaranteeDetailed', 'Quote')}</p>
-                <a href="https://discord.gg/propickz" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold bg-purple-600/20 px-6 py-3 rounded-full border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:bg-purple-600/30 transition-all duration-300">
+                <a href="https://discord.gg/wEKnBrvZUF" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold bg-purple-600/20 px-6 py-3 rounded-full border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:bg-purple-600/30 transition-all duration-300">
                   {t('guaranteeDetailed', 'CTA')} <ArrowRight size={16} />
                 </a>
               </div>
@@ -1293,7 +1298,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
                     Our team is constantly building models for new markets including Horse Racing, E-Sports, and International Leagues. If there's an edge, we will find it.
                   </p>
                   <button
-                    onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+                    onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')}
                     className="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
                   >
                     Get All Access
@@ -1347,7 +1352,7 @@ const PricingPage: React.FC = () => {
               <li className="flex gap-3 text-gray-500 text-sm italic">Great way to test Propickz</li>
             </ul>
             <button
-              onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+              onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')}
               className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
             >
               {t('pricing', 'FreeCTA')}
@@ -1373,7 +1378,7 @@ const PricingPage: React.FC = () => {
               <li className="flex gap-3 text-gray-400 text-sm">Included in Member Lottery</li>
             </ul>
             <button
-              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+              onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')}
               className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-purple-900/40"
             >
               {t('pricing', 'MonthlyCTA')}
@@ -1394,7 +1399,7 @@ const PricingPage: React.FC = () => {
               <li className="flex gap-3 text-gray-300 text-sm"><Users className="text-purple-500 shrink-0" size={18} /> Exclusive Discord Channels</li>
             </ul>
             <button
-              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+              onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')}
               className="w-full py-3 bg-white hover:bg-gray-200 text-black font-bold rounded-xl transition-colors"
             >
               {t('pricing', 'QuarterlyCTA')}
@@ -1419,7 +1424,7 @@ const PricingPage: React.FC = () => {
               <li className="flex gap-3 text-gray-300 text-sm"><Shield className="text-green-500 shrink-0" size={18} /> Maximize Bankroll Growth</li>
             </ul>
             <button
-              onClick={() => window.open('https://www.winible.com/propickz', '_blank')}
+              onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')}
               className="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors"
             >
               {t('pricing', 'AnnualCTA')}
@@ -2075,7 +2080,7 @@ const LegalPage: React.FC = () => {
               Get Started Now
             </button>
             <button
-              onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+              onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')}
               className="px-8 py-4 bg-transparent border border-gray-700 text-white font-bold rounded-full hover:bg-gray-800 transition-colors"
             >
               Join Free Discord

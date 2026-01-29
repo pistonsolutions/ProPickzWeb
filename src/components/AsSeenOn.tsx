@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { useLanguage } from '../contexts/LanguageContext';
 import { Star } from 'lucide-react';
 
 const reviews = [
@@ -48,21 +48,22 @@ const reviews = [
 const AsSeenOn: React.FC = () => {
 
 
+    const { t } = useLanguage();
+
     return (
         <div className="py-12 bg-black border-y border-gray-900 overflow-hidden relative">
             {/* Header */}
             <div className="max-w-7xl mx-auto px-4 mb-8 text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-900/20 border border-purple-500/30 text-purple-300 text-xs font-bold uppercase tracking-widest font-heading mb-4">
-                    Community Verified
+                    {t('testimonials', 'Badge')}
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black text-white">
-                    Join the <span className="text-purple-400">Winning Side</span>
+                    {t('testimonials', 'HeadlineStart')}<span className="text-purple-400">{t('testimonials', 'HeadlineHighlight')}</span>
                 </h2>
             </div>
 
-            {/* Rotating Reviews Carousel */}
             <div className="relative flex overflow-hidden group">
-                <div className="flex animate-marquee-slow whitespace-nowrap gap-6 items-stretch hover:[animation-play-state:paused] will-change-transform">
+                <div className="flex animate-marquee-slow whitespace-nowrap gap-6 items-stretch md:hover:[animation-play-state:paused] will-change-transform">
                     {/* First Set */}
                     {reviews.map((review) => (
                         <div
@@ -75,7 +76,7 @@ const AsSeenOn: React.FC = () => {
                                 </div>
                                 <div>
                                     <div className="text-white font-bold text-sm">{review.username}</div>
-                                    <div className="text-gray-500 text-xs">Verified Member</div>
+                                    <div className="text-gray-500 text-xs">{t('testimonials', 'Verified')}</div>
                                 </div>
                             </div>
                             <p className="text-gray-300 text-sm whitespace-normal mb-3 leading-relaxed">"{review.review}"</p>
@@ -136,9 +137,9 @@ const AsSeenOn: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Fade Masks */}
-                <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-black to-transparent z-10"></div>
-                <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-black to-transparent z-10"></div>
+                {/* Fade Masks - Reduced width on mobile to prevent "Black Shadow" blocking content */}
+                <div className="absolute top-0 left-0 w-12 md:w-32 h-full bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-12 md:w-32 h-full bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
             </div>
         </div>
     );

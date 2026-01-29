@@ -750,8 +750,8 @@ export const translations = {
             a6: "Oui, vous pouvez annuler à tout moment via notre page Whop. En cas de problème, contactez le support et nous rectifierons la situation immédiatement.",
             q7: "De quels bookmakers ai-je besoin ?",
             a7: "Plus vous avez d'options, mieux c'est. Cependant, vous pouvez absolument faire du profit avec un seul bookmaker. Ne laissez pas cela vous empêcher de commencer.",
-            q8: "Is this legal?",
-            a8: "Yes, sports betting is legal in many jurisdictions. However, it is your responsibility to ensure you are complying with the local laws and regulations of your specific location.",
+            q8: "Est-ce légal ?",
+            a8: "Oui, les paris sportifs sont légaux dans de nombreuses juridictions. Cependant, il est de votre responsabilité de vous assurer que vous respectez les lois et réglementations locales de votre emplacement spécifique.",
             Subtitle: "Tout ce que vous devez savoir sur le système, les mathématiques et l'argent."
         },
         footer: {

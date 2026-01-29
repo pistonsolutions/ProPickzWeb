@@ -36,7 +36,7 @@ const ContactPage: React.FC = () => {
                                 {t('contact', 'DiscordText')}
                             </p>
                             <button
-                                onClick={() => window.open('https://discord.gg/propickz', '_blank')}
+                                onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')}
                                 className="w-full py-4 bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
                             >
                                 <MessageSquare size={20} /> {t('contact', 'DiscordButton')}
