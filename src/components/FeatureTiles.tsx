@@ -22,7 +22,7 @@ const FeatureTiles: React.FC = () => {
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-1">
-                    <h3 className="text-base font-bold text-white">Inside the Winning Room</h3>
+                    <h3 className="text-base font-bold text-white">{t('featureTiles', 'Widget1Title')}</h3>
                 </div>
 
                 <div className="flex-1 flex items-center justify-center">
@@ -60,9 +60,9 @@ const FeatureTiles: React.FC = () => {
                 <div className="bg-black/30 backdrop-blur-md p-4 rounded-full mb-6 border border-white/20 shadow-xl group-hover:scale-110 transition-transform duration-300">
                     <Gift size={48} className="text-yellow-200" />
                 </div>
-                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-wide drop-shadow-md">Exclusive Giveaways</h3>
-                <p className="text-yellow-100 font-medium mb-6">Weekly prizes for our VIP members.</p>
-                <span className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">Members Only</span>
+                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-wide drop-shadow-md text-balance">{t('featureTiles', 'Widget2Title')}</h3>
+                <p className="text-yellow-100 font-medium mb-6">{t('featureTiles', 'Widget2Desc')}</p>
+                <span className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">{t('featureTiles', 'Widget2Badge')}</span>
             </div>
         </div>,
 
@@ -73,8 +73,8 @@ const FeatureTiles: React.FC = () => {
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-4">
-                    <h3 className="text-xl font-bold text-white mb-1">The Algorithm</h3>
-                    <p className="text-sm text-gray-400">Industry leading technology aggregating millions of data points every second.</p>
+                    <h3 className="text-xl font-bold text-white mb-1">{t('featureTiles', 'Widget3Title')}</h3>
+                    <p className="text-sm text-gray-400">{t('featureTiles', 'Widget3Desc')}</p>
                 </div>
                 <AlgorithmTerminal />
             </div>
@@ -93,8 +93,8 @@ const FeatureTiles: React.FC = () => {
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-4">
-                    <h3 className="text-base font-bold text-white mb-1">Master the Game Behind the Picks</h3>
-                    <p className="text-sm text-emerald-200/70">Learn the principles behind sports betting... or don't. Our picks work either way.</p>
+                    <h3 className="text-base font-bold text-white mb-1">{t('featureTiles', 'Widget4Title')}</h3>
+                    <p className="text-sm text-emerald-200/70">{t('featureTiles', 'Widget4Desc')}</p>
                 </div>
 
                 <div className="flex-1 flex items-center justify-center translate-y-4">
@@ -132,7 +132,7 @@ const FeatureTiles: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4">
                 <Reveal className="mb-12">
                     <h2 className="text-4xl md:text-6xl font-black text-white mb-6">
-                        {t('featureTiles', 'HeadlinePrefix')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-400">Complete Ecosystem</span><span className="text-purple-400 animate-pulse">_</span>
+                        {t('featureTiles', 'HeadlinePrefix')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-400">{t('featureTiles', 'HeadlineHighlight')}</span><span className="text-purple-400 animate-pulse">_</span>
                     </h2>
                     <p className="text-xl text-gray-400 max-w-2xl">
                         {t('featureTiles', 'Subheadline')}

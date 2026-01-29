@@ -764,7 +764,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               </div>
               <div>
                 <div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={membersRef}>{Math.floor(membersVal).toLocaleString()}+</div>
-                <div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">Days Tracked</div>
+                <div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'DaysTracked')}</div>
               </div>
             </div>
           </div>
