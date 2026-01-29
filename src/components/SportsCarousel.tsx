@@ -18,37 +18,12 @@ const SportsCarousel: React.FC = () => {
     const sports = getSports();
 
     // Animation state
-    const [isVisible, setIsVisible] = React.useState(false);
     const sectionRef = React.useRef<HTMLDivElement>(null);
-
-    React.useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
-        }
-
-        return () => observer.disconnect();
-    }, []);
 
     const SportCard = ({ sport, index, isMobile = false }: { sport: { name: string }, index: number, isMobile?: boolean }) => (
         <div
             className={`flex-shrink-0 w-[240px] md:w-[200px] h-[120px] bg-[#0f1014] border border-purple-500/30 rounded-2xl relative overflow-hidden group/card shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:border-purple-400/60 transition-all duration-300 flex items-center justify-center transform hover:scale-105 ${isMobile ? 'snap-center' : ''
                 }`}
-            style={isMobile ? {
-                transitionDelay: `${index * 100}ms`,
-                transform: isVisible ? 'translateY(0)' : 'translateY(50px)',
-                opacity: isVisible ? 1 : 0,
-                transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-            } : undefined}
         >
             {/* Glowing Background Effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 to-transparent opacity-50 group-hover/card:opacity-100 transition-opacity"></div>
@@ -81,7 +56,7 @@ const SportsCarousel: React.FC = () => {
 
             {/* Mobile: Horizontal Swipe Carousel */}
             <div
-                className={`flex md:hidden overflow-x-auto gap-4 px-4 pb-4 snap-x snap-mandatory scrollbar-hide transition-all duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                className="flex md:hidden overflow-x-auto gap-4 px-4 pb-4 snap-x snap-mandatory scrollbar-hide"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {sports.map((sport, i) => (
