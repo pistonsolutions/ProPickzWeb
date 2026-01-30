@@ -3,19 +3,15 @@ import React, { useEffect, useRef, useState } from 'react';
 const Reveal: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        // Check if mobile on mount
-        const mobileCheck = window.innerWidth < 768;
-        setIsMobile(mobileCheck);
-
-        if (mobileCheck) {
+        // Simple check to skip observer on mobile to save resources
+        // relying on CSS for the visual 'always visible' state
+        if (window.innerWidth < 768) {
             setIsVisible(true);
             return;
         }
 
-        // Use IntersectionObserver only for desktop
         const observer = new IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
                 setIsVisible(true);
@@ -30,16 +26,21 @@ const Reveal: React.FC<{ children: React.ReactNode; className?: string; delay?: 
         return () => observer.disconnect();
     }, []);
 
-    const style = isMobile ? {} : { transitionDelay: `${delay}ms` };
+    // On mobile, we want NO transition delay so it feels instant
+    // We can't easily do conditional inline styles with media queries, 
+    // but the delay typically only matters when the transition is happening.
+    // Since mobile starts visible, the transition won't trigger ideally.
 
     return (
         <div
             ref={ref}
-            className={`${className} ${!isMobile ? 'transition-all duration-700 ease-out transform' : ''} ${isVisible
+            className={`${className} transition-all duration-700 ease-out transform ${isVisible
                 ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-12'
+                : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-12' // Mobile: Always visible. Desktop: Hidden initially
                 }`}
-            style={style}
+            style={{
+                transitionDelay: window.innerWidth >= 768 ? `${delay}ms` : '0ms'
+            }}
         >
             {children}
         </div>
