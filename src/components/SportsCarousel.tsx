@@ -20,7 +20,7 @@ const SportsCarousel: React.FC = () => {
     // Animation state
     const sectionRef = React.useRef<HTMLDivElement>(null);
 
-    const SportCard = ({ sport, index, isMobile = false }: { sport: { name: string }, index: number, isMobile?: boolean }) => (
+    const SportCard = ({ sport, isMobile = false }: { sport: { name: string }, isMobile?: boolean }) => (
         <div
             className={`flex-shrink-0 w-[240px] md:w-[200px] h-[120px] bg-[#0f1014] border border-purple-500/30 rounded-2xl relative overflow-hidden group/card shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:border-purple-400/60 transition-all duration-300 flex items-center justify-center transform hover:scale-105 ${isMobile ? 'snap-center' : ''
                 }`}
@@ -52,7 +52,7 @@ const SportsCarousel: React.FC = () => {
             <div className="hidden md:flex animate-marquee hover:[animation-play-state:paused] gap-6 items-center">
                 {/* Triple the list for smooth infinity loop */}
                 {[...sports, ...sports, ...sports].map((sport, i) => (
-                    <SportCard key={`desktop-${i}`} sport={sport} index={i} />
+                    <SportCard key={`desktop-${i}`} sport={sport} />
                 ))}
             </div>
 
@@ -62,7 +62,7 @@ const SportsCarousel: React.FC = () => {
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {sports.map((sport, i) => (
-                    <SportCard key={`mobile-${i}`} sport={sport} index={i} isMobile={true} />
+                    <SportCard key={`mobile-${i}`} sport={sport} isMobile={true} />
                 ))}
             </div>
 
