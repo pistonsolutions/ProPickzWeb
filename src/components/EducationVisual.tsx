@@ -16,7 +16,7 @@ const EducationVisual: React.FC = () => {
     ];
 
     return (
-        <div className="relative w-full h-[450px] md:h-[500px] flex items-center justify-center font-sans">
+        <div className="relative w-full h-[450px] md:h-[500px] flex items-center justify-center">
             {/* Background Glow */}
             <div className="absolute inset-0 bg-purple-600/5 blur-[80px] rounded-full pointer-events-none"></div>
 

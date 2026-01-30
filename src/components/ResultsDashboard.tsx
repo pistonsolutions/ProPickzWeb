@@ -12,27 +12,27 @@ const ResultsDashboard: React.FC = () => {
     const recaps = [
         {
             name: t('resultsDashboard', 'HybridModel'),
-            units: "+124.6",
-            roi: "12.4%",
-            winRate: "58.2%",
+            units: t('resultsDashboard', 'Pending'),
+            roi: t('resultsDashboard', 'Pending'),
+            winRate: t('resultsDashboard', 'Pending'),
             color: "text-purple-400",
             bg: "bg-purple-900/20",
             border: "border-purple-500/30"
         },
         {
             name: "SAFE PARLAYS",
-            units: "+42.8",
-            roi: "18.5%",
-            winRate: "42.1%",
+            units: t('resultsDashboard', 'Pending'),
+            roi: t('resultsDashboard', 'Pending'),
+            winRate: t('resultsDashboard', 'Pending'),
             color: "text-green-400",
             bg: "bg-green-900/20",
             border: "border-green-500/30"
         },
         {
             name: "FREE PLAYS",
-            units: "+15.3",
-            roi: "8.2%",
-            winRate: "52.4%",
+            units: t('resultsDashboard', 'Pending'),
+            roi: t('resultsDashboard', 'Pending'),
+            winRate: t('resultsDashboard', 'Pending'),
             color: "text-blue-400",
             bg: "bg-blue-900/20",
             border: "border-blue-500/30"
@@ -47,7 +47,7 @@ const ResultsDashboard: React.FC = () => {
         { date: "Apr 13", sport: "NHL", pick: "EDM Puckline", odds: "+140", units: "1.0", result: "Win" },
     ];
 
-    const UnitTable = ({ title, profitPoints }: { title: string, profitPoints: { unit: number, profit: number }[] }) => (
+    const UnitTable = ({ title, profitPoints }: { title: string, profitPoints: { unit: number, profit: number | string }[] }) => (
         <div className="bg-[#0A0A0A] border border-gray-800 rounded-2xl overflow-hidden flex flex-col shadow-lg">
             <div className="bg-[#4c1d95] p-2 text-center border-b border-white/10">
                 <h3 className="text-white font-black italic uppercase tracking-wider text-xs md:text-sm">
@@ -59,7 +59,11 @@ const ResultsDashboard: React.FC = () => {
                     {profitPoints.map((pt, i) => (
                         <div key={i} className="flex justify-between items-center text-[10px] md:text-xs font-bold border-b border-white/10 last:border-0 pb-1.5 last:pb-0">
                             <span className="text-gray-400">${pt.unit} {t('resultsDashboard', 'UnitsLabel')}</span>
-                            <span className="font-black text-green-400">${pt.profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            <span className="font-black text-green-400">
+                                {typeof pt.profit === 'number'
+                                    ? `$${pt.profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                    : pt.profit}
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -68,7 +72,11 @@ const ResultsDashboard: React.FC = () => {
     );
 
     return (
-        <div className="w-full max-w-6xl mx-auto p-4 md:p-6 bg-[#050505] rounded-3xl border border-gray-800 shadow-2xl relative overflow-hidden font-sans">
+        <div className="w-full max-w-6xl mx-auto p-4 md:p-6 bg-[#050505] rounded-3xl border border-gray-800 shadow-2xl relative overflow-hidden">
+            {/* Grid pattern texture */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.04)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+            {/* Noise texture overlay */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 mix-blend-overlay pointer-events-none"></div>
             {/* Background Glows (Hidden on mobile for performance) */}
             <div className="hidden md:block absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
             <div className="hidden md:block absolute bottom-0 left-0 w-64 h-64 bg-green-600/10 rounded-full blur-[80px] pointer-events-none"></div>
@@ -88,17 +96,17 @@ const ResultsDashboard: React.FC = () => {
             <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-6 relative z-10">
                 <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
                     <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{t('resultsDashboard', 'Last30Day')}</div>
-                    <div className="text-lg md:text-3xl font-black text-purple-400">124.6</div>
+                    <div className="text-lg md:text-3xl font-black text-purple-400">{t('resultsDashboard', 'Pending')}</div>
                     <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5">{t('resultsDashboard', 'UnitsProfit')}</div>
                 </div>
                 <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
                     <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{t('resultsDashboard', 'YTDUnits')}</div>
-                    <div className="text-lg md:text-3xl font-black text-green-400">+642.3</div>
+                    <div className="text-lg md:text-3xl font-black text-green-400">{t('resultsDashboard', 'Pending')}</div>
                     <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5">{t('resultsDashboard', 'TotalProfit')}</div>
                 </div>
                 <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
                     <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">ALL TIME</div>
-                    <div className="text-lg md:text-3xl font-black text-white">58.2%</div>
+                    <div className="text-lg md:text-3xl font-black text-white">{t('resultsDashboard', 'Pending')}</div>
                     <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5 uppercase">{t('resultsDashboard', 'WinRate')}</div>
                 </div>
             </div>
@@ -120,7 +128,9 @@ const ResultsDashboard: React.FC = () => {
                                     </div>
                                     <div>
                                         <div className="text-[10px] text-gray-400 uppercase mb-0.5">{t('resultsDashboard', 'Profit')}</div>
-                                        <div className="text-2xl font-black text-white">{recap.units} u</div>
+                                        <div className="text-2xl font-black text-white">
+                                            {recap.units === t('resultsDashboard', 'Pending') ? recap.units : `${recap.units} u`}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -169,7 +179,7 @@ const ResultsDashboard: React.FC = () => {
                                 {/* Floating Tag */}
                                 <g transform="translate(300, 30)">
                                     <rect x="-40" y="-35" width="80" height="25" rx="6" fill="#1f2937" stroke="#374151" />
-                                    <text x="0" y="-18" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">+1,612.5 {t('resultsDashboard', 'UnitsLabel')}</text>
+                                    <text x="0" y="-18" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">{t('resultsDashboard', 'Pending')}</text>
                                     <circle cx="0" cy="0" r="4" fill="#fff" stroke="#a855f7" strokeWidth="2" />
                                 </g>
                             </svg>
@@ -205,19 +215,19 @@ const ResultsDashboard: React.FC = () => {
                             <UnitTable
                                 title={t('resultsDashboard', 'Table30Days')}
                                 profitPoints={[
-                                    { unit: 20, profit: 2492 },
-                                    { unit: 50, profit: 6230 },
-                                    { unit: 100, profit: 12460 },
-                                    { unit: 250, profit: 31150 }
+                                    { unit: 20, profit: t('resultsDashboard', 'Pending') },
+                                    { unit: 50, profit: t('resultsDashboard', 'Pending') },
+                                    { unit: 100, profit: t('resultsDashboard', 'Pending') },
+                                    { unit: 250, profit: t('resultsDashboard', 'Pending') }
                                 ]}
                             />
                             <UnitTable
                                 title={t('resultsDashboard', 'TableYTD')}
                                 profitPoints={[
-                                    { unit: 20, profit: 12846 },
-                                    { unit: 50, profit: 32115 },
-                                    { unit: 100, profit: 64230 },
-                                    { unit: 250, profit: 160575 }
+                                    { unit: 20, profit: t('resultsDashboard', 'Pending') },
+                                    { unit: 50, profit: t('resultsDashboard', 'Pending') },
+                                    { unit: 100, profit: t('resultsDashboard', 'Pending') },
+                                    { unit: 250, profit: t('resultsDashboard', 'Pending') }
                                 ]}
                             />
                         </div>

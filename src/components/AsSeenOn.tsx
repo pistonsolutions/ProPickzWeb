@@ -51,7 +51,7 @@ const AsSeenOn: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <div className="py-12 bg-black border-y border-gray-900 overflow-hidden relative">
+        <div id="testimonials" className="py-12 bg-black border-y border-gray-900 overflow-hidden relative">
             {/* Header */}
             <div className="max-w-7xl mx-auto px-4 mb-8 text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-900/20 border border-purple-500/30 text-purple-300 text-xs font-bold uppercase tracking-widest font-heading mb-4">
@@ -100,7 +100,7 @@ const AsSeenOn: React.FC = () => {
                                 </div>
                                 <div>
                                     <div className="text-white font-bold text-sm">{review.username}</div>
-                                    <div className="text-gray-500 text-xs">Verified Member</div>
+                                    <div className="text-gray-500 text-xs text-green-400">{t('testimonials', 'Verified')}</div>
                                 </div>
                             </div>
                             <p className="text-gray-300 text-sm whitespace-normal mb-3 leading-relaxed">"{review.review}"</p>
@@ -124,7 +124,7 @@ const AsSeenOn: React.FC = () => {
                                 </div>
                                 <div>
                                     <div className="text-white font-bold text-sm">{review.username}</div>
-                                    <div className="text-gray-500 text-xs">Verified Member</div>
+                                    <div className="text-gray-500 text-xs text-green-400">{t('testimonials', 'Verified')}</div>
                                 </div>
                             </div>
                             <p className="text-gray-300 text-sm whitespace-normal mb-3 leading-relaxed">"{review.review}"</p>

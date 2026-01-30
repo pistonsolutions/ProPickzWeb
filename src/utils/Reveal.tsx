@@ -3,9 +3,19 @@ import React, { useEffect, useRef, useState } from 'react';
 const Reveal: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        // Use IntersectionObserver for both mobile and desktop
+        // Check if mobile on mount
+        const mobileCheck = window.innerWidth < 768;
+        setIsMobile(mobileCheck);
+
+        if (mobileCheck) {
+            setIsVisible(true);
+            return;
+        }
+
+        // Use IntersectionObserver only for desktop
         const observer = new IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
                 setIsVisible(true);
@@ -20,16 +30,16 @@ const Reveal: React.FC<{ children: React.ReactNode; className?: string; delay?: 
         return () => observer.disconnect();
     }, []);
 
+    const style = isMobile ? {} : { transitionDelay: `${delay}ms` };
+
     return (
         <div
             ref={ref}
-            className={`${className} transition-all duration-700 ease-out transform ${isVisible
+            className={`${className} ${!isMobile ? 'transition-all duration-700 ease-out transform' : ''} ${isVisible
                 ? 'opacity-100 translate-y-0'
-                : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-12' /* Mobile: Always visible. Desktop: Hidden initially */
+                : 'opacity-0 translate-y-12'
                 }`}
-            style={{
-                transitionDelay: `${delay}ms`
-            }}
+            style={style}
         >
             {children}
         </div>

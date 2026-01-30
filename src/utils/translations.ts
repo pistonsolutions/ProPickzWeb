@@ -594,7 +594,8 @@ export const translations = {
             TableYTD: "A _ Unit Bettor Is Up: YTD",
             HybridModel: "Hybrid In-House Model",
             SafeParlay: "Safe Parlay",
-            FreePlay: "Free Play"
+            FreePlay: "Free Play",
+            Pending: "Pending"
         },
         communityBenefits: {
             LotteryTitle: "The Propickz Lottery",
@@ -635,7 +636,7 @@ export const translations = {
             Trust: "Pourquoi nous faire confiance",
             BettingAcademy: "Académie de paris",
             FAQ: "FAQ",
-            Legal: "Légal",
+            Legal: "Legal",
             Calculators: "Calculatrices",
             JoinDiscord: "Rejoindre Discord",
             ViewPricing: "Voir les tarifs",
@@ -1201,7 +1202,8 @@ export const translations = {
             TableYTD: "Un parieur de _ Unité est en hausse : YTD",
             HybridModel: "Modèle Hybride Interne",
             SafeParlay: "Parlay Sécurisé",
-            FreePlay: "Jeu Gratuit"
+            FreePlay: "Jeu Gratuit",
+            Pending: "En attente"
         },
         communityBenefits: {
             LotteryTitle: "La Loterie Propickz",
@@ -1809,7 +1811,8 @@ export const translations = {
             TableYTD: "Un apostador de _ Unidad ha subido: YTD",
             HybridModel: "Modelo Híbrido Interno",
             SafeParlay: "Parlay Seguro",
-            FreePlay: "Jugada Gratis"
+            FreePlay: "Jugada Gratis",
+            Pending: "Pendiente"
         },
         communityBenefits: {
             LotteryTitle: "La Lotería Propickz",

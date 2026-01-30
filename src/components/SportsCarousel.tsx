@@ -27,7 +27,9 @@ const SportsCarousel: React.FC = () => {
         >
             {/* Glowing Background Effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 to-transparent opacity-50 group-hover/card:opacity-100 transition-opacity"></div>
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+            {/* Grid pattern */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.06)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-40 mix-blend-overlay pointer-events-none"></div>
 
             {/* Text */}
             <h3 className="text-2xl font-black text-white tracking-tight relative z-10 group-hover/card:text-purple-100 transition-colors drop-shadow-md">

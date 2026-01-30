@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        heading: ['Outfit', 'sans-serif'],
+        sans: ['M PLUS Code Latin', 'monospace'],
+        heading: ['M PLUS Code Latin', 'monospace'],
       },
       animation: {
         'marquee': 'marquee 60s linear infinite',

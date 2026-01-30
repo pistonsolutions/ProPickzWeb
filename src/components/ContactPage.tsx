@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, MessageSquare, Send, CheckCircle, MapPin } from 'lucide-react';
+import { Mail, MessageSquare, Send, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const ContactPage: React.FC = () => {
@@ -52,15 +52,6 @@ const ContactPage: React.FC = () => {
                                     <div>
                                         <div className="text-sm text-gray-500 font-bold uppercase">{t('contact', 'EmailLabel')}</div>
                                         <div className="text-white">support@propickz.com</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400">
-                                        <MapPin size={24} />
-                                    </div>
-                                    <div>
-                                        <div className="text-sm text-gray-500 font-bold uppercase">{t('contact', 'LocationLabel')}</div>
-                                        <div className="text-white">{t('contact', 'LocationValue')}</div>
                                     </div>
                                 </div>
                             </div>

@@ -226,85 +226,145 @@ const ProfitGraph: React.FC<ProfitGraphProps> = ({ bankroll }) => {
 
 const ROICalculator: React.FC = () => {
   const [unitSize, setUnitSize] = useState<number>(50);
-  // Assume average +25 units per month
+  // Assume average +24.5 units per month
   const monthlyProfit = (unitSize * 24.5).toFixed(0);
   const yearlyPotential = (unitSize * 24.5 * 12).toFixed(0);
   const { t } = useLanguage();
 
+  // Calculate slider percentage for gradient fill
+  const sliderPercent = ((unitSize - 10) / (500 - 10)) * 100;
+
   return (
-    <div className="bg-gradient-to-br from-purple-900/20 via-[#0f1014] to-cyan-900/20 border-2 border-purple-500/40 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-[0_0_60px_rgba(168,85,247,0.4)] relative overflow-hidden group hover:border-purple-400/60 hover:shadow-[0_0_80px_rgba(168,85,247,0.6)] transition-all duration-500 max-w-sm md:max-w-none mx-auto">
-      {/* Vibrant Animated Background Effects */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full blur-[120px] group-hover:scale-110 transition-all duration-700 pointer-events-none animate-pulse-slow"></div>
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-green-500/25 to-emerald-400/25 rounded-full blur-[100px] group-hover:scale-110 transition-all duration-700 pointer-events-none animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-[90px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+    <div className="bg-[#12141a] border border-purple-500/30 p-6 md:p-8 rounded-2xl shadow-[0_0_40px_rgba(168,85,247,0.15)] relative overflow-hidden max-w-md mx-auto">
+      {/* Grid pattern texture */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.06)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+      {/* Noise texture overlay */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-40 mix-blend-overlay pointer-events-none"></div>
+      {/* Subtle purple glow in background */}
+      <div className="absolute top-0 right-0 w-48 h-48 bg-purple-600/10 rounded-full blur-[80px] pointer-events-none"></div>
 
       <div className="relative z-10">
-        <h3 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]">{t('roi', 'Title')}</h3>
-        <p className="text-purple-200/80 mb-8 text-sm font-semibold">{t('roi', 'Subtitle')}</p>
+        {/* Header */}
+        <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{t('roi', 'Title')}</h3>
+        <p className="text-gray-500 mb-8 text-sm">{t('roi', 'Subtitle')}</p>
 
-        <div className="mb-8">
-          <div className="flex justify-between items-end mb-4">
+        {/* Unit Size Section */}
+        <div className="mb-6">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="text-purple-300 font-bold text-xs uppercase tracking-widest font-heading mb-1">
+              <div className="text-gray-400 font-bold text-xs uppercase tracking-wider mb-1">
                 {t('roi', 'UnitSize')}
               </div>
-              <div className="text-xs text-cyan-400/80">
+              <div className="text-xs text-gray-600">
                 {t('roi', 'UnitDefinition')}
               </div>
             </div>
-            <div className="text-4xl font-black bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(251,191,36,0.6)] animate-pulse">
+            <div className="text-4xl font-black text-white">
               ${unitSize}
             </div>
           </div>
 
-          <input
-            type="range"
-            min="10"
-            max="500"
-            step="10"
-            value={unitSize}
-            onChange={(e) => setUnitSize(parseInt(e.target.value))}
-            className="w-full h-4 bg-gradient-to-r from-purple-900/50 via-pink-900/50 to-purple-900/50 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all shadow-[0_0_30px_rgba(168,85,247,0.5)] hover:shadow-[0_0_40px_rgba(168,85,247,0.7)] border border-purple-500/30"
-            style={{
-              background: 'linear-gradient(to right, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.3), rgba(147, 51, 234, 0.3))'
-            }}
-          />
-          <div className="flex justify-between text-xs text-purple-300 mt-3 font-bold">
+          {/* Custom Slider */}
+          <div className="relative">
+            <input
+              type="range"
+              min="10"
+              max="500"
+              step="10"
+              value={unitSize}
+              onChange={(e) => setUnitSize(parseInt(e.target.value))}
+              className="w-full h-2 rounded-full appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #22c55e ${sliderPercent}%, #2a2d35 ${sliderPercent}%)`
+              }}
+            />
+            <style>{`
+              input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: #a855f7;
+                cursor: pointer;
+                border: 3px solid #c084fc;
+                box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+              }
+              input[type="range"]::-moz-range-thumb {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: #a855f7;
+                cursor: pointer;
+                border: 3px solid #c084fc;
+                box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+              }
+            `}</style>
+          </div>
+          <div className="flex justify-between text-xs text-gray-600 mt-2">
             <span>{t('roi', 'Min')}</span>
             <span>{t('roi', 'Max')}</span>
           </div>
         </div>
 
-        <div className="mb-8 p-4 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-2xl border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
-          <ProfitGraph bankroll={unitSize * 100} />
-          {/* Scaled for graph visual */}
+        {/* Line Chart with Glow */}
+        <div className="mb-8 h-40 relative">
+          <svg viewBox="0 0 400 120" className="w-full h-full" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="chartLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#a855f7" />
+                <stop offset="100%" stopColor="#a855f7" />
+              </linearGradient>
+              <linearGradient id="chartAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#a855f7" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Area fill */}
+            <path
+              d="M20,100 C80,98 140,95 200,85 Q280,65 340,35 Q370,20 380,15 L380,120 L20,120 Z"
+              fill="url(#chartAreaGradient)"
+            />
+            {/* Line with glow */}
+            <path
+              d="M20,100 C80,98 140,95 200,85 Q280,65 340,35 Q370,20 380,15"
+              fill="none"
+              stroke="url(#chartLineGradient)"
+              strokeWidth="3"
+              filter="url(#glow)"
+              vectorEffect="non-scaling-stroke"
+            />
+            {/* End dot */}
+            <circle cx="380" cy="15" r="5" fill="white" filter="url(#glow)" />
+          </svg>
         </div>
 
+        {/* Profit Cards */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-green-600/30 via-emerald-600/20 to-green-700/30 p-6 rounded-2xl border-2 border-green-400/50 relative overflow-hidden group/card shadow-[0_0_30px_rgba(34,197,94,0.4)] hover:shadow-[0_0_50px_rgba(34,197,94,0.6)] transition-all duration-300 hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-400/20 group-hover/card:from-green-400/30 group-hover/card:to-emerald-400/30 transition-colors"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-green-400/30 rounded-full blur-[60px] group-hover/card:scale-150 transition-transform duration-500"></div>
-            <div className="relative z-10">
-              <div className="text-green-300 text-xs font-black uppercase tracking-wider mb-2 drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">{t('roi', 'MonthlyProfit')}</div>
-              <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-green-300 via-emerald-200 to-green-300 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(34,197,94,0.8)]">
-                ${parseInt(monthlyProfit).toLocaleString()}
-              </div>
+          <div className="bg-[#1a1d24] p-5 rounded-xl border border-gray-700/50">
+            <div className="text-green-400 text-[11px] font-bold uppercase tracking-wider mb-2">{t('roi', 'MonthlyProfit')}</div>
+            <div className="text-3xl md:text-4xl font-black text-green-400">
+              ${parseInt(monthlyProfit).toLocaleString()}
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-600/30 via-pink-600/20 to-purple-700/30 p-6 rounded-2xl border-2 border-purple-400/50 relative overflow-hidden group/card shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] transition-all duration-300 hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 group-hover/card:from-purple-400/30 group-hover/card:to-pink-400/30 transition-colors"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-400/30 rounded-full blur-[60px] group-hover/card:scale-150 transition-transform duration-500"></div>
-            <div className="relative z-10">
-              <div className="text-purple-300 text-xs font-black uppercase tracking-wider mb-2 drop-shadow-[0_0_10px_rgba(168,85,247,0.8)]">{t('roi', 'YearlyPotential')}</div>
-              <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-purple-200 via-pink-200 to-purple-200 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(168,85,247,0.8)]">
-                ${parseInt(yearlyPotential).toLocaleString()}
-              </div>
+          <div className="bg-[#1a1d24] p-5 rounded-xl border border-gray-700/50">
+            <div className="text-purple-400 text-[11px] font-bold uppercase tracking-wider mb-2">{t('roi', 'YearlyPotential')}</div>
+            <div className="text-3xl md:text-4xl font-black text-white">
+              ${parseInt(yearlyPotential).toLocaleString()}
             </div>
           </div>
         </div>
 
-        <p className="text-[10px] text-purple-400/60 mt-6 text-center italic border-t border-purple-500/30 pt-4">
+        {/* Disclaimer */}
+        <p className="text-[11px] text-gray-600 mt-6 text-center italic border-t border-gray-800 pt-4">
           {t('roi', 'Disclaimer')}
         </p>
       </div>
@@ -1454,8 +1514,9 @@ const PricingPage: React.FC = () => {
 // --- 9. HOW IT WORKS PAGE COMPONENT ---
 
 const HowItWorksPage: React.FC = () => {
-
   const { t } = useLanguage();
+
+  // NO JAVASCRIPT LOGIC NEEDED. PURE CSS PERFORMANCE.
 
   return (
     <div className="min-h-screen bg-matt-black pt-24 pb-20 relative overflow-hidden">
@@ -1463,13 +1524,12 @@ const HowItWorksPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
 
+        {/* Header */}
 
-
-        {/* ORIGINAL HERO (Pushed Down) */}
-        <div className="text-center mb-24 pt-12 border-t border-gray-800/50">
+        <div className="text-center mb-24 pt-12">
           <Reveal>
-            <h1 className="text-3xl md:text-5xl font-black text-white mb-6 text-gray-400">
-              {t('engineSection', 'Title')} <span className="text-white">{t('engineSection', 'TitleHighlight')}</span>
+            <h1 className="text-3xl md:text-5xl font-black text-white mb-6">
+              {t('engineSection', 'Title')} <span className="text-purple-500">{t('engineSection', 'TitleHighlight')}</span>
             </h1>
           </Reveal>
           <Reveal delay={200}>
@@ -1479,17 +1539,14 @@ const HowItWorksPage: React.FC = () => {
           </Reveal>
         </div>
 
-        {/* Steps */}
+        {/* Steps Container */}
         <div className="space-y-16 md:space-y-32 relative">
-          {/* Connecting Line - Left on mobile, Center on desktop */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent block"></div>
 
-          {/* Step 1 */}
+
+          {/* --- STEP 1 --- */}
           <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
-            {/* Text Side - Always First on Mobile */}
+            {/* Text Side */}
             <div className="md:text-right order-1 md:order-1 relative">
-              {/* Mobile Dot */}
-              <div className="absolute -left-[30px] top-6 w-3 h-3 bg-blue-500 rounded-full md:hidden shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
 
               <div className="flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-0 mb-4 md:mb-0">
                 <div className="inline-block p-2 md:p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 md:mb-4 shrink-0">
@@ -1501,76 +1558,28 @@ const HowItWorksPage: React.FC = () => {
                 {t('engineSection', 'Step1Desc')}
               </p>
             </div>
-
-            {/* Visual Side - Order 2 on Mobile */}
+            {/* Visual Side */}
             <div className="order-2 md:order-2 relative">
-              <div className="absolute left-0 top-1/2 -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
-              <div className="bg-gray-900/50 border border-gray-800 p-4 md:p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden max-w-[320px] mx-auto md:max-w-none md:mx-0">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-slide-in-left"></div>
-                <div className="flex items-center justify-between mb-4 border-b border-gray-800 pb-2">
-                  <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">{t('engineSection', 'LiveMarketFeed')}</span>
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-xs text-gray-500">{t('engineSection', 'Scanning')}</span>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 rounded bg-gray-800/30 opacity-50">
-                    <span className="text-gray-400 text-xs md:text-sm">NBA: LAL vs GSW</span>
-                    <span className="text-gray-600 text-[10px] md:text-xs">{t('engineSection', 'Checking')}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-gray-800/30 opacity-50">
-                    <span className="text-gray-400 text-xs md:text-sm">NFL: KC vs BUF</span>
-                    <span className="text-gray-600 text-[10px] md:text-xs">{t('engineSection', 'Checking')}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded bg-blue-500/10 border border-blue-500/30 transform scale-100 md:scale-105 transition-all">
-                    <div className="flex flex-col">
-                      <span className="text-white font-bold text-xs md:text-sm">LeBron James</span>
-                      <span className="text-blue-300 text-[10px] md:text-xs">{t('engineSection', 'OverPoints').replace('{points}', '25.5')}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="block text-white font-bold text-sm">-110</span>
-                      <span className="text-green-400 text-[10px] md:text-xs font-bold">{t('engineSection', 'DiscrepancyFound')}</span>
-                    </div>
-                  </div>
-                </div>
+
+              <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm max-w-[320px] mx-auto md:max-w-none md:mx-0">
+                <div className="text-blue-400 font-bold text-sm mb-2">{t('engineSection', 'LiveMarketFeed')}</div>
+                <div className="text-gray-400 text-xs">Scanning 24/7...</div>
               </div>
             </div>
           </Reveal>
 
-          {/* Step 2 */}
+          {/* --- STEP 2 --- */}
           <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
-            {/* Visual Side - Order 2 on Mobile */}
+            {/* Visual Side */}
             <div className="order-2 relative">
-              <div className="absolute right-0 top-1/2 translate-x-1/2 w-4 h-4 bg-purple-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(168,85,247,0.5)]"></div>
-              <div className="bg-gray-900/50 border border-gray-800 p-6 md:p-8 rounded-3xl backdrop-blur-sm max-w-[320px] mx-auto md:max-w-none md:mx-0">
-                <div className="font-mono text-xs text-purple-300 mb-4 text-center">&gt;&gt; {t('engineSection', 'HybridActive')}</div>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="text-center">
-                      <div className="text-gray-500 text-[10px] md:text-xs mb-1">{t('engineSection', 'AiProjection')}</div>
-                      <div className="text-base md:text-lg font-bold text-white">Lakers -4</div>
-                      <div className="text-[10px] md:text-xs text-gray-600">{t('engineSection', 'DataOnly')}</div>
-                    </div>
-                    <div className="h-px w-8 md:w-12 bg-gray-700"></div>
-                    <div className="text-center">
-                      <div className="text-gray-500 text-[10px] md:text-xs mb-1">{t('engineSection', 'AnalystAdj')}</div>
-                      <div className="text-base md:text-lg font-bold text-blue-400">{t('engineSection', 'AdjValue')}</div>
-                      <div className="text-[10px] md:text-xs text-gray-600">{t('engineSection', 'InjuryFactor')}</div>
-                    </div>
-                  </div>
-                  <div className="bg-purple-500/10 border border-purple-500/30 p-3 rounded-xl text-center">
-                    <div className="text-purple-400 font-bold text-xs md:text-sm">{t('engineSection', 'FinalVerdict')}: LAKERS -5.5</div>
-                    <div className="text-gray-400 text-[10px] md:text-xs mt-1">{t('engineSection', 'ConfirmedBy')}</div>
-                  </div>
-                </div>
+
+              <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm max-w-[320px] mx-auto md:max-w-none md:mx-0">
+                <div className="text-purple-400 font-bold text-sm mb-2">{t('engineSection', 'HybridActive')}</div>
+                <div className="text-gray-400 text-xs">Human + AI Analysis</div>
               </div>
             </div>
-
-            {/* Text Side - Always First on Mobile */}
+            {/* Text Side */}
             <div className="order-1 md:order-2 relative">
-              {/* Mobile Dot */}
-              <div className="absolute -left-[30px] top-6 w-3 h-3 bg-purple-500 rounded-full md:hidden shadow-[0_0_15px_rgba(168,85,247,0.5)]"></div>
 
               <div className="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-4 md:mb-0">
                 <div className="inline-block p-2 md:p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 md:mb-4 shrink-0">
@@ -1584,12 +1593,10 @@ const HowItWorksPage: React.FC = () => {
             </div>
           </Reveal>
 
-          {/* Step 3 */}
+          {/* --- STEP 3 --- */}
           <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
-            {/* Text Side - Always First on Mobile */}
+            {/* Text Side */}
             <div className="md:text-right order-1 md:order-1 relative">
-              {/* Mobile Dot */}
-              <div className="absolute -left-[30px] top-6 w-3 h-3 bg-green-500 rounded-full md:hidden shadow-[0_0_15px_rgba(34,197,94,0.5)]"></div>
 
               <div className="flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-0 mb-4 md:mb-0">
                 <div className="inline-block p-2 md:p-3 rounded-2xl bg-green-500/10 border border-green-500/30 md:mb-4 shrink-0">
@@ -1601,37 +1608,21 @@ const HowItWorksPage: React.FC = () => {
                 {t('engineSection', 'Step3Desc')}
               </p>
             </div>
-
-            {/* Visual Side - Order 2 on Mobile */}
+            {/* Visual Side */}
             <div className="order-2 md:order-2 relative">
-              <div className="absolute left-0 top-1/2 -translate-x-1/2 w-4 h-4 bg-green-500 rounded-full hidden md:block shadow-[0_0_20px_rgba(34,197,94,0.5)]"></div>
-              <div className="bg-gray-900/50 border border-gray-800 p-6 md:p-6 rounded-3xl backdrop-blur-sm max-w-[320px] mx-auto md:max-w-sm md:mx-0">
-                <div className="flex items-center gap-3 mb-4">
-                  <img src={pIcon} alt="Bot" className="w-10 h-10 rounded-full object-cover" />
-                  <div>
-                    <div className="text-white font-bold text-sm">{t('engineSection', 'BotName')}</div>
-                    <div className="text-gray-500 text-xs">{t('engineSection', 'BotTime')}</div>
-                  </div>
-                </div>
-                <div className="bg-gray-800/50 p-3 rounded-lg border-l-4 border-green-500 mb-2">
-                  <div className="text-green-400 font-bold text-sm mb-1">💎 {t('engineSection', 'WhalePlay')}</div>
-                  <div className="text-white text-sm">LeBron James Over 25.5 Pts</div>
-                  <div className="text-gray-400 text-xs mt-1">{t('engineSection', 'OddsExample')}</div>
-                  <div className="text-purple-400 text-xs font-bold mt-1">{t('engineSection', 'HybridScore')}</div>
-                </div>
+
+              <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm max-w-[320px] mx-auto md:max-w-sm md:mx-0">
+                <div className="text-green-400 font-bold text-sm mb-2">{t('engineSection', 'WhalePlay')}</div>
+                <div className="text-gray-400 text-xs">Instant Notification</div>
               </div>
             </div>
           </Reveal>
+
         </div>
-
-        {/* Trust Section */}
-
-
       </div>
     </div>
   );
 };
-
 // --- 10. SUPPORTED SPORTS PAGE COMPONENT ---
 
 const SupportedSportsPage: React.FC = () => {
@@ -2236,7 +2227,7 @@ const App: React.FC = () => {
 
   return (
     <LanguageProvider>
-      <div className="min-h-screen bg-black text-white font-sans selection:bg-purple-500/30">
+      <div className="min-h-screen bg-black text-white selection:bg-purple-500/30">
         <Navbar setView={setView} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} currentView={view} />
 
         {/* Main Content */}
