@@ -38,15 +38,15 @@ const FeatureTiles: React.FC = () => {
                         style={{
                             width: '170px',
                             height: '360px',
-                            background: 'linear-gradient(145deg, #2c2c2e 0%, #1c1c1e 50%, #2c2c2e 100%)',
+                            background: 'transparent', // Removed gradient frame background
                             padding: '3px',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.1), inset 0 1px 2px rgba(255,255,255,0.05)'
+                            // Removed box shadow to avoid double frame
                         }}
                     >
                         {/* Screen */}
                         <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#1a1a1e]">
                             <img
-                                src="/assets/discord-channels.png"
+                                src="/assets/phone2nd_contour.png"
                                 alt="Discord Channels"
                                 className="w-full h-full object-cover"
                                 style={{ objectPosition: 'center top' }}
@@ -121,27 +121,24 @@ const FeatureTiles: React.FC = () => {
                     <p className="text-sm text-emerald-200/70">{t('featureTiles', 'Widget4Desc')}</p>
                 </div>
 
-                <div className="flex-1 flex items-center justify-center translate-y-4">
+                <div className="flex-1 flex items-center justify-center">
                     {/* Realistic iPhone Frame */}
+                    {/* Full Phone Image */}
                     <div
                         className="relative rounded-[2.5rem] overflow-hidden"
                         style={{
                             width: '170px',
                             height: '360px',
-                            background: 'linear-gradient(145deg, #2c2c2e 0%, #1c1c1e 50%, #2c2c2e 100%)',
+                            background: 'transparent',
                             padding: '3px',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.1), inset 0 1px 2px rgba(255,255,255,0.05)'
                         }}
                     >
-                        {/* Screen */}
-                        <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#1a1a1e]">
-                            <img
-                                src="/assets/education-screen.png"
-                                alt="ProPickz Education Channels"
-                                className="w-full h-full object-cover"
-                                style={{ objectPosition: 'center top' }}
-                            />
-                        </div>
+                        <img
+                            src="/assets/croppedphone_contour.png"
+                            alt="ProPickz Ecosystem"
+                            className="w-full h-full object-cover"
+                            style={{ objectPosition: 'center top' }}
+                        />
                     </div>
                 </div>
             </div>

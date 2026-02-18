@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // Import the hero phone image
-import heroPhoneImage from '../assets/hero_phone.png';
+import heroPhoneImage from '../assets/hero_phone_v8_final.png';
 
 const Hero3DPhone: React.FC = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -27,9 +27,6 @@ const Hero3DPhone: React.FC = () => {
                 className="hero-phone w-auto h-[480px] md:h-[650px] object-contain z-10 transition-transform duration-500 hover:scale-[1.02] drop-shadow-2xl"
                 draggable={false}
             />
-
-            {/* Premium Blue Glow Effect */}
-            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[700px] bg-gradient-to-br from-blue-600/25 via-indigo-500/20 to-purple-500/15 blur-[150px] rounded-full"></div>
         </div>
     );
 };
