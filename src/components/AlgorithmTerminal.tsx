@@ -27,17 +27,22 @@ const AlgorithmTerminal: React.FC = () => {
     const [currentLine, setCurrentLine] = useState(0);
     const [currentChar, setCurrentChar] = useState(0);
     const [isTyping] = useState(true);
+    const [isFadingOut, setIsFadingOut] = useState(false);
 
     useEffect(() => {
         if (!isTyping) return;
 
         if (currentLine >= codeLines.length) {
-            // Reset and loop
+            // Fade out then reset
             setTimeout(() => {
-                setDisplayedLines([]);
-                setCurrentLine(0);
-                setCurrentChar(0);
-            }, 3000);
+                setIsFadingOut(true);
+                setTimeout(() => {
+                    setDisplayedLines([]);
+                    setCurrentLine(0);
+                    setCurrentChar(0);
+                    setIsFadingOut(false);
+                }, 600);
+            }, 2000);
             return;
         }
 
@@ -115,7 +120,7 @@ const AlgorithmTerminal: React.FC = () => {
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
             </div>
-            <div className="p-3 text-gray-300 space-y-1 overflow-hidden h-[280px]">
+            <div className={`p-3 text-gray-300 space-y-1 overflow-hidden h-[280px] transition-opacity duration-500 ${isFadingOut ? 'opacity-0' : 'opacity-100'}`}>
                 {displayedLines.map((line, index) => renderLine(line, index))}
                 <span className="text-green-500 animate-pulse">_</span>
             </div>

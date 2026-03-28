@@ -8,7 +8,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['M PLUS Code Latin', 'monospace'],
-        heading: ['M PLUS Code Latin', 'monospace'],
+        heading: ['Space Grotesk', 'sans-serif'],
+        nav: ['DM Sans', 'sans-serif'],
       },
       animation: {
         'marquee': 'marquee 60s linear infinite',

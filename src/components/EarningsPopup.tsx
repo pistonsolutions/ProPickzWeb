@@ -75,8 +75,6 @@ const EarningsPopup: React.FC = () => {
 
             {/* Popup Content */}
             <div className="relative bg-[#0f0f11] border border-purple-500/30 rounded-3xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(168,85,247,0.2)] animate-fade-in-up scale-100 transform transition-all overflow-hidden">
-                {/* Textured matte background overlay */}
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-40 pointer-events-none"></div>
 
                 <button
                     onClick={() => setIsVisible(false)}

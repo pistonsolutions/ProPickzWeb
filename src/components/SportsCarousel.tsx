@@ -22,14 +22,11 @@ const SportsCarousel: React.FC = () => {
 
     const SportCard = ({ sport, isMobile = false }: { sport: { name: string }, isMobile?: boolean }) => (
         <div
-            className={`flex-shrink-0 w-[240px] md:w-[200px] h-[120px] bg-[#0f1014] border border-purple-500/30 rounded-2xl relative overflow-hidden group/card shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:border-purple-400/60 transition-all duration-300 flex items-center justify-center transform hover:scale-105 ${isMobile ? 'snap-center' : ''
+            className={`flex-shrink-0 w-[240px] md:w-[200px] h-[120px] bg-transparent border border-purple-500/20 rounded-2xl relative overflow-hidden group/card hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] hover:border-purple-400/50 transition-all duration-300 flex items-center justify-center transform hover:scale-105 ${isMobile ? 'snap-center' : ''
                 }`}
         >
             {/* Glowing Background Effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 to-transparent opacity-50 group-hover/card:opacity-100 transition-opacity"></div>
-            {/* Grid pattern */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.06)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-40 mix-blend-overlay pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
 
             {/* Text */}
             <h3 className="text-2xl font-black text-white tracking-tight relative z-10 group-hover/card:text-purple-100 transition-colors drop-shadow-md">

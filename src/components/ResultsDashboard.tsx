@@ -73,10 +73,6 @@ const ResultsDashboard: React.FC = () => {
 
     return (
         <div className="w-full max-w-6xl mx-auto p-4 md:p-6 bg-[#050505] rounded-3xl border border-gray-800 shadow-2xl relative overflow-hidden">
-            {/* Grid pattern texture */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.04)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-            {/* Noise texture overlay */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 mix-blend-overlay pointer-events-none"></div>
             {/* Background Glows (Hidden on mobile for performance) */}
             <div className="hidden md:block absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
             <div className="hidden md:block absolute bottom-0 left-0 w-64 h-64 bg-green-600/10 rounded-full blur-[80px] pointer-events-none"></div>
