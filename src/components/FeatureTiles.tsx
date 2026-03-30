@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Gift } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Gift } from 'lucide-react';
 import { Reveal } from '../utils/Reveal';
 import { useLanguage } from '../contexts/LanguageContext';
 import AlgorithmTerminal from './AlgorithmTerminal';
@@ -7,18 +7,24 @@ import AlgorithmTerminal from './AlgorithmTerminal';
 const FeatureTiles: React.FC = () => {
     const { t } = useLanguage();
     const sectionRef = useRef<HTMLDivElement>(null);
+    const sliderRef = useRef<HTMLDivElement>(null);
 
 
     const widgets = [
         // Widget 1: Inside the Winning Room
-        <div key="widget1" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-[#0a0a0a] p-4 relative overflow-hidden border border-white/10 shadow-[inset_0_0_30px_rgba(0,0,0,0.5),0_0_40px_rgba(139,92,246,0.1)] group h-[400px] md:h-full md:min-h-[400px] hover:shadow-[0_0_60px_rgba(139,92,246,0.2)] transition-all duration-300">
-            {/* Subtle glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+        <div key="widget1" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-gradient-to-br from-[#7c3aed] via-[#6d28d9] to-[#5b21b6] p-4 relative overflow-hidden border border-purple-400/30 shadow-[inset_0_0_30px_rgba(0,0,0,0.5),0_0_40px_rgba(139,92,246,0.15)] group h-[440px] md:h-full md:min-h-[400px] hover:shadow-[0_0_60px_rgba(139,92,246,0.25)] transition-all duration-300">
+            {/* Noise texture overlay */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-60 mix-blend-overlay pointer-events-none"></div>
+            {/* Grid pattern */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none"></div>
+            {/* Glow effects */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-400/20 rounded-full blur-[30px] md:blur-[80px] pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-violet-500/15 rounded-full blur-[20px] md:blur-[60px] pointer-events-none"></div>
 
             {/* Live Tracking Badge - Absolute positioned */}
             <div className="absolute top-4 left-4 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-900/40 border border-cyan-500/50 text-cyan-300 text-[10px] font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-                ONLY WITH PROPICKZ
+                LIVE TRACKING
             </div>
 
             <div className="relative z-10 flex flex-col h-full pt-10">
@@ -26,25 +32,39 @@ const FeatureTiles: React.FC = () => {
                     <h3 className="text-base font-bold text-white">{t('featureTiles', 'Widget1Title')}</h3>
                 </div>
 
-                <div className="flex-1 flex items-center justify-center overflow-hidden">
-                    <img
-                        src="/assets/phone2nd_contour.png"
-                        alt="Discord Channels"
-                        className="w-[300px] h-auto object-contain -mt-2"
-                    />
+                <div className="flex-1 flex items-center justify-center">
+                    {/* Realistic iPhone Frame */}
+                    <div
+                        className="relative rounded-[2.5rem] overflow-hidden w-[150px] h-[320px] md:w-[170px] md:h-[360px]"
+                        style={{
+                            background: 'transparent', // Removed gradient frame background
+                            padding: '3px',
+                            // Removed box shadow to avoid double frame
+                        }}
+                    >
+                        {/* Screen */}
+                        <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#1a1a1e]">
+                            <img
+                                src="/assets/phone2nd_contour.png"
+                                alt="Discord Channels"
+                                className="w-full h-full object-cover"
+                                style={{ objectPosition: 'center top' }}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>,
 
         // Widget 2: Exclusive Giveaways
         <div key="widget2" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-gradient-to-br from-amber-600 to-yellow-700 p-6 relative overflow-hidden border border-white/20 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] group h-[400px] md:h-full md:min-h-[400px] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] transition-all">
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-25 mix-blend-overlay pointer-events-none"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-yellow-300/20 rounded-full blur-[40px] pointer-events-none animate-pulse"></div>
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-60 mix-blend-overlay pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-yellow-300/30 rounded-full blur-[20px] md:blur-[60px] pointer-events-none animate-pulse"></div>
 
             {/* Live Tracking Badge - Absolute positioned */}
             <div className="absolute top-4 left-4 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-900/40 border border-cyan-500/50 text-cyan-300 text-[10px] font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-                ONLY WITH PROPICKZ
+                LIVE TRACKING
             </div>
 
             <div className="relative z-10 flex flex-col items-center justify-center h-full text-center">
@@ -65,7 +85,7 @@ const FeatureTiles: React.FC = () => {
             {/* Live Tracking Badge - Absolute positioned */}
             <div className="absolute top-4 left-4 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-900/40 border border-cyan-500/50 text-cyan-300 text-[10px] font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-                ONLY WITH PROPICKZ
+                LIVE TRACKING
             </div>
 
             <div className="relative z-10 flex flex-col h-full pt-10">
@@ -79,9 +99,11 @@ const FeatureTiles: React.FC = () => {
 
 
         // Widget 4: Betting Academy - Discord Community
-        <div key="widget4" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-gradient-to-br from-[#064e3b] via-[#0d4a3a] to-[#0f2e2a] p-4 relative overflow-hidden border border-emerald-500/30 shadow-[inset_0_0_30px_rgba(0,0,0,0.6),0_0_40px_rgba(16,185,129,0.15)] group h-[400px] md:h-full md:min-h-[400px] hover:shadow-[0_0_60px_rgba(16,185,129,0.25)] transition-all duration-300">
-            {/* Subtle blueprint grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(16,185,129,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(16,185,129,0.05)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+        <div key="widget4" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-gradient-to-br from-[#064e3b] via-[#0d4a3a] to-[#0f2e2a] p-6 md:p-8 relative overflow-hidden border border-emerald-500/30 shadow-[inset_0_0_30px_rgba(0,0,0,0.6),0_0_40px_rgba(16,185,129,0.15)] group h-[500px] md:h-full md:min-h-[500px] hover:shadow-[0_0_60px_rgba(16,185,129,0.25)] transition-all duration-300">
+            {/* Noise texture overlay */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-60 mix-blend-overlay pointer-events-none"></div>
+            {/* Diagonal lines pattern */}
+            <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(16,185,129,0.03)_10px,rgba(16,185,129,0.03)_20px)] pointer-events-none"></div>
             {/* Glow effect */}
             <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-400/15 rounded-full blur-[30px] md:blur-[80px] pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-teal-500/10 rounded-full blur-[20px] md:blur-[60px] pointer-events-none"></div>
@@ -89,30 +111,53 @@ const FeatureTiles: React.FC = () => {
             {/* Live Tracking Badge - Absolute positioned */}
             <div className="absolute top-4 left-4 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-900/40 border border-cyan-500/50 text-cyan-300 text-[10px] font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-                ONLY WITH PROPICKZ
+                LIVE TRACKING
             </div>
 
-            <div className="relative z-10 flex flex-col h-full pt-10">
-                <div className="mb-1">
-                    <h3 className="text-base font-bold text-white">{t('featureTiles', 'Widget4Title')}</h3>
+            <div className="relative z-10 flex flex-col h-full pt-8 md:pt-10">
+                <div className="mb-4">
+                    <h3 className="text-base font-bold text-white mb-1">{t('featureTiles', 'Widget4Title')}</h3>
+                    <p className="hidden md:block text-sm text-emerald-200/70">{t('featureTiles', 'Widget4Desc')}</p>
                 </div>
 
-                <div className="flex-1 flex items-center justify-center overflow-hidden">
-                    <img
-                        src="/assets/croppedphone_contour.png"
-                        alt="ProPickz Ecosystem"
-                        className="w-[300px] h-auto object-contain -mt-2"
-                    />
+                <div className="flex-1 flex items-center justify-center">
+                    {/* Realistic iPhone Frame */}
+                    {/* Full Phone Image */}
+                    <div
+                        className="relative rounded-[2.5rem] overflow-hidden w-[150px] h-[320px] md:w-[170px] md:h-[360px]"
+                        style={{
+                            background: 'transparent',
+                            padding: '3px',
+                        }}
+                    >
+                        <img
+                            src="/assets/croppedphone_contour.png"
+                            alt="ProPickz Ecosystem"
+                            className="w-full h-full object-contain md:object-cover"
+                            style={{ objectPosition: 'center top' }}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
     ];
 
-    // Create infinite loop by duplicating widgets (reduced for performance)
-    const extendedWidgets = [...widgets, ...widgets];
+    const scrollSliderByCard = (direction: 'left' | 'right') => {
+        if (!sliderRef.current) return;
+
+        const firstCard = sliderRef.current.querySelector('div.snap-start') as HTMLDivElement | null;
+        const cardWidth = firstCard?.clientWidth ?? 320;
+        const gap = 24;
+        const offset = cardWidth + gap;
+
+        sliderRef.current.scrollBy({
+            left: direction === 'right' ? offset : -offset,
+            behavior: 'smooth',
+        });
+    };
 
     return (
-        <section className="py-12 md:py-24 bg-black relative overflow-hidden" ref={sectionRef}>
+        <section className="py-24 bg-black relative overflow-hidden" ref={sectionRef}>
             <div className="max-w-7xl mx-auto px-4">
                 <Reveal className="mb-12">
                     <h2 className="text-4xl md:text-6xl font-black text-white mb-6">
@@ -123,23 +168,38 @@ const FeatureTiles: React.FC = () => {
                     </p>
                 </Reveal>
 
-                {/* Infinite Auto-Scrolling Carousel with CSS Animation */}
-                <div className="relative overflow-hidden">
-                    {/* Gradient fade on edges */}
+                {/* User-controlled horizontal slider */}
+                <div className="relative">
+                    {/* Gradient fade on edges for depth */}
                     <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
                     <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
 
-                    <div
-                        className="flex gap-6 animate-carousel-scroll"
-                        style={{
-                            width: 'fit-content',
-                            willChange: 'transform',
-                        }}
+                    <button
+                        type="button"
+                        onClick={() => scrollSliderByCard('left')}
+                        aria-label="Previous widget"
+                        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/70 text-white hover:bg-black/85 transition-colors flex items-center justify-center"
                     >
-                        {extendedWidgets.map((widget, index) => (
+                        <ChevronLeft size={22} />
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => scrollSliderByCard('right')}
+                        aria-label="Next widget"
+                        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/70 text-white hover:bg-black/85 transition-colors flex items-center justify-center"
+                    >
+                        <ChevronRight size={22} />
+                    </button>
+
+                    <div
+                        ref={sliderRef}
+                        className="flex gap-6 overflow-x-hidden snap-x snap-mandatory pb-2 select-none"
+                    >
+                        {widgets.map((widget, index) => (
                             <div
                                 key={index}
-                                className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[400px]"
+                                className="flex-shrink-0 snap-start w-[300px] md:w-[400px]"
                             >
                                 {widget}
                             </div>
@@ -147,26 +207,6 @@ const FeatureTiles: React.FC = () => {
                     </div>
                 </div>
             </div>
-
-            {/* GPU-Accelerated CSS Animation */}
-            <style>{`
-                @keyframes carouselScroll {
-                    0% {
-                        transform: translate3d(0, 0, 0);
-                    }
-                    100% {
-                        transform: translate3d(-50%, 0, 0);
-                    }
-                }
-                .animate-carousel-scroll {
-                    animation: carouselScroll 30s linear infinite;
-                    backface-visibility: hidden;
-                    perspective: 1000px;
-                }
-                .animate-carousel-scroll:hover {
-                    animation-play-state: paused;
-                }
-            `}</style>
         </section>
     );
 };

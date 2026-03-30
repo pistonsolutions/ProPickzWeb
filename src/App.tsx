@@ -15,6 +15,7 @@ import ContactPage from './components/ContactPage';
 import AsSeenOn from './components/AsSeenOn';
 import Hero3DPhone from './components/Hero3DPhone';
 import ResultsDashboard from './components/ResultsDashboard';
+import WinningSlips from './components/WinningSlips';
 import SportsCarousel from './components/SportsCarousel';
 import { Reveal } from './utils/Reveal';
 import CommunityBenefits from './components/CommunityBenefits';
@@ -132,21 +133,21 @@ const ROICalculator: React.FC = () => {
   const monthlyProfit = (unitSize * 24.5).toFixed(0);
   const yearlyPotential = (unitSize * 24.5 * 12).toFixed(0);
   const { t } = useLanguage();
-  const sliderPercent = ((unitSize - 10) / (500 - 10)) * 100;
 
   return (
-    <div className="bg-[#0c0e14] border border-purple-500/20 p-8 md:p-10 rounded-2xl shadow-[0_0_40px_rgba(168,85,247,0.1)] relative overflow-hidden max-w-2xl mx-auto">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-purple-500/8 rounded-full blur-[80px] pointer-events-none"></div>
+    <div className="bg-[#12141a] border border-purple-500/30 p-6 md:p-8 rounded-2xl shadow-[0_0_40px_rgba(168,85,247,0.15)] relative overflow-hidden max-w-md mx-auto">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.06)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-40 mix-blend-overlay pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-48 h-48 bg-purple-600/10 rounded-full blur-[80px] pointer-events-none"></div>
 
       <div className="relative z-10">
-        <h3 className="text-3xl md:text-4xl font-black text-white mb-3">{t('roi', 'Title')}</h3>
-        <p className="text-gray-500 mb-10 text-base font-code">{t('roi', 'Subtitle')}</p>
-        <div className="mb-8">
+        <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{t('roi', 'Title')}</h3>
+        <p className="text-gray-500 mb-8 text-sm">{t('roi', 'Subtitle')}</p>
+        <div className="mb-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="text-gray-400 font-bold text-sm uppercase tracking-wider mb-1">{t('roi', 'UnitSize')}</div>
-              <div className="text-sm text-gray-600 font-code">{t('roi', 'UnitDefinition')}</div>
+              <div className="text-gray-400 font-bold text-xs uppercase tracking-wider mb-1">{t('roi', 'UnitSize')}</div>
+              <div className="text-xs text-gray-600">{t('roi', 'UnitDefinition')}</div>
             </div>
             <div className="text-4xl font-black text-white">${unitSize}</div>
           </div>
@@ -157,71 +158,72 @@ const ROICalculator: React.FC = () => {
               max="500"
               step="10"
               value={unitSize}
-              onChange={(e) => setUnitSize(parseInt(e.target.value))}
-              className="w-full h-2 rounded-full appearance-none cursor-pointer"
-              style={{ background: `linear-gradient(to right, #a855f7 ${sliderPercent}%, #1e1e2a ${sliderPercent}%)` }}
+              onChange={(e) => setUnitSize(parseInt(e.target.value, 10))}
+              className="roi-slider w-full h-2 rounded-full appearance-none cursor-pointer bg-[#2a2d35] accent-green-500"
             />
             <style>{`
-              input[type="range"]::-webkit-slider-thumb {
+              .roi-slider {
+                touch-action: pan-x;
+              }
+              .roi-slider::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
-                width: 18px;
-                height: 18px;
+                width: 16px;
+                height: 16px;
                 border-radius: 50%;
-                background: #a855f7;
+                background: #22c55e;
                 cursor: pointer;
-                border: 3px solid #c084fc;
-                box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+                border: 2px solid #ffffff;
+                box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+              }
+              .roi-slider::-moz-range-track {
+                height: 8px;
+                background: #2a2d35;
+                border-radius: 9999px;
+              }
+              .roi-slider::-moz-range-thumb {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: #22c55e;
+                border: 2px solid #ffffff;
               }
             `}</style>
           </div>
-          <div className="flex justify-between text-xs text-gray-600 mt-2 font-code">
+          <div className="flex justify-between text-xs text-gray-600 mt-2">
             <span>{t('roi', 'Min')}</span>
             <span>{t('roi', 'Max')}</span>
           </div>
         </div>
-        <div className="mb-10 h-48 relative">
-          <svg viewBox="0 0 400 160" className="w-full h-full">
+        <div className="mb-8 h-40 relative">
+          <svg viewBox="0 0 400 120" className="w-full h-full" preserveAspectRatio="none">
             <defs>
               <linearGradient id="chartLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#a855f7" />
-                <stop offset="100%" stopColor="#c084fc" />
+                <stop offset="100%" stopColor="#a855f7" />
               </linearGradient>
               <linearGradient id="chartAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#a855f7" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="#7c3aed" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
-              </linearGradient>
-              <radialGradient id="chartGlow" cx="75%" cy="30%" r="40%">
-                <stop offset="0%" stopColor="#a855f7" stopOpacity="0.15" />
+                <stop offset="0%" stopColor="#a855f7" stopOpacity="0.4" />
                 <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
-              </radialGradient>
-              <filter id="lineGlow"><feGaussianBlur stdDeviation="3" result="coloredBlur" /><feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-              <filter id="dotGlow"><feGaussianBlur stdDeviation="2" result="coloredBlur" /><feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+              </linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur" /><feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
             </defs>
-            {/* Ambient glow behind curve peak */}
-            <rect x="0" y="0" width="400" height="160" fill="url(#chartGlow)" />
-            {/* Area fill under curve */}
-            <path d="M40,140 C80,139 120,137 160,132 C200,125 240,110 280,85 C300,70 310,55 320,45 L320,160 L40,160 Z" fill="url(#chartAreaGradient)" />
-            {/* Vertical indicator line from dot */}
-            <line x1="320" y1="45" x2="320" y2="160" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.15" />
-            {/* Curve line */}
-            <path d="M40,140 C80,139 120,137 160,132 C200,125 240,110 280,85 C300,70 310,55 320,45" fill="none" stroke="url(#chartLineGradient)" strokeWidth="2.5" strokeLinecap="round" filter="url(#lineGlow)" />
-            {/* Endpoint dot */}
-            <circle cx="320" cy="45" r="4" fill="#e2d6f5" stroke="#c084fc" strokeWidth="1" filter="url(#dotGlow)" />
+            <path d="M20,100 C80,98 140,95 200,85 Q280,65 340,35 Q370,20 380,15 L380,120 L20,120 Z" fill="url(#chartAreaGradient)" />
+            <path d="M20,100 C80,98 140,95 200,85 Q280,65 340,35 Q370,20 380,15" fill="none" stroke="url(#chartLineGradient)" strokeWidth="3" filter="url(#glow)" vectorEffect="non-scaling-stroke" />
+            <circle cx="380" cy="15" r="5" fill="white" filter="url(#glow)" />
           </svg>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:gap-4">
-          <div className="bg-[#0a1a0f] p-4 md:p-6 rounded-xl border border-green-500/20 overflow-hidden">
-            <div className="text-green-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2 md:mb-3">{t('roi', 'MonthlyProfit')}</div>
-            <div className="text-2xl sm:text-4xl md:text-5xl font-black text-green-400">${parseInt(monthlyProfit).toLocaleString()}</div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#1a1d24] p-5 rounded-xl border border-gray-700/50">
+            <div className="text-green-400 text-[11px] font-bold uppercase tracking-wider mb-2">{t('roi', 'MonthlyProfit')}</div>
+            <div className="text-3xl md:text-4xl font-black text-green-400">${parseInt(monthlyProfit).toLocaleString()}</div>
           </div>
-          <div className="bg-[#0a1a0f] p-4 md:p-6 rounded-xl border border-green-500/20 overflow-hidden">
-            <div className="text-purple-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2 md:mb-3">{t('roi', 'YearlyPotential')}</div>
-            <div className="text-2xl sm:text-4xl md:text-5xl font-black text-white">${parseInt(yearlyPotential).toLocaleString()}</div>
+          <div className="bg-[#1a1d24] p-5 rounded-xl border border-gray-700/50">
+            <div className="text-purple-400 text-[11px] font-bold uppercase tracking-wider mb-2">{t('roi', 'YearlyPotential')}</div>
+            <div className="text-3xl md:text-4xl font-black text-white">${parseInt(yearlyPotential).toLocaleString()}</div>
           </div>
         </div>
-        <p className="text-[11px] text-gray-600 mt-6 text-center italic border-t border-gray-800 pt-4 font-code">{t('roi', 'Disclaimer')}</p>
+        <p className="text-[11px] text-gray-600 mt-6 text-center italic border-t border-gray-800 pt-4">{t('roi', 'Disclaimer')}</p>
       </div>
     </div>
   );
@@ -261,7 +263,7 @@ const FomoNotification: React.FC = () => {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-24 left-4 md:left-8 z-50 bg-white dark:bg-gray-900 border border-purple-500/30 p-4 rounded-xl shadow-2xl flex items-center gap-4 animate-slide-in-left max-w-sm max-w-[calc(100vw-2rem)]">
+    <div className="fixed bottom-24 left-4 md:left-8 z-50 bg-white dark:bg-gray-900 border border-purple-500/30 p-4 rounded-xl shadow-2xl flex items-center gap-4 animate-slide-in-left max-w-sm">
       <div className="bg-black p-2 rounded-full border border-gray-800"><img src={propickzLogo} alt="Propickz" className="w-6 h-6 object-contain" /></div>
       <div><div className="text-sm font-bold text-gray-900 dark:text-white">{data.name}</div><div className="text-xs text-gray-500 dark:text-gray-400">{data.action}</div></div>
       <div className="text-xs text-gray-400 ml-auto">{t('fomo', 'JustNow')}</div>
@@ -318,7 +320,7 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
     <nav className="fixed top-0 w-full z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-6">
-          <button onClick={() => setView('Contact')} className="text-sm font-semibold text-gray-300 hover:text-white transition-all hover:scale-105 font-nav">{t('nav', 'Contact')}</button>
+          <button onClick={() => setView('Contact')} className="text-sm font-semibold text-gray-300 hover:text-white transition-all hover:scale-105">{t('nav', 'Contact')}</button>
           <div className="cursor-pointer group" onClick={goHome}>
             <img src={pIcon} alt="Propickz" className="h-14 w-14 object-contain group-hover:scale-110 transition-transform drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
           </div>
@@ -328,10 +330,10 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
             if (link.type === 'dropdown' && link.subItems) {
               return (
                 <div key={link.name} className="relative group">
-                  <button className={`text-sm font-semibold transition-all hover:scale-105 flex items-center gap-1 text-gray-300 hover:text-white group-hover:text-white font-nav`}>{link.name} <ChevronDown size={14} className="group-hover:rotate-180 transition-transform" /></button>
+                  <button className={`text-sm font-semibold transition-all hover:scale-105 flex items-center gap-1 text-gray-300 hover:text-white group-hover:text-white`}>{link.name} <ChevronDown size={14} className="group-hover:rotate-180 transition-transform" /></button>
                   <div className="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-xl border border-gray-800 rounded-xl overflow-hidden shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                     <div className="flex flex-col p-1">
-                      {link.subItems.map((sub) => (<button key={sub.page} onClick={() => { setView(sub.page!); }} className={`text-left px-4 py-3 text-sm font-semibold hover:bg-white/10 rounded-lg transition-colors font-nav ${currentView === sub.page ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white'}`}>{sub.name}</button>))}
+                      {link.subItems.map((sub) => (<button key={sub.page} onClick={() => { setView(sub.page!); }} className={`text-left px-4 py-3 text-sm font-semibold hover:bg-white/10 rounded-lg transition-colors ${currentView === sub.page ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white'}`}>{sub.name}</button>))}
                     </div>
                   </div>
                 </div>
@@ -339,14 +341,14 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
             }
             const isActive = link.type === 'scroll' ? activeSection === link.anchor : currentView === link.page;
             return (
-              <button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className={`text-sm font-semibold transition-all hover:scale-105 relative group font-nav ${isActive ? 'text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'text-gray-300 hover:text-white'}`}>{link.name}<span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span></button>
+              <button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className={`text-sm font-semibold transition-all hover:scale-105 relative group ${isActive ? 'text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'text-gray-300 hover:text-white'}`}>{link.name}<span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span></button>
             );
           })}
         </div>
-        <div className="hidden lg:flex items-center gap-4">
-          <button onClick={toggleLanguage} className="px-3 py-1.5 text-gray-300 hover:text-white transition-all flex items-center gap-2 font-semibold text-sm uppercase bg-white/5 rounded-lg hover:bg-white/10 border border-purple-500/20 font-nav"><Globe size={16} /> {language === 'en' ? 'EN' : language === 'fr' ? 'FR' : 'ES'}</button>
-          <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105 font-nav">{t('nav', 'JoinDiscord')}</button>
-          <button onClick={() => scrollToSection('pricing')} className="px-5 py-2 bg-gradient-to-r from-amber-500/10 to-yellow-600/10 backdrop-blur-sm border border-amber-500/30 text-amber-200 text-sm font-bold rounded-lg hover:bg-amber-500/20 transition-all hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] font-nav">{t('nav', 'ViewPricing')}</button>
+        <div className="hidden md:flex items-center gap-4">
+          <button onClick={toggleLanguage} className="px-3 py-1.5 text-gray-300 hover:text-white transition-all flex items-center gap-2 font-semibold text-sm uppercase bg-white/5 rounded-lg hover:bg-white/10 border border-purple-500/20"><Globe size={16} /> {language === 'en' ? 'EN' : language === 'fr' ? 'FR' : 'ES'}</button>
+          <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105">{t('nav', 'JoinDiscord')}</button>
+          <button onClick={() => scrollToSection('pricing')} className="px-5 py-2 bg-gradient-to-r from-amber-500/10 to-yellow-600/10 backdrop-blur-sm border border-amber-500/30 text-amber-200 text-sm font-bold rounded-lg hover:bg-amber-500/20 transition-all hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]">{t('nav', 'ViewPricing')}</button>
         </div>
         <button className="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X /> : <Menu />}</button>
       </div>
@@ -356,17 +358,17 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
             if (link.type === 'dropdown' && link.subItems) {
               return (
                 <div key={link.name} className="flex flex-col">
-                  <button onClick={() => setResourcesOpen(!resourcesOpen)} className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5 flex justify-between items-center font-nav">{link.name} {resourcesOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</button>
-                  {resourcesOpen && (<div className="flex flex-col ml-4 border-l border-gray-800 pl-4 mt-2 gap-2">{link.subItems.map(sub => (<button key={sub.page} onClick={() => { setView(sub.page!); setMobileMenuOpen(false); }} className="text-gray-400 hover:text-white text-base p-3 text-left font-semibold hover:bg-white/5 rounded-lg transition-all font-nav">{sub.name}</button>))}</div>)}
+                  <button onClick={() => setResourcesOpen(!resourcesOpen)} className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5 flex justify-between items-center">{link.name} {resourcesOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</button>
+                  {resourcesOpen && (<div className="flex flex-col ml-4 border-l border-gray-800 pl-4 mt-2 gap-2">{link.subItems.map(sub => (<button key={sub.page} onClick={() => { setView(sub.page!); setMobileMenuOpen(false); }} className="text-gray-400 hover:text-white text-base p-3 text-left font-semibold hover:bg-white/5 rounded-lg transition-all">{sub.name}</button>))}</div>)}
                 </div>
               );
             }
-            return (<button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5 font-nav">{link.name}</button>);
+            return (<button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5">{link.name}</button>);
           })}
           <div className="mt-auto pb-8 flex flex-col gap-4">
-            <button onClick={toggleLanguage} className="w-full py-4 text-white font-bold bg-white/5 rounded-xl border border-white/10 flex items-center justify-center gap-2 font-nav"><Globe size={20} /> {language === 'en' ? 'English' : language === 'fr' ? 'Français' : 'Español'}</button>
-            <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20 font-nav">{t('nav', 'JoinDiscord')}</button>
-            <button onClick={() => scrollToSection('pricing')} className="w-full py-4 bg-white text-black font-bold rounded-xl shadow-lg font-nav">{t('nav', 'ViewPricing')}</button>
+            <button onClick={toggleLanguage} className="w-full py-4 text-white font-bold bg-white/5 rounded-xl border border-white/10 flex items-center justify-center gap-2"><Globe size={20} /> {language === 'en' ? 'English' : language === 'fr' ? 'Français' : 'Español'}</button>
+            <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20">{t('nav', 'JoinDiscord')}</button>
+            <button onClick={() => scrollToSection('pricing')} className="w-full py-4 bg-white text-black font-bold rounded-xl shadow-lg">{t('nav', 'ViewPricing')}</button>
           </div>
         </div>
       )}
@@ -376,17 +378,107 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
+  const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const NEWSLETTER_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzq6JX5Jo4VRZGgz9PqFFqjo4kj6PB4l5Tkl45KAJRYcbzKHLjADthPG0_XH9b31pM0Vg/exec';
+  const SIGNUP_EMAILS_STORAGE_KEY = 'propickzPromoSignupEmails';
+
+  const getStoredSignupEmails = (): string[] => {
+    try {
+      const raw = localStorage.getItem(SIGNUP_EMAILS_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const saveSignupEmail = (value: string) => {
+    const existing = getStoredSignupEmails();
+    if (existing.includes(value)) return;
+    const next = [...existing, value].slice(-200);
+    localStorage.setItem(SIGNUP_EMAILS_STORAGE_KEY, JSON.stringify(next));
+  };
+
+  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setSubmitState('error');
+      setSubmitMessage('Please enter your email.');
+      return;
+    }
+
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
+    if (!isValidEmail) {
+      setSubmitState('error');
+      setSubmitMessage('Please enter a valid email.');
+      return;
+    }
+
+    const existingEmails = getStoredSignupEmails();
+    if (existingEmails.includes(normalizedEmail)) {
+      setSubmitState('error');
+      setSubmitMessage('This email is already signed up.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitState('idle');
+    setSubmitMessage('');
+
+    try {
+      await fetch(NEWSLETTER_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          email: normalizedEmail,
+          source: 'promo-15',
+          discountCode: 'PROPICKZ15',
+        }),
+      });
+
+      setSubmitState('success');
+      setSubmitMessage('Thanks! Your 15% code is on the way.');
+      saveSignupEmail(normalizedEmail);
+      setEmail('');
+    } catch (error) {
+      console.error('Newsletter submit failed', error);
+      setSubmitState('error');
+      setSubmitMessage('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-black border-t border-gray-900 py-12 text-center">
       <div className="max-w-7xl mx-auto px-4">
         <div className="mb-16 border-b border-gray-800 pb-16">
           <h2 className="text-3xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600 tracking-tight">{t('newsletter', 'Headline')}</h2>
           <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">{t('newsletter', 'Subheadline')}</p>
-          <form className="max-w-md mx-auto relative group flex flex-col gap-4 md:block" onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder={t('newsletter', 'Placeholder')} className="w-full pl-6 pr-6 md:pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.15)]" />
-            <button type="submit" className="w-full md:w-auto md:mt-0 relative md:absolute md:right-2 md:top-2 md:bottom-2 px-8 md:px-6 py-4 md:py-0 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center justify-center md:inline-flex gap-2 text-sm shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98]">
-              <span className="md:hidden">Send My Discount</span><span className="hidden md:inline">{t('newsletter', 'Button')}</span><ArrowRight className="w-4 h-4" />
+          <form className="max-w-md mx-auto relative group flex flex-col gap-4 md:block" onSubmit={handleNewsletterSubmit}>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder={t('newsletter', 'Placeholder')} className="w-full pl-6 pr-6 md:pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.15)]" />
+            <button type="submit" disabled={isSubmitting} className="w-full md:w-auto md:mt-0 relative md:absolute md:right-2 md:top-2 md:bottom-2 px-8 md:px-6 py-4 md:py-0 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center justify-center md:inline-flex gap-2 text-sm shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
+              {isSubmitting ? (
+                <span className="inline-flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>Sending...</span>
+              ) : (
+                <>
+                  <span className="md:hidden">Send My Discount</span><span className="hidden md:inline">{t('newsletter', 'Button')}</span><ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
+            {submitMessage && (
+              <p className={`text-xs md:mt-3 md:text-left px-3 py-2 rounded-lg border ${submitState === 'success' ? 'text-green-300 border-green-500/30 bg-green-500/10' : 'text-red-300 border-red-500/30 bg-red-500/10'}`}>
+                {submitMessage}
+              </p>
+            )}
           </form>
         </div>
         <p className="text-gray-600 text-sm">{t('footer', 'Copyright')}<br /> {t('footer', 'Disclaimer')}</p>
@@ -404,12 +496,12 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
   return (
     <div className="overflow-x-hidden">
-      <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-matt-black">
+      <section id="hero" className="relative min-h-screen flex items-center pt-24 md:pt-20 overflow-hidden bg-matt-black">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
         <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-600/30 rounded-full blur-[80px] md:blur-[120px] pointer-events-none animate-pulse-slow"></div>
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-6 lg:gap-12 items-center relative z-10 w-full">
-          <div className="text-left space-y-4 md:space-y-8 pt-10 lg:pt-0 order-2 lg:order-1 -mt-64 lg:mt-0 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
+          <div className="text-left space-y-6 md:space-y-8 pt-10 lg:pt-0">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/50 text-cyan-300 text-xs font-bold uppercase tracking-widest font-heading animate-fade-in-up shadow-[0_0_15px_rgba(34,211,238,0.2)]">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></span>{t('hero', 'SystemLive')}
             </div>
@@ -423,23 +515,21 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               <button onClick={() => setView('Results')} className="px-8 py-4 bg-transparent border border-gray-700 text-white rounded-full font-bold text-lg hover:bg-gray-900 hover:border-white transition-all flex items-center justify-center gap-2"><Shield size={20} fill="currentColor" /> {t('hero', 'WatchDemo')}</button>
             </div>
           </div>
-          <div className="order-1 lg:order-2">
-            <Hero3DPhone />
-          </div>
+          <Hero3DPhone />
         </div>
       </section>
 
       <AsSeenOn />
 
-      <section className="py-12 md:py-24 bg-gradient-to-b from-textured-black to-purple-900/20 overflow-hidden bg-textured-black">
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <section className="py-24 bg-gradient-to-b from-textured-black to-purple-900/20 overflow-hidden bg-textured-black">
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <div className="inline-block px-4 py-1.5 rounded-full bg-purple-900/30 text-purple-300 font-bold text-sm mb-6 border border-purple-500/30">{t('roi', 'Badge')}</div>
-            <h2 className="text-3xl md:text-6xl font-bold text-white mb-6 whitespace-pre-line">{t('roi', 'Headline')}</h2>
-            <p className="text-gray-400 text-base md:text-lg mb-8 leading-relaxed font-code">{t('roi', 'Subheadline')}</p>
-            <div className="flex gap-6 sm:gap-12 mb-8 lg:mb-0">
-              <div><div className="text-3xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={unitsRef}>+{unitsVal.toFixed(1)}u</div><div className="text-xs sm:text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'ProfitYTD')}</div></div>
-              <div><div className="text-3xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={membersRef}>{Math.floor(membersVal).toLocaleString()}+</div><div className="text-xs sm:text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'DaysTracked')}</div></div>
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 whitespace-pre-line">{t('roi', 'Headline')}</h2>
+            <p className="text-gray-400 text-lg mb-8 leading-relaxed">{t('roi', 'Subheadline')}</p>
+            <div className="flex gap-12">
+              <div><div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={unitsRef}>+{unitsVal.toFixed(1)}u</div><div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'ProfitYTD')}</div></div>
+              <div><div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={membersRef}>{Math.floor(membersVal).toLocaleString()}+</div><div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'DaysTracked')}</div></div>
             </div>
           </div>
           <div className="relative"><ROICalculator /></div>
@@ -448,7 +538,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
       <FeatureTiles />
 
-      <section id="pricing" className="py-12 md:py-24 bg-matt-black relative border-t border-gray-900">
+      <section id="pricing" className="py-24 bg-matt-black relative border-t border-gray-900">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -479,7 +569,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
                 <div className="flex gap-3 text-sm text-white font-medium"><BookOpen size={18} className="text-purple-500 shrink-0 mt-0.5" /><span>{t('membershipComparison', 'ProFeature4')}</span></div>
                 <p className="text-xs text-purple-400 italic pt-2">{t('membershipComparison', 'ProQuote')}</p>
               </div>
-              <div className="mt-auto"><button onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')} className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-[1.02] transition-all">{t('membershipComparison', 'ProMonthlyCTA')} →</button><p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'ProMonthlyFooter')}</p></div>
+              <div className="mt-auto"><button disabled className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold transition-all blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">{t('membershipComparison', 'ProMonthlyCTA')} →</button><p className="text-center text-[11px] text-amber-300 mt-3 font-semibold uppercase tracking-wide">Available soon</p></div>
             </Reveal>
 
             <Reveal delay={300} className="flex flex-col h-full p-8 rounded-[2rem] border border-amber-500/20 bg-[#0f1014] hover:border-amber-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.1)] transition-all duration-300 relative group overflow-hidden">
@@ -493,14 +583,14 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
                 <div className="flex gap-3 text-sm text-white font-medium"><Target size={18} className="text-amber-500 shrink-0 mt-0.5" /><span>{t('membershipComparison', 'ProYearlyFeature3')}</span></div>
                 <p className="text-xs text-amber-500/80 italic pt-2">{t('membershipComparison', 'ProYearlyQuote')}</p>
               </div>
-              <div className="mt-auto"><button onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')} className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-[1.02] transition-all">{t('membershipComparison', 'ProYearlyCTA')} →</button><p className="text-center text-[11px] text-gray-500 mt-3 font-medium">{t('membershipComparison', 'ProYearlyFooter')}</p></div>
+              <div className="mt-auto"><button disabled className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold transition-all blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">{t('membershipComparison', 'ProYearlyCTA')} →</button><p className="text-center text-[11px] text-amber-300 mt-3 font-semibold uppercase tracking-wide">Available soon</p></div>
             </Reveal>
           </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-24 bg-textured-black relative border-t border-gray-900 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <section className="py-24 bg-textured-black relative border-t border-gray-900 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <Reveal><h2 className="text-4xl md:text-5xl font-black text-white mb-4">{t('rewardPool', 'Title')} <span className="text-yellow-400">{t('rewardPool', 'TitleHighlight')}</span></h2><p className="text-lg text-gray-400 leading-relaxed">{t('rewardPool', 'Description')}</p></Reveal>
             <Reveal delay={200} className="space-y-6">
@@ -547,19 +637,19 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
       </section>
 
       {/* 10. ENGINE / HOW IT WORKS SECTION - HOME PAGE VERSION */}
-      <section id="how-it-works" className="py-12 md:py-24 bg-matt-black relative overflow-hidden text-center md:text-left">
+      <section id="how-it-works" className="py-24 bg-matt-black relative overflow-hidden text-center md:text-left">
         <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="text-center mb-12 md:mb-24 max-w-3xl mx-auto">
+          <div className="text-center mb-24 max-w-3xl mx-auto">
             <Reveal><h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">{t('engineSection', 'Title')} <span className="text-purple-500">{t('engineSection', 'TitleHighlight')}</span></h1></Reveal>
             <Reveal delay={200}><p className="text-xl text-gray-400">{t('engineSection', 'Description')}</p></Reveal>
           </div>
           <div className="space-y-16 md:space-y-32 relative">
 
-            {/* Timeline line - hidden on mobile */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent hidden md:block"></div>
+            {/* FIXED: Removed the moving bar entirely. Just the static track line remains. */}
+            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent block"></div>
 
             {/* Steps Content */}
-            <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative">
+            <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
               <div className="md:order-1 relative">
                 <div className="absolute right-[-3rem] top-1/2 w-4 h-4 bg-purple-500 rounded-full shadow-[0_0_20px_rgba(168,85,247,1)] hidden md:block"></div>
                 <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-0 relative overflow-hidden group shadow-2xl">
@@ -616,11 +706,11 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
         </div>
       </section>
 
-      <section id="guarantee" className="py-12 md:py-24 bg-gradient-to-b from-textured-black to-gray-900 border-t border-gray-900 relative overflow-hidden bg-textured-black">
+      <section id="guarantee" className="py-24 bg-gradient-to-b from-textured-black to-gray-900 border-t border-gray-900 relative overflow-hidden bg-textured-black">
         <div className="absolute inset-0 bg-purple-900/5 pointer-events-none"></div>
-        <div className="max-w-[68rem] mx-auto px-4 text-center relative z-10">
-          <Reveal><h2 className="text-4xl md:text-6xl font-black text-white mb-6">{t('guaranteeDetailed', 'Headline')}</h2></Reveal>
-          <Reveal delay={200}><p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto font-nav">{t('guaranteeDetailed', 'Subheadline')}</p></Reveal>
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <Reveal><h2 className="text-4xl md:text-5xl font-black text-white mb-6">{t('guaranteeDetailed', 'Headline')}</h2></Reveal>
+          <Reveal delay={200}><p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">{t('guaranteeDetailed', 'Subheadline')}</p></Reveal>
           <Reveal delay={300}>
             <div className="bg-[#0A0A0A] border border-gray-800 rounded-[2rem] p-8 md:p-12 relative overflow-hidden shadow-2xl group hover:border-purple-500/20 transition-all duration-500">
               <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
@@ -628,32 +718,33 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <h3 className="text-2xl font-bold text-white mb-10 flex items-center justify-center gap-3 relative z-10"><Shield size={28} className="text-purple-500" /> {t('guaranteeDetailed', 'HowItWorks')}</h3>
               <div className="grid md:grid-cols-2 gap-8 text-left max-w-3xl mx-auto relative z-10">
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">1</div>{t('guaranteeDetailed', 'Step1Title')}</div><p className="text-gray-300 text-[15px] leading-relaxed font-nav">{t('guaranteeDetailed', 'Step1Desc')}</p></div>
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">2</div>{t('guaranteeDetailed', 'Step2Title')}</div><p className="text-gray-300 text-[15px] leading-relaxed font-nav">{t('guaranteeDetailed', 'Step2Desc')}</p></div>
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">3</div>{t('guaranteeDetailed', 'Step3Title')}</div><p className="text-gray-300 text-[15px] leading-relaxed font-nav">{t('guaranteeDetailed', 'Step3Desc')}</p></div>
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">4</div>{t('guaranteeDetailed', 'Step4Title')}</div><p className="text-gray-300 text-[15px] leading-relaxed font-nav">{t('guaranteeDetailed', 'Step4Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">1</div>{t('guaranteeDetailed', 'Step1Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step1Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">2</div>{t('guaranteeDetailed', 'Step2Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step2Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">3</div>{t('guaranteeDetailed', 'Step3Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step3Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">4</div>{t('guaranteeDetailed', 'Step4Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step4Desc')}</p></div>
               </div>
-              <div className="mt-12 bg-[#0a0a0a] rounded-xl p-7 border border-gray-800 relative z-10 text-center">
-                <p className="text-gray-400 text-[15px] italic mb-4 font-nav">{t('guaranteeDetailed', 'Quote')}</p>
-                <a href="https://discord.gg/wEKnBrvZUF" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold bg-purple-600/20 px-7 py-3.5 rounded-full border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:bg-purple-600/30 transition-all duration-300">{t('guaranteeDetailed', 'CTA')} <ArrowRight size={16} /></a>
+              <div className="mt-12 bg-[#0a0a0a] rounded-xl p-6 border border-gray-800 relative z-10 text-center">
+                <p className="text-gray-400 text-sm italic mb-4">{t('guaranteeDetailed', 'Quote')}</p>
+                <a href="https://discord.gg/wEKnBrvZUF" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold bg-purple-600/20 px-6 py-3 rounded-full border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:bg-purple-600/30 transition-all duration-300">{t('guaranteeDetailed', 'CTA')} <ArrowRight size={16} /></a>
               </div>
             </div>
           </Reveal>
         </div>
       </section>
 
-      <section id="dominance" className="py-12 md:py-24 bg-matt-black relative border-t border-gray-900 overflow-hidden">
+      <section id="dominance" className="py-24 bg-matt-black relative border-t border-gray-900 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
           <Reveal><h2 className="text-4xl md:text-5xl font-black text-white mb-6">{t('dominanceSection', 'Headline')} <span className="text-green-500">{t('dominanceSection', 'HeadlineHighlight')}</span></h2></Reveal>
           <Reveal delay={300}><SportsCarousel /></Reveal>
           <Reveal delay={400}>
-            <div className="mt-16 max-w-5xl mx-auto">
-              <div className="bg-gradient-to-br from-gray-900/80 to-black border border-gray-800 rounded-3xl p-10 md:p-14 relative overflow-hidden">
+            <div className="mt-16 max-w-2xl mx-auto">
+              <div className="bg-gradient-to-br from-gray-900/80 to-black border border-gray-800 rounded-3xl p-8 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
                 <div className="relative z-10">
-                  <h3 className="text-3xl md:text-4xl font-black text-white mb-5">More Leagues Added Constantly</h3>
-                  <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-3xl mx-auto">Our team is constantly building models for new markets including Horse Racing, E-Sports, and International Leagues. If there's an edge, we will find it.</p>
-                  <button onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')} className="px-10 py-4 bg-white text-black font-bold text-lg rounded-xl hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">Get All Access</button>
+                  <h3 className="text-2xl md:text-3xl font-black text-white mb-4">More Leagues Added Constantly</h3>
+                  <p className="text-gray-400 mb-6 leading-relaxed">Our team is constantly building models for new markets including Horse Racing, E-Sports, and International Leagues. If there's an edge, we will find it.</p>
+                  <button disabled className="px-8 py-3 bg-white text-black font-bold rounded-xl transition-all duration-300 shadow-lg blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">Get All Access</button>
+                  <p className="text-amber-300 text-xs font-semibold uppercase tracking-wide mt-3">Available soon</p>
                 </div>
               </div>
             </div>
@@ -698,7 +789,8 @@ const PricingPage: React.FC = () => {
               <li className="flex gap-3 text-white text-sm font-bold"><BookOpen className="text-purple-400 shrink-0" size={18} /> Education Section</li>
               <li className="flex gap-3 text-gray-400 text-sm">Included in Member Lottery</li>
             </ul>
-            <button onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')} className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-purple-900/40">{t('pricing', 'MonthlyCTA')}</button>
+            <button disabled className="w-full py-3 bg-purple-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-purple-900/40 blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">{t('pricing', 'MonthlyCTA')}</button>
+            <p className="text-center text-[11px] text-amber-300 mt-3 font-semibold uppercase tracking-wide">Available soon</p>
           </Reveal>
           <Reveal delay={500} className="glass-card glass-card-hover flex flex-col text-left p-6 rounded-3xl">
             <h3 className="text-xl font-bold text-white mb-2">{t('pricing', 'Quarterly')}</h3>
@@ -709,7 +801,8 @@ const PricingPage: React.FC = () => {
               <li className="flex gap-3 text-gray-300 text-sm"><Star className="text-purple-500 shrink-0" size={18} /> Priority Support</li>
               <li className="flex gap-3 text-gray-300 text-sm"><Users className="text-purple-500 shrink-0" size={18} /> Exclusive Discord Channels</li>
             </ul>
-            <button onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')} className="w-full py-3 bg-white hover:bg-gray-200 text-black font-bold rounded-xl transition-colors">{t('pricing', 'QuarterlyCTA')}</button>
+            <button disabled className="w-full py-3 bg-white text-black font-bold rounded-xl transition-colors blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">{t('pricing', 'QuarterlyCTA')}</button>
+            <p className="text-center text-[11px] text-amber-300 mt-3 font-semibold uppercase tracking-wide">Available soon</p>
           </Reveal>
           <Reveal delay={600} className="glass-card glass-card-hover flex flex-col text-left p-6 rounded-3xl border border-yellow-500/20">
             <div className="absolute top-0 right-0 bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-bl-xl text-xs font-bold uppercase tracking-wider">Best Value</div>
@@ -722,7 +815,8 @@ const PricingPage: React.FC = () => {
               <li className="flex gap-3 text-gray-300 text-sm"><Target className="text-green-500 shrink-0" size={18} /> Long-term strategy focus</li>
               <li className="flex gap-3 text-gray-300 text-sm"><Shield className="text-green-500 shrink-0" size={18} /> Maximize Bankroll Growth</li>
             </ul>
-            <button onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')} className="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors">{t('pricing', 'AnnualCTA')}</button>
+            <button disabled className="w-full py-3 bg-white text-black font-bold rounded-xl transition-colors blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">{t('pricing', 'AnnualCTA')}</button>
+            <p className="text-center text-[11px] text-amber-300 mt-3 font-semibold uppercase tracking-wide">Available soon</p>
           </Reveal>
         </div>
         <Reveal delay={700}><CommunityBenefits /></Reveal>
@@ -878,8 +972,9 @@ const ResultsPage: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
         <h1 className="text-4xl md:text-6xl font-black text-white mb-6">Proven <span className="text-green-500">Results.</span></h1>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16 font-code">Real wins from real members. The math speaks for itself.</p>
+        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16">Real wins from real members. The math speaks for itself.</p>
         <div className="mb-24"><ResultsDashboard /></div>
+        <div><WinningSlips /></div>
       </div>
     </div>
   );
@@ -891,146 +986,12 @@ const LegalPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
       <div className="max-w-4xl mx-auto px-4 relative z-10">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Legal</h1>
-        <p className="text-gray-400 mb-12 font-code">Effective Date: June 1, 2025</p>
-        <div className="space-y-10 text-gray-300 leading-relaxed font-nav">
-          <p>These Terms &amp; Conditions (&ldquo;Terms&rdquo;) govern your access to and use of the Propickz platform, including but not limited to our website, Discord server, bots, tools, data, models, projections, recommendations, content, communications, and any related products or services (collectively, the &ldquo;Service&rdquo;).</p>
-          <p>By accessing, subscribing to, or otherwise using the Service, you acknowledge that you have read, understood, and agree to be legally bound by these Terms. If you do not agree, you must not use the Service.</p>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">1. Informational Purposes Only &mdash; Not Financial or Gambling Advice</h2>
-            <p className="mb-3">All content provided by Propickz, including but not limited to betting picks, statistical models, educational material, projections, articles, Discord discussions, tools, and bot-generated outputs, is intended strictly for informational, educational, and entertainment purposes only.</p>
-            <p className="mb-3">Propickz is not a financial advisor, investment advisor, bookmaker, gambling operator, or licensed gaming provider.</p>
-            <p className="mb-3">No content provided constitutes investment advice, financial guidance, legal advice, tax advice, or an inducement to gamble. Any decisions you make based on the information provided are made entirely at your own discretion and risk.</p>
-            <p>You acknowledge that gambling and betting inherently involve high risk, including the potential loss of your entire stake, and you agree that you assume all responsibility and liability for how you use the Service.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">2. No Guarantee of Profit, Outcome, or Accuracy</h2>
-            <p className="mb-3">Propickz makes no guarantees, warranties, or representations &mdash; express or implied &mdash; regarding:</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-400 ml-4">
-              <li>The accuracy, reliability, timeliness, or completeness of any information or selections.</li>
-              <li>The likelihood of achieving profit, success, or any particular outcome.</li>
-              <li>Win rates, statistical advantages, or performance results.</li>
-            </ul>
-            <p className="mt-3">Historical performance, whether real, simulated, or hypothetical, is provided for reference and educational purposes only and does not guarantee future outcomes.</p>
-            <p className="mt-3">By using the Service, you expressly acknowledge and agree that all betting and gambling decisions are inherently uncertain, and Propickz shall not be held responsible or liable for any reliance you place on the content.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">3. Content May Include Simulations, Hypotheticals, and Marketing Materials</h2>
-            <p className="mb-3">Certain materials provided or displayed by Propickz, including but not limited to illustrations, mockups, dashboards, case studies, projections, or profit examples, may be fictional, simulated, or hypothetical in nature.</p>
-            <p className="mb-3">All such content is intended solely for presentation and marketing purposes and is clearly distinguished from actual performance data.</p>
-            <p className="mb-3">Any resemblance to actual events, earnings, or outcomes is purely coincidental and not intended to imply real-world accuracy or guaranteed results.</p>
-            <p>Where simulations or hypothetical results are displayed, they will be prominently labeled as such.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">4. No Client, Fiduciary, or Advisory Relationship</h2>
-            <p className="mb-3">Your use of the Service does not establish any professional-client, fiduciary, advisory, or partnership relationship between you and Propickz.</p>
-            <p className="mb-3">Propickz does not act in any advisory capacity, including but not limited to financial, legal, or gambling-related advisory.</p>
-            <p className="mb-3">You are solely responsible for:</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-400 ml-4">
-              <li>Complying with all local, state/provincial, federal, and international laws applicable to your activities.</li>
-              <li>Determining whether sports betting or gambling is legal in your jurisdiction.</li>
-              <li>Ensuring that you meet the minimum legal age requirement in your jurisdiction (in no event less than 18 years old, and in some jurisdictions 21 years old).</li>
-            </ul>
-            <p className="mt-3">Propickz does not provide access to the Service in jurisdictions where doing so would violate applicable law, and we reserve the right to restrict access accordingly.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">5. Limitation of Liability</h2>
-            <p className="mb-3">To the maximum extent permitted by law, Propickz, its owners, employees, contractors, affiliates, and agents shall not be liable for:</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-400 ml-4">
-              <li>Any losses or damages of any kind &mdash; including but not limited to direct, indirect, incidental, consequential, punitive, exemplary, or special damages;</li>
-              <li>Loss of profits, revenues, savings, data, goodwill, or opportunity;</li>
-              <li>Reliance on content, recommendations, or services provided by Propickz;</li>
-              <li>Unauthorized access to or alteration of your data, transmissions, or account;</li>
-              <li>Third-party platforms, tools, bookmakers, or integrations accessed through or in connection with the Service.</li>
-            </ul>
-            <p className="mt-3">This limitation applies even if Propickz has been advised of the possibility of such damages.</p>
-            <p className="mt-3">Nothing in these Terms excludes liability for fraud or fraudulent misrepresentation, gross negligence or willful misconduct by Propickz, or any liability that cannot be excluded under applicable law.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">6. Disclaimer of Warranties</h2>
-            <p className="mb-3">The Service and all content are provided strictly &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind, express or implied.</p>
-            <p className="mb-3">Propickz disclaims all warranties including, but not limited to: merchantability, fitness for a particular purpose, accuracy, reliability, or non-infringement.</p>
-            <p>We do not warrant that the Service will be uninterrupted, timely, secure, error-free, or free of harmful components. You acknowledge that any reliance you place on the Service is entirely at your own risk.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">7. Intellectual Property and User License</h2>
-            <p className="mb-3">All intellectual property rights in and to the Service, including but not limited to software, bots, tools, written content, logos, branding, trademarks, and design elements, are and shall remain the exclusive property of Propickz.</p>
-            <p className="mb-3">Propickz grants you a limited, revocable, non-exclusive, non-transferable license to use the Service strictly for personal, non-commercial, lawful purposes, subject to these Terms.</p>
-            <p>You may not copy, reproduce, distribute, modify, reverse-engineer, or publicly display any Propickz content without prior written consent. Any unauthorized use of intellectual property may result in termination of access and legal action.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">8. Jurisdiction, Governing Law, and Dispute Resolution</h2>
-            <p className="mb-3">These Terms shall be governed by and construed in accordance with the laws of the Province of Quebec, Canada, without regard to conflict of law principles.</p>
-            <p className="mb-3">You agree that all legal actions, claims, or proceedings arising from or relating to the Service shall be brought exclusively before the provincial and federal courts located in Montreal, Quebec.</p>
-            <p>By using the Service, you expressly and irrevocably consent to the jurisdiction of these courts. To the fullest extent permitted by law, you waive the right to participate in any class action or representative lawsuit against Propickz. All disputes must be resolved on an individual basis.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">9. Changes to Terms</h2>
-            <p className="mb-3">Propickz reserves the right to amend, update, or replace these Terms at any time.</p>
-            <p>Material changes will be communicated through prominent notice (such as email, Discord announcements, or website updates). Your continued use of the Service following any such changes constitutes acceptance of the revised Terms. It is your responsibility to review these Terms regularly.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">10. Severability</h2>
-            <p>If any provision of these Terms is determined to be unlawful, invalid, or unenforceable, such provision shall be enforced to the maximum extent permissible, and the remainder of the Terms shall remain in full force and effect.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">11. Entire Agreement</h2>
-            <p>These Terms constitute the entire agreement between you and Propickz regarding the Service and supersede any prior agreements, understandings, or representations.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">12. Guarantee Disclaimer</h2>
-            <h3 className="text-lg font-bold text-white mb-3">Scope of Guarantee</h3>
-            <p className="mb-3">The guarantee described herein applies solely to the subscription fee paid by the Member for their Membership plan (monthly, yearly, or lifetime). Under no circumstances shall Propickz (&ldquo;the Company&rdquo;) be liable for any losses, damages, or claims beyond the limited refund amounts defined below.</p>
-
-            <h3 className="text-lg font-bold text-white mb-3 mt-6">Definition of Loss and Evaluation Period</h3>
-            <p className="mb-3">The term loss is defined exclusively as the absence of net profit within a given thirty (30) consecutive calendar-day period (&ldquo;Guarantee Month&rdquo;), measured from the first day of Membership activation or from any subsequent monthly cycle.</p>
-            <p>Profit or loss shall be determined solely on the collective results of all Company-provided content, including but not limited to event picks, analyst recommendations, +EV strategies, and arbitrage tools. Each Guarantee Month is treated independently, and no Guarantee Month may be combined or averaged with another to establish a claim.</p>
-
-            <h3 className="text-lg font-bold text-white mb-3 mt-6">Membership-Specific Guarantees</h3>
-            <ul className="list-disc list-inside space-y-2 text-gray-400 ml-4">
-              <li><span className="text-white font-semibold">Monthly Memberships:</span> If no net profit is achieved during any Guarantee Month, the Company&apos;s sole obligation shall be to refund the subscription fee paid for that specific month.</li>
-              <li><span className="text-white font-semibold">Yearly Memberships:</span> If no net profit is achieved during any Guarantee Month within the yearly term, the Company&apos;s sole obligation shall be to refund an amount equal to one (1) month of Pro Membership fees at the then-current monthly rate, regardless of the total annual fee paid.</li>
-              <li><span className="text-white font-semibold">Lifetime Memberships:</span> If no net profit is achieved during any Guarantee Month within the lifetime of the Membership, the Company&apos;s sole obligation shall be to refund an amount equal to one (1) month of Pro Membership fees at the then-current monthly rate, regardless of the lifetime fee paid.</li>
-            </ul>
-
-            <h3 className="text-lg font-bold text-white mb-3 mt-6">Member-Initiated Claims</h3>
-            <p className="mb-3">Refunds are not proactive. It is the Member&apos;s sole responsibility to request a refund in writing within seven (7) days following the end of the applicable Guarantee Month.</p>
-            <p>Failure to make a timely request shall result in forfeiture of that month&apos;s refund eligibility. The Company will not issue refunds automatically, nor will it notify Members of eligibility.</p>
-
-            <h3 className="text-lg font-bold text-white mb-3 mt-6">Exclusions of Liability</h3>
-            <p className="mb-3">The Company provides sports picks, strategies, tools, and related content strictly for informational and entertainment purposes only. The Company does not provide financial, investment, or gambling advice, and nothing on its platform shall be construed as such.</p>
-            <p>The Company assumes no responsibility for any wagering outcomes, financial losses, or personal decisions made by Members in reliance upon its content. Any betting or financial activity undertaken by Members is done solely at their own risk.</p>
-
-            <h3 className="text-lg font-bold text-white mb-3 mt-6">Guarantee Limitation</h3>
-            <p className="mb-3">Refunds are capped strictly at the amounts described above. The guarantee does not extend to any claimed or alleged losses beyond the subscription refund described herein, including but not limited to wagering losses, consequential damages, indirect losses, or opportunity costs.</p>
-
-            <h3 className="text-lg font-bold text-white mb-3 mt-6">No Workarounds / Binding Effect</h3>
-            <p>This guarantee is non-transferable, non-renewable, and may not be restarted by canceling and re-enrolling in any Membership plan. This guarantee cannot be circumvented by any claim, workaround, or interpretation inconsistent with the express terms stated herein. By enrolling in any Membership plan, the Member acknowledges, accepts, and agrees to be bound by this Guarantee Disclaimer in full.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">13. Contact</h2>
-            <p>For questions regarding these Terms, please contact us at: <a href="mailto:support@propickz.com" className="text-purple-400 hover:text-purple-300 transition-colors">support@propickz.com</a></p>
-          </div>
-
-          <div className="border-t border-gray-800 pt-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Ready to Start Winning?</h2>
-            <p className="text-gray-400 mb-8 font-code">Join the only community with a verified mathematical edge over the sportsbooks.</p>
-            <button onClick={() => window.open('https://whop.com/propickzofficial/propickz-all-access/', '_blank')} className="px-10 py-4 bg-white text-black font-bold text-lg rounded-xl hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">Get Started Now</button>
-          </div>
+        <p className="text-gray-400 mb-12">Effective Date: June 1, 2025</p>
+        <div className="space-y-12 text-gray-300 leading-relaxed font-light">
+          <p>These Terms & Conditions (“Terms”) govern your access to and use of the Propickz platform...</p>
         </div>
       </div>
     </div>

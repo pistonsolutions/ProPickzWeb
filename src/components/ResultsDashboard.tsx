@@ -1,12 +1,219 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Activity, Search } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+
+type SheetCell = { v: string | number | boolean | null } | null;
+
+interface SheetRow {
+    c: SheetCell[];
+}
+
+interface BetLogItem {
+    date: string;
+    sport: string;
+    pick: string;
+    odds: string;
+    units: string;
+    result: string;
+}
+
+interface ChartPoint {
+    label: string;
+    value: number;
+}
+
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1nphrBl9VmISc1k5IpPQ7h4vVhcAf4Go3i5ai_WuCyRo/gviz/tq?tqx=out:json';
+
+const parseNumber = (value: unknown): number | null => {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value !== 'string') return null;
+    const cleaned = value.replace(/[$,%uU\s,]/g, '').replace(/\+/g, '');
+    const parsed = Number.parseFloat(cleaned);
+    return Number.isFinite(parsed) ? parsed : null;
+};
+
+const toRowsMatrix = (rows: SheetRow[]): string[][] =>
+    rows.map((row) => (row.c || []).map((cell) => (cell?.v == null ? '' : String(cell.v).trim())));
+
+const parseGoogleVizJson = (text: string) => {
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start === -1 || end === -1 || end <= start) {
+        throw new Error('Invalid Google Visualization response format');
+    }
+    return JSON.parse(text.slice(start, end + 1));
+};
+
+const deriveBetsFromSheet = (rowsMatrix: string[][]): BetLogItem[] => {
+    const headerIndex = rowsMatrix.findIndex((row) => {
+        const normalized = row.map((v) => v.toLowerCase());
+        return normalized.includes('date') && normalized.includes('bet');
+    });
+
+    if (headerIndex === -1) return [];
+
+    const headerRow = rowsMatrix[headerIndex].map((h) => h.toLowerCase());
+    const dateIdx = headerRow.findIndex((h) => h === 'date');
+    const betIdx = headerRow.findIndex((h) => h === 'bet');
+    const resultIdx = headerRow.findIndex((h) => h.includes('w or l'));
+    const oddsIdx = headerRow.findIndex((h) => h.includes('odds'));
+    const unitsIdx = headerRow.findIndex((h) => h.includes('units profited'));
+
+    const parsed: BetLogItem[] = [];
+    for (let i = headerIndex + 1; i < rowsMatrix.length; i += 1) {
+        const row = rowsMatrix[i];
+        const date = row[dateIdx] || '';
+        const pick = row[betIdx] || '';
+        if (!date && !pick) continue;
+
+        const betText = pick;
+        const sportMatch = betText.match(/\b(NBA|NFL|MLB|NHL|NCAAB|NCAAF|UFC|Soccer|Tennis)\b/i);
+        const sport = sportMatch ? sportMatch[0].toUpperCase() : '--';
+        const resultRaw = (row[resultIdx] || '').toLowerCase();
+        const result = resultRaw.startsWith('w') ? 'Win' : resultRaw.startsWith('l') ? 'Loss' : '--';
+
+        const unitsNumber = parseNumber(row[unitsIdx]);
+        const units = unitsNumber == null ? '--' : Math.abs(unitsNumber).toFixed(2);
+
+        parsed.push({
+            date,
+            sport,
+            pick: betText,
+            odds: row[oddsIdx] || '--',
+            units,
+            result,
+        });
+    }
+
+    return parsed;
+};
+
+const deriveYtdProfit = (rowsMatrix: string[][], bets: BetLogItem[]): number | null => {
+    for (const row of rowsMatrix) {
+        const keyIdx = row.findIndex((cell) => /total\s*profit|year\s*to\s*date|ytd/i.test(cell));
+        if (keyIdx !== -1) {
+            const numericCell = row.find((cell, idx) => idx !== keyIdx && parseNumber(cell) != null);
+            const parsed = parseNumber(numericCell);
+            if (parsed != null) return parsed;
+        }
+    }
+
+    // Fallback: sum units from parsed bet log.
+    const sum = bets.reduce((acc, bet) => {
+        const units = Number.parseFloat(bet.units);
+        if (!Number.isFinite(units)) return acc;
+        return acc + (bet.result === 'Loss' ? -units : units);
+    }, 0);
+
+    return Number.isFinite(sum) ? sum : null;
+};
+
+const deriveChartPoints = (bets: BetLogItem[]): ChartPoint[] => {
+    if (!bets.length) return [];
+
+    const byDate = new Map<string, number>();
+    bets
+        .slice()
+        .reverse()
+        .forEach((bet) => {
+            const units = Number.parseFloat(bet.units);
+            if (!Number.isFinite(units)) return;
+            const signed = bet.result === 'Loss' ? -units : units;
+            byDate.set(bet.date, (byDate.get(bet.date) || 0) + signed);
+        });
+
+    let running = 0;
+    return Array.from(byDate.entries()).map(([label, delta]) => {
+        running += delta;
+        return { label, value: Number(running.toFixed(2)) };
+    });
+};
+
+const buildPathFromPoints = (points: ChartPoint[]): string => {
+    if (!points.length) return 'M0,80 L400,80';
+    if (points.length === 1) return `M0,50 L400,50`;
+
+    const values = points.map((p) => p.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+
+    const toY = (v: number) => 85 - ((v - min) / range) * 70;
+    const stepX = 400 / (points.length - 1);
+
+    let line = '';
+    points.forEach((point, idx) => {
+        const x = idx * stepX;
+        const y = toY(point.value);
+        line += `${idx === 0 ? 'M' : ' L'}${x.toFixed(2)},${y.toFixed(2)}`;
+    });
+
+    const area = `${line} L400,95 L0,95 Z`;
+    return area;
+};
 
 const ResultsDashboard: React.FC = () => {
     const { t } = useLanguage();
     // Default to '30D' but we might want to translate these values or map them
     // For now, keeping state labels internal, but displaying translated buttons
     const [timeRange, setTimeRange] = useState('30D');
+    const [bets, setBets] = useState<BetLogItem[]>([]);
+    const [ytdProfit, setYtdProfit] = useState<number | null>(null);
+    const [allTimeWinRate, setAllTimeWinRate] = useState<number | null>(null);
+    const [last30Units, setLast30Units] = useState<number | null>(null);
+    const [chartPoints, setChartPoints] = useState<ChartPoint[]>([]);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadSheet = async () => {
+            try {
+                const response = await fetch(SHEET_URL);
+                const text = await response.text();
+                const payload = parseGoogleVizJson(text);
+                const rows = (payload?.table?.rows || []) as SheetRow[];
+                const matrix = toRowsMatrix(rows);
+                const parsedBets = deriveBetsFromSheet(matrix);
+                const ytd = deriveYtdProfit(matrix, parsedBets);
+                const chart = deriveChartPoints(parsedBets);
+
+                const wins = parsedBets.filter((bet) => bet.result === 'Win').length;
+                const losses = parsedBets.filter((bet) => bet.result === 'Loss').length;
+                const totalDecisions = wins + losses;
+                const winRate = totalDecisions > 0 ? (wins / totalDecisions) * 100 : null;
+
+                const recentFor30d = parsedBets.slice(0, 30);
+                const units30d = recentFor30d.reduce((acc, bet) => {
+                    const units = Number.parseFloat(bet.units);
+                    if (!Number.isFinite(units)) return acc;
+                    return acc + (bet.result === 'Loss' ? -units : units);
+                }, 0);
+
+                if (!isMounted) return;
+                setBets(parsedBets);
+                setYtdProfit(ytd);
+                setAllTimeWinRate(winRate == null ? null : Number(winRate.toFixed(1)));
+                setLast30Units(Number.isFinite(units30d) ? Number(units30d.toFixed(2)) : null);
+                setChartPoints(chart);
+            } catch (error) {
+                console.error('Failed to fetch Google Sheet data', error);
+            }
+        };
+
+        loadSheet();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    const chartPath = useMemo(() => buildPathFromPoints(chartPoints), [chartPoints]);
+    const latestChartValue = chartPoints.length ? chartPoints[chartPoints.length - 1].value : null;
+
+    const formatUnits = (value: number | null) =>
+        value == null ? t('resultsDashboard', 'Pending') : `${value > 0 ? '+' : ''}${value.toFixed(2)}u`;
+
+    const formatPercent = (value: number | null) =>
+        value == null ? t('resultsDashboard', 'Pending') : `${value.toFixed(1)}%`;
 
     // RECAP DATA
     const recaps = [
@@ -37,14 +244,6 @@ const ResultsDashboard: React.FC = () => {
             bg: "bg-blue-900/20",
             border: "border-blue-500/30"
         }
-    ];
-
-    const bets = [
-        { date: "Apr 15", sport: "NBA", pick: "BOS -7.5", odds: "-110", units: "2.0", result: "Win" },
-        { date: "Apr 14", sport: "MLB", pick: "NYY Moneyline", odds: "-129", units: "1.5", result: "Loss" },
-        { date: "Apr 14", sport: "NFL", pick: "KC -3.5", odds: "-113", units: "1.0", result: "Loss" },
-        { date: "Apr 13", sport: "NBA", pick: "LAL Over 224", odds: "-110", units: "2.0", result: "Win" },
-        { date: "Apr 13", sport: "NHL", pick: "EDM Puckline", odds: "+140", units: "1.0", result: "Win" },
     ];
 
     const UnitTable = ({ title, profitPoints }: { title: string, profitPoints: { unit: number, profit: number | string }[] }) => (
@@ -92,17 +291,17 @@ const ResultsDashboard: React.FC = () => {
             <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-6 relative z-10">
                 <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
                     <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{t('resultsDashboard', 'Last30Day')}</div>
-                    <div className="text-lg md:text-3xl font-black text-purple-400">{t('resultsDashboard', 'Pending')}</div>
+                    <div className="text-lg md:text-3xl font-black text-purple-400">{formatUnits(last30Units)}</div>
                     <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5">{t('resultsDashboard', 'UnitsProfit')}</div>
                 </div>
                 <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
                     <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{t('resultsDashboard', 'YTDUnits')}</div>
-                    <div className="text-lg md:text-3xl font-black text-green-400">{t('resultsDashboard', 'Pending')}</div>
+                    <div className="text-lg md:text-3xl font-black text-green-400">{formatUnits(ytdProfit)}</div>
                     <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5">{t('resultsDashboard', 'TotalProfit')}</div>
                 </div>
                 <div className="bg-gray-900/40 border border-gray-800 p-2 md:p-4 rounded-xl backdrop-blur-sm">
                     <div className="text-gray-500 text-[9px] md:text-[10px] uppercase tracking-wider mb-1 whitespace-nowrap overflow-hidden text-ellipsis">ALL TIME</div>
-                    <div className="text-lg md:text-3xl font-black text-white">{t('resultsDashboard', 'Pending')}</div>
+                    <div className="text-lg md:text-3xl font-black text-white">{formatPercent(allTimeWinRate)}</div>
                     <div className="text-gray-600 text-[9px] md:text-[10px] mt-0.5 uppercase">{t('resultsDashboard', 'WinRate')}</div>
                 </div>
             </div>
@@ -166,7 +365,7 @@ const ResultsDashboard: React.FC = () => {
                                     </linearGradient>
                                 </defs>
                                 <path
-                                    d="M0,80 C50,70 100,85 150,50 S250,55 300,30 S350,20 400,10"
+                                    d={chartPath}
                                     fill="url(#graphGradient)"
                                     stroke="#a855f7"
                                     strokeWidth="3"
@@ -175,7 +374,7 @@ const ResultsDashboard: React.FC = () => {
                                 {/* Floating Tag */}
                                 <g transform="translate(300, 30)">
                                     <rect x="-40" y="-35" width="80" height="25" rx="6" fill="#1f2937" stroke="#374151" />
-                                    <text x="0" y="-18" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">{t('resultsDashboard', 'Pending')}</text>
+                                    <text x="0" y="-18" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">{latestChartValue == null ? t('resultsDashboard', 'Pending') : `${latestChartValue > 0 ? '+' : ''}${latestChartValue.toFixed(2)}u`}</text>
                                     <circle cx="0" cy="0" r="4" fill="#fff" stroke="#a855f7" strokeWidth="2" />
                                 </g>
                             </svg>
@@ -203,6 +402,11 @@ const ResultsDashboard: React.FC = () => {
                                         </div>
                                     </div>
                                 ))}
+                                {!bets.length && (
+                                    <div className="text-[10px] text-gray-500 p-2 bg-white/5 rounded-lg border border-white/5">
+                                        {t('resultsDashboard', 'Pending')}
+                                    </div>
+                                )}
                             </div>
                         </div>
 

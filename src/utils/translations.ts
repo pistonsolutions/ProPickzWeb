@@ -445,7 +445,7 @@ export const translations = {
         },
 
         newsletter: {
-            Headline: "Get 20% Off Your First Month!",
+            Headline: "Get 15% Off Your First Month!",
             Subheadline: "Join our newsletter for exclusive betting slips, strategy guides, and receive your discount code instantly.",
             Placeholder: "Enter your email address",
             Button: "Send My Discount"
@@ -1054,7 +1054,7 @@ export const translations = {
         },
 
         newsletter: {
-            Headline: "Obtenez -20% sur votre premier mois !",
+            Headline: "Obtenez -15% sur votre premier mois !",
             Subheadline: "Rejoignez notre newsletter pour des pronostics exclusifs, des guides stratégiques et recevez votre code de réduction.",
             Placeholder: "Entrez votre adresse e-mail",
             Button: "Envoyer ma réduction"
@@ -1662,7 +1662,7 @@ export const translations = {
         },
 
         newsletter: {
-            Headline: "¡Obtén un 20% de Descuento!",
+            Headline: "¡Obtén un 15% de Descuento!",
             Subheadline: "Únete a nuestro boletín para recibir pronósticos exclusivos, guías de estrategia y tu código de descuento.",
             Placeholder: "Ingresa tu correo electrónico",
             Button: "Enviar mi descuento"
