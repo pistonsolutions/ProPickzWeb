@@ -33,24 +33,20 @@ const FeatureTiles: React.FC = () => {
                 </div>
 
                 <div className="flex-1 flex items-center justify-center">
-                    {/* Realistic iPhone Frame */}
+                    {/* Match green-card phone rendering style */}
                     <div
                         className="relative rounded-[2.5rem] overflow-hidden w-[150px] h-[320px] md:w-[170px] md:h-[360px]"
                         style={{
-                            background: 'transparent', // Removed gradient frame background
+                            background: 'transparent',
                             padding: '3px',
-                            // Removed box shadow to avoid double frame
                         }}
                     >
-                        {/* Screen */}
-                        <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#1a1a1e]">
-                            <img
-                                src="/assets/phone2nd_contour.png"
-                                alt="Discord Channels"
-                                className="w-full h-full object-cover"
-                                style={{ objectPosition: 'center top' }}
-                            />
-                        </div>
+                        <img
+                            src="/assets/phone2nd_contour.png"
+                            alt="Discord Channels"
+                            className="w-full h-full object-contain md:object-cover"
+                            style={{ objectPosition: 'center top' }}
+                        />
                     </div>
                 </div>
             </div>
