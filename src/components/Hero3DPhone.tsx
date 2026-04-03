@@ -10,7 +10,7 @@ const Hero3DPhone: React.FC = () => {
         // Trigger the slide-in animation after a short delay for page load
         const timer = setTimeout(() => {
             setIsVisible(true);
-        }, 200);
+        }, 100);
 
         return () => {
             clearTimeout(timer);
@@ -52,7 +52,7 @@ const Hero3DPhone: React.FC = () => {
                     }
                 }
             `}</style>
-            <div className={`hero-phone-wrapper relative flex items-start justify-center h-[420px] md:h-[700px] w-full transition-all duration-[1200ms] ease-out overflow-hidden ${isVisible ? 'opacity-100 translate-x-0 translate-y-0' : 'opacity-0 translate-y-[40px] md:translate-y-0 md:translate-x-[120px]'}`}>
+            <div className={`hero-phone-wrapper relative flex items-start justify-center h-[420px] md:h-[700px] w-full transition-all duration-700 ease-out overflow-hidden ${isVisible ? 'opacity-100 translate-x-0 translate-y-0' : 'opacity-0 translate-y-[40px] md:translate-y-0 md:translate-x-[120px]'}`}>
                 <div className="hero-phone-blur relative">
                     <img
                         src={heroPhoneImage}

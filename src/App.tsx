@@ -15,7 +15,7 @@ import ContactPage from './components/ContactPage';
 import AsSeenOn from './components/AsSeenOn';
 import Hero3DPhone from './components/Hero3DPhone';
 import ResultsDashboard from './components/ResultsDashboard';
-import WinningSlips from './components/WinningSlips';
+
 import SportsCarousel from './components/SportsCarousel';
 import { Reveal } from './utils/Reveal';
 import CommunityBenefits from './components/CommunityBenefits';
@@ -133,21 +133,21 @@ const ROICalculator: React.FC = () => {
   const monthlyProfit = (unitSize * 24.5).toFixed(0);
   const yearlyPotential = (unitSize * 24.5 * 12).toFixed(0);
   const { t } = useLanguage();
+  const sliderPercent = ((unitSize - 10) / (500 - 10)) * 100;
 
   return (
-    <div className="bg-[#12141a] border border-purple-500/30 p-6 md:p-8 rounded-2xl shadow-[0_0_40px_rgba(168,85,247,0.15)] relative overflow-hidden max-w-md mx-auto">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.06)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-40 mix-blend-overlay pointer-events-none"></div>
-      <div className="absolute top-0 right-0 w-48 h-48 bg-purple-600/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <div className="bg-[#0c0e14] border border-purple-500/20 p-8 md:p-10 rounded-2xl shadow-[0_0_40px_rgba(168,85,247,0.1)] relative overflow-hidden max-w-2xl mx-auto">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-purple-500/8 rounded-full blur-[80px] pointer-events-none"></div>
 
       <div className="relative z-10">
-        <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{t('roi', 'Title')}</h3>
-        <p className="text-gray-500 mb-8 text-sm">{t('roi', 'Subtitle')}</p>
+        <h3 className="text-3xl md:text-4xl font-black text-white mb-3">{t('roi', 'Title')}</h3>
+        <p className="font-code text-gray-500 mb-8 text-base">{t('roi', 'Subtitle')}</p>
         <div className="mb-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="text-gray-400 font-bold text-xs uppercase tracking-wider mb-1">{t('roi', 'UnitSize')}</div>
-              <div className="text-xs text-gray-600">{t('roi', 'UnitDefinition')}</div>
+              <div className="text-gray-400 font-bold text-sm uppercase tracking-wider mb-1">{t('roi', 'UnitSize')}</div>
+              <div className="text-sm text-gray-600 font-code">{t('roi', 'UnitDefinition')}</div>
             </div>
             <div className="text-4xl font-black text-white">${unitSize}</div>
           </div>
@@ -159,7 +159,8 @@ const ROICalculator: React.FC = () => {
               step="10"
               value={unitSize}
               onChange={(e) => setUnitSize(parseInt(e.target.value, 10))}
-              className="roi-slider w-full h-2 rounded-full appearance-none cursor-pointer bg-[#2a2d35] accent-green-500"
+              className="roi-slider w-full h-2 rounded-full appearance-none cursor-pointer"
+              style={{ background: `linear-gradient(to right, #a855f7 ${sliderPercent}%, #1e1e2a ${sliderPercent}%)` }}
             />
             <style>{`
               .roi-slider {
@@ -168,35 +169,36 @@ const ROICalculator: React.FC = () => {
               .roi-slider::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
-                width: 16px;
-                height: 16px;
+                width: 18px;
+                height: 18px;
                 border-radius: 50%;
-                background: #22c55e;
+                background: #a855f7;
                 cursor: pointer;
-                border: 2px solid #ffffff;
-                box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+                border: 3px solid #c084fc;
+                box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
               }
               .roi-slider::-moz-range-track {
                 height: 8px;
-                background: #2a2d35;
+                background: #1e1e2a;
                 border-radius: 9999px;
               }
               .roi-slider::-moz-range-thumb {
-                width: 16px;
-                height: 16px;
+                width: 18px;
+                height: 18px;
                 border-radius: 50%;
-                background: #22c55e;
-                border: 2px solid #ffffff;
+                background: #a855f7;
+                border: 3px solid #c084fc;
+                box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
               }
             `}</style>
           </div>
           <div className="flex justify-between text-xs text-gray-600 mt-2">
-            <span>{t('roi', 'Min')}</span>
-            <span>{t('roi', 'Max')}</span>
+            <span className="font-code">{t('roi', 'Min')}</span>
+            <span className="font-code">{t('roi', 'Max')}</span>
           </div>
         </div>
         <div className="mb-8 h-40 relative">
-          <svg viewBox="0 0 400 120" className="w-full h-full" preserveAspectRatio="none">
+          <svg viewBox="0 0 400 160" className="w-full h-full">
             <defs>
               <linearGradient id="chartLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#a855f7" />
@@ -206,24 +208,30 @@ const ROICalculator: React.FC = () => {
                 <stop offset="0%" stopColor="#a855f7" stopOpacity="0.4" />
                 <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
               </linearGradient>
+              <radialGradient id="chartGlow" cx="320" cy="45" r="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#a855f7" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+              </radialGradient>
               <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur" /><feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
             </defs>
-            <path d="M20,100 C80,98 140,95 200,85 Q280,65 340,35 Q370,20 380,15 L380,120 L20,120 Z" fill="url(#chartAreaGradient)" />
-            <path d="M20,100 C80,98 140,95 200,85 Q280,65 340,35 Q370,20 380,15" fill="none" stroke="url(#chartLineGradient)" strokeWidth="3" filter="url(#glow)" vectorEffect="non-scaling-stroke" />
-            <circle cx="380" cy="15" r="5" fill="white" filter="url(#glow)" />
+            <circle cx="320" cy="45" r="80" fill="url(#chartGlow)" />
+            <path d="M40,140 C100,138 160,130 220,110 Q280,85 320,45 L320,160 L40,160 Z" fill="url(#chartAreaGradient)" />
+            <path d="M40,140 C100,138 160,130 220,110 Q280,85 320,45" fill="none" stroke="url(#chartLineGradient)" strokeWidth="3" filter="url(#glow)" vectorEffect="non-scaling-stroke" />
+            <line x1="320" y1="45" x2="320" y2="160" stroke="#a855f7" strokeWidth="1" strokeDasharray="4 4" opacity="0.3" />
+            <circle cx="320" cy="45" r="5" fill="white" filter="url(#glow)" />
           </svg>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#1a1d24] p-5 rounded-xl border border-gray-700/50">
+          <div className="bg-[#0a1a0f] p-4 md:p-6 rounded-xl border border-green-500/20 overflow-hidden">
             <div className="text-green-400 text-[11px] font-bold uppercase tracking-wider mb-2">{t('roi', 'MonthlyProfit')}</div>
-            <div className="text-3xl md:text-4xl font-black text-green-400">${parseInt(monthlyProfit).toLocaleString()}</div>
+            <div className="text-2xl sm:text-4xl md:text-5xl font-black text-green-400">${parseInt(monthlyProfit).toLocaleString()}</div>
           </div>
-          <div className="bg-[#1a1d24] p-5 rounded-xl border border-gray-700/50">
+          <div className="bg-[#0a1a0f] p-4 md:p-6 rounded-xl border border-green-500/20 overflow-hidden">
             <div className="text-purple-400 text-[11px] font-bold uppercase tracking-wider mb-2">{t('roi', 'YearlyPotential')}</div>
-            <div className="text-3xl md:text-4xl font-black text-white">${parseInt(yearlyPotential).toLocaleString()}</div>
+            <div className="text-2xl sm:text-4xl md:text-5xl font-black text-white">${parseInt(yearlyPotential).toLocaleString()}</div>
           </div>
         </div>
-        <p className="text-[11px] text-gray-600 mt-6 text-center italic border-t border-gray-800 pt-4">{t('roi', 'Disclaimer')}</p>
+        <p className="font-code text-[11px] text-gray-600 mt-6 text-center italic border-t border-gray-800 pt-4">{t('roi', 'Disclaimer')}</p>
       </div>
     </div>
   );
@@ -320,7 +328,7 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
     <nav className="fixed top-0 w-full z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-6">
-          <button onClick={() => setView('Contact')} className="text-sm font-semibold text-gray-300 hover:text-white transition-all hover:scale-105">{t('nav', 'Contact')}</button>
+          <button onClick={() => setView('Contact')} className="font-nav text-sm font-semibold text-gray-300 hover:text-white transition-all hover:scale-105">{t('nav', 'Contact')}</button>
           <div className="cursor-pointer group" onClick={goHome}>
             <img src={pIcon} alt="Propickz" className="h-14 w-14 object-contain group-hover:scale-110 transition-transform drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
           </div>
@@ -330,10 +338,10 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
             if (link.type === 'dropdown' && link.subItems) {
               return (
                 <div key={link.name} className="relative group">
-                  <button className={`text-sm font-semibold transition-all hover:scale-105 flex items-center gap-1 text-gray-300 hover:text-white group-hover:text-white`}>{link.name} <ChevronDown size={14} className="group-hover:rotate-180 transition-transform" /></button>
+                  <button className={`font-nav text-sm font-semibold transition-all hover:scale-105 flex items-center gap-1 text-gray-300 hover:text-white group-hover:text-white`}>{link.name} <ChevronDown size={14} className="group-hover:rotate-180 transition-transform" /></button>
                   <div className="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-xl border border-gray-800 rounded-xl overflow-hidden shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                     <div className="flex flex-col p-1">
-                      {link.subItems.map((sub) => (<button key={sub.page} onClick={() => { setView(sub.page!); }} className={`text-left px-4 py-3 text-sm font-semibold hover:bg-white/10 rounded-lg transition-colors ${currentView === sub.page ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white'}`}>{sub.name}</button>))}
+                      {link.subItems.map((sub) => (<button key={sub.page} onClick={() => { setView(sub.page!); }} className={`font-nav text-left px-4 py-3 text-sm font-semibold hover:bg-white/10 rounded-lg transition-colors ${currentView === sub.page ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white'}`}>{sub.name}</button>))}
                     </div>
                   </div>
                 </div>
@@ -341,14 +349,14 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
             }
             const isActive = link.type === 'scroll' ? activeSection === link.anchor : currentView === link.page;
             return (
-              <button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className={`text-sm font-semibold transition-all hover:scale-105 relative group ${isActive ? 'text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'text-gray-300 hover:text-white'}`}>{link.name}<span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span></button>
+              <button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className={`font-nav text-sm font-semibold transition-all hover:scale-105 relative group ${isActive ? 'text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'text-gray-300 hover:text-white'}`}>{link.name}<span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span></button>
             );
           })}
         </div>
         <div className="hidden md:flex items-center gap-4">
-          <button onClick={toggleLanguage} className="px-3 py-1.5 text-gray-300 hover:text-white transition-all flex items-center gap-2 font-semibold text-sm uppercase bg-white/5 rounded-lg hover:bg-white/10 border border-purple-500/20"><Globe size={16} /> {language === 'en' ? 'EN' : language === 'fr' ? 'FR' : 'ES'}</button>
-          <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105">{t('nav', 'JoinDiscord')}</button>
-          <button onClick={() => scrollToSection('pricing')} className="px-5 py-2 bg-gradient-to-r from-amber-500/10 to-yellow-600/10 backdrop-blur-sm border border-amber-500/30 text-amber-200 text-sm font-bold rounded-lg hover:bg-amber-500/20 transition-all hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]">{t('nav', 'ViewPricing')}</button>
+          <button onClick={toggleLanguage} className="font-nav px-3 py-1.5 text-gray-300 hover:text-white transition-all flex items-center gap-2 font-semibold text-sm uppercase bg-white/5 rounded-lg hover:bg-white/10 border border-purple-500/20"><Globe size={16} /> {language === 'en' ? 'EN' : language === 'fr' ? 'FR' : 'ES'}</button>
+          <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="font-nav px-5 py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:scale-105">{t('nav', 'JoinDiscord')}</button>
+          <button onClick={() => scrollToSection('pricing')} className="font-nav px-5 py-2 bg-gradient-to-r from-amber-500/10 to-yellow-600/10 backdrop-blur-sm border border-amber-500/30 text-amber-200 text-sm font-bold rounded-lg hover:bg-amber-500/20 transition-all hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]">{t('nav', 'ViewPricing')}</button>
         </div>
         <button className="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X /> : <Menu />}</button>
       </div>
@@ -358,17 +366,17 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
             if (link.type === 'dropdown' && link.subItems) {
               return (
                 <div key={link.name} className="flex flex-col">
-                  <button onClick={() => setResourcesOpen(!resourcesOpen)} className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5 flex justify-between items-center">{link.name} {resourcesOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</button>
-                  {resourcesOpen && (<div className="flex flex-col ml-4 border-l border-gray-800 pl-4 mt-2 gap-2">{link.subItems.map(sub => (<button key={sub.page} onClick={() => { setView(sub.page!); setMobileMenuOpen(false); }} className="text-gray-400 hover:text-white text-base p-3 text-left font-semibold hover:bg-white/5 rounded-lg transition-all">{sub.name}</button>))}</div>)}
+                  <button onClick={() => setResourcesOpen(!resourcesOpen)} className="font-nav text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5 flex justify-between items-center">{link.name} {resourcesOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</button>
+                  {resourcesOpen && (<div className="flex flex-col ml-4 border-l border-gray-800 pl-4 mt-2 gap-2">{link.subItems.map(sub => (<button key={sub.page} onClick={() => { setView(sub.page!); setMobileMenuOpen(false); }} className="font-nav text-gray-400 hover:text-white text-base p-3 text-left font-semibold hover:bg-white/5 rounded-lg transition-all">{sub.name}</button>))}</div>)}
                 </div>
               );
             }
-            return (<button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5">{link.name}</button>);
+            return (<button key={link.anchor || link.page} onClick={() => handleNavClick(link as any)} className="font-nav text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-lg p-4 text-left font-bold transition-all border border-transparent hover:border-white/5">{link.name}</button>);
           })}
           <div className="mt-auto pb-8 flex flex-col gap-4">
-            <button onClick={toggleLanguage} className="w-full py-4 text-white font-bold bg-white/5 rounded-xl border border-white/10 flex items-center justify-center gap-2"><Globe size={20} /> {language === 'en' ? 'English' : language === 'fr' ? 'Français' : 'Español'}</button>
-            <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20">{t('nav', 'JoinDiscord')}</button>
-            <button onClick={() => scrollToSection('pricing')} className="w-full py-4 bg-white text-black font-bold rounded-xl shadow-lg">{t('nav', 'ViewPricing')}</button>
+            <button onClick={toggleLanguage} className="font-nav w-full py-4 text-white font-bold bg-white/5 rounded-xl border border-white/10 flex items-center justify-center gap-2"><Globe size={20} /> {language === 'en' ? 'English' : language === 'fr' ? 'Français' : 'Español'}</button>
+            <button onClick={() => window.open('https://discord.gg/wEKnBrvZUF', '_blank')} className="font-nav w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20">{t('nav', 'JoinDiscord')}</button>
+            <button onClick={() => scrollToSection('pricing')} className="font-nav w-full py-4 bg-white text-black font-bold rounded-xl shadow-lg">{t('nav', 'ViewPricing')}</button>
           </div>
         </div>
       )}
@@ -501,7 +509,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
         <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-600/30 rounded-full blur-[80px] md:blur-[120px] pointer-events-none animate-pulse-slow"></div>
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
-          <div className="text-left space-y-6 md:space-y-8 pt-10 lg:pt-0">
+          <div className="order-2 lg:order-1 -mt-64 lg:mt-0 relative z-20 text-left space-y-6 md:space-y-8 pt-10 lg:pt-0">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/50 text-cyan-300 text-xs font-bold uppercase tracking-widest font-heading animate-fade-in-up shadow-[0_0_15px_rgba(34,211,238,0.2)]">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></span>{t('hero', 'SystemLive')}
             </div>
@@ -515,21 +523,21 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               <button onClick={() => setView('Results')} className="px-8 py-4 bg-transparent border border-gray-700 text-white rounded-full font-bold text-lg hover:bg-gray-900 hover:border-white transition-all flex items-center justify-center gap-2"><Shield size={20} fill="currentColor" /> {t('hero', 'WatchDemo')}</button>
             </div>
           </div>
-          <Hero3DPhone />
+          <div className="order-1 lg:order-2"><Hero3DPhone /></div>
         </div>
       </section>
 
       <AsSeenOn />
 
       <section className="py-24 bg-gradient-to-b from-textured-black to-purple-900/20 overflow-hidden bg-textured-black">
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <div className="inline-block px-4 py-1.5 rounded-full bg-purple-900/30 text-purple-300 font-bold text-sm mb-6 border border-purple-500/30">{t('roi', 'Badge')}</div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 whitespace-pre-line">{t('roi', 'Headline')}</h2>
-            <p className="text-gray-400 text-lg mb-8 leading-relaxed">{t('roi', 'Subheadline')}</p>
-            <div className="flex gap-12">
-              <div><div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={unitsRef}>+{unitsVal.toFixed(1)}u</div><div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'ProfitYTD')}</div></div>
-              <div><div className="text-4xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={membersRef}>{Math.floor(membersVal).toLocaleString()}+</div><div className="text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'DaysTracked')}</div></div>
+            <h2 className="text-3xl md:text-6xl font-bold text-white mb-6 whitespace-pre-line">{t('roi', 'Headline')}</h2>
+            <p className="font-code text-gray-400 text-base md:text-lg mb-8 lg:mb-0 leading-relaxed">{t('roi', 'Subheadline')}</p>
+            <div className="flex gap-12 mb-8 lg:mb-0">
+              <div><div className="text-3xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={unitsRef}>+{unitsVal.toFixed(1)}u</div><div className="text-xs sm:text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'ProfitYTD')}</div></div>
+              <div><div className="text-3xl sm:text-5xl font-black text-white mb-1 tracking-tight" ref={membersRef}>{Math.floor(membersVal).toLocaleString()}+</div><div className="text-xs sm:text-sm text-gray-500 uppercase tracking-[0.2em] font-bold font-heading">{t('roi', 'DaysTracked')}</div></div>
             </div>
           </div>
           <div className="relative"><ROICalculator /></div>
@@ -646,10 +654,10 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
           <div className="space-y-16 md:space-y-32 relative">
 
             {/* FIXED: Removed the moving bar entirely. Just the static track line remains. */}
-            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent block"></div>
+            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent hidden md:block"></div>
 
             {/* Steps Content */}
-            <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
+            <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative">
               <div className="md:order-1 relative">
                 <div className="absolute right-[-3rem] top-1/2 w-4 h-4 bg-purple-500 rounded-full shadow-[0_0_20px_rgba(168,85,247,1)] hidden md:block"></div>
                 <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-0 relative overflow-hidden group shadow-2xl">
@@ -708,9 +716,9 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
       <section id="guarantee" className="py-24 bg-gradient-to-b from-textured-black to-gray-900 border-t border-gray-900 relative overflow-hidden bg-textured-black">
         <div className="absolute inset-0 bg-purple-900/5 pointer-events-none"></div>
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <Reveal><h2 className="text-4xl md:text-5xl font-black text-white mb-6">{t('guaranteeDetailed', 'Headline')}</h2></Reveal>
-          <Reveal delay={200}><p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">{t('guaranteeDetailed', 'Subheadline')}</p></Reveal>
+        <div className="max-w-[68rem] mx-auto px-4 text-center relative z-10">
+          <Reveal><h2 className="text-4xl md:text-6xl font-black text-white mb-6">{t('guaranteeDetailed', 'Headline')}</h2></Reveal>
+          <Reveal delay={200}><p className="font-nav text-xl text-gray-400 mb-16 max-w-2xl mx-auto">{t('guaranteeDetailed', 'Subheadline')}</p></Reveal>
           <Reveal delay={300}>
             <div className="bg-[#0A0A0A] border border-gray-800 rounded-[2rem] p-8 md:p-12 relative overflow-hidden shadow-2xl group hover:border-purple-500/20 transition-all duration-500">
               <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
@@ -718,14 +726,14 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
               <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <h3 className="text-2xl font-bold text-white mb-10 flex items-center justify-center gap-3 relative z-10"><Shield size={28} className="text-purple-500" /> {t('guaranteeDetailed', 'HowItWorks')}</h3>
               <div className="grid md:grid-cols-2 gap-8 text-left max-w-3xl mx-auto relative z-10">
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">1</div>{t('guaranteeDetailed', 'Step1Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step1Desc')}</p></div>
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">2</div>{t('guaranteeDetailed', 'Step2Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step2Desc')}</p></div>
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">3</div>{t('guaranteeDetailed', 'Step3Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step3Desc')}</p></div>
-                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">4</div>{t('guaranteeDetailed', 'Step4Title')}</div><p className="text-gray-300 text-sm leading-relaxed">{t('guaranteeDetailed', 'Step4Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">1</div>{t('guaranteeDetailed', 'Step1Title')}</div><p className="font-nav text-gray-300 text-[15px] leading-relaxed">{t('guaranteeDetailed', 'Step1Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">2</div>{t('guaranteeDetailed', 'Step2Title')}</div><p className="font-nav text-gray-300 text-[15px] leading-relaxed">{t('guaranteeDetailed', 'Step2Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">3</div>{t('guaranteeDetailed', 'Step3Title')}</div><p className="font-nav text-gray-300 text-[15px] leading-relaxed">{t('guaranteeDetailed', 'Step3Desc')}</p></div>
+                <div className="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"><div className="text-purple-500 font-bold text-xs uppercase tracking-wider flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px]">4</div>{t('guaranteeDetailed', 'Step4Title')}</div><p className="font-nav text-gray-300 text-[15px] leading-relaxed">{t('guaranteeDetailed', 'Step4Desc')}</p></div>
               </div>
-              <div className="mt-12 bg-[#0a0a0a] rounded-xl p-6 border border-gray-800 relative z-10 text-center">
-                <p className="text-gray-400 text-sm italic mb-4">{t('guaranteeDetailed', 'Quote')}</p>
-                <a href="https://discord.gg/wEKnBrvZUF" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold bg-purple-600/20 px-6 py-3 rounded-full border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:bg-purple-600/30 transition-all duration-300">{t('guaranteeDetailed', 'CTA')} <ArrowRight size={16} /></a>
+              <div className="mt-12 bg-[#0a0a0a] rounded-xl p-7 border border-gray-800 relative z-10 text-center">
+                <p className="font-nav text-gray-400 text-[15px] italic mb-4">{t('guaranteeDetailed', 'Quote')}</p>
+                <a href="https://discord.gg/wEKnBrvZUF" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white font-bold bg-purple-600/20 px-7 py-3.5 rounded-full border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] hover:bg-purple-600/30 transition-all duration-300">{t('guaranteeDetailed', 'CTA')} <ArrowRight size={16} /></a>
               </div>
             </div>
           </Reveal>
@@ -737,13 +745,13 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
           <Reveal><h2 className="text-4xl md:text-5xl font-black text-white mb-6">{t('dominanceSection', 'Headline')} <span className="text-green-500">{t('dominanceSection', 'HeadlineHighlight')}</span></h2></Reveal>
           <Reveal delay={300}><SportsCarousel /></Reveal>
           <Reveal delay={400}>
-            <div className="mt-16 max-w-2xl mx-auto">
-              <div className="bg-gradient-to-br from-gray-900/80 to-black border border-gray-800 rounded-3xl p-8 relative overflow-hidden">
+            <div className="mt-16 max-w-5xl mx-auto">
+              <div className="bg-gradient-to-br from-gray-900/80 to-black border border-gray-800 rounded-3xl p-10 md:p-14 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
                 <div className="relative z-10">
-                  <h3 className="text-2xl md:text-3xl font-black text-white mb-4">More Leagues Added Constantly</h3>
-                  <p className="text-gray-400 mb-6 leading-relaxed">Our team is constantly building models for new markets including Horse Racing, E-Sports, and International Leagues. If there's an edge, we will find it.</p>
-                  <button disabled className="px-8 py-3 bg-white text-black font-bold rounded-xl transition-all duration-300 shadow-lg blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">Get All Access</button>
+                  <h3 className="text-3xl md:text-4xl font-black text-white mb-4">More Leagues Added Constantly</h3>
+                  <p className="text-lg text-gray-400 mb-6 leading-relaxed max-w-3xl mx-auto">Our team is constantly building models for new markets including Horse Racing, E-Sports, and International Leagues. If there's an edge, we will find it.</p>
+                  <button disabled className="px-10 py-4 text-lg bg-white text-black font-bold rounded-xl transition-all duration-300 shadow-lg blur-[1.5px] opacity-70 cursor-not-allowed pointer-events-none select-none">Get All Access</button>
                   <p className="text-amber-300 text-xs font-semibold uppercase tracking-wide mt-3">Available soon</p>
                 </div>
               </div>
@@ -841,7 +849,7 @@ const HowItWorksPage: React.FC = () => {
           <Reveal delay={200}><p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">{t('engineSection', 'Description')}</p></Reveal>
         </div>
         <div className="space-y-16 md:space-y-32 relative">
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent block"></div>
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent hidden md:block"></div>
           {/* REMOVED: Moving bar is completely gone */}
           <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative pl-12 md:pl-0">
             <div className="md:text-right order-1 md:order-1 relative">
@@ -972,9 +980,8 @@ const ResultsPage: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
         <h1 className="text-4xl md:text-6xl font-black text-white mb-6">Proven <span className="text-green-500">Results.</span></h1>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-16">Real wins from real members. The math speaks for itself.</p>
+        <p className="font-code text-xl text-gray-400 max-w-2xl mx-auto mb-16">Real wins from real members. The math speaks for itself.</p>
         <div className="mb-24"><ResultsDashboard /></div>
-        <div><WinningSlips /></div>
       </div>
     </div>
   );
@@ -988,10 +995,137 @@ const LegalPage: React.FC = () => {
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
       <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
       <div className="max-w-4xl mx-auto px-4 relative z-10">
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Legal</h1>
-        <p className="text-gray-400 mb-12">Effective Date: June 1, 2025</p>
-        <div className="space-y-12 text-gray-300 leading-relaxed font-light">
-          <p>These Terms & Conditions (“Terms”) govern your access to and use of the Propickz platform...</p>
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Terms &amp; Conditions</h1>
+        <p className="font-code text-gray-400 mb-12">Effective Date: June 1, 2025</p>
+        <div className="space-y-12 font-nav text-gray-300 leading-relaxed">
+          <p>These Terms &amp; Conditions (&ldquo;Terms&rdquo;) govern your access to and use of the Propickz platform, including all content, tools, picks, projections, and related services (collectively, the &ldquo;Service&rdquo;). By accessing or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.</p>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">1. Informational Purposes Only</h2>
+            <p>All content provided by Propickz &mdash; including but not limited to sports picks, projections, analyses, educational materials, and commentary &mdash; is strictly for informational and entertainment purposes. Nothing on the platform constitutes financial, investment, or gambling advice. You are solely responsible for any decisions you make based on the information provided.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">2. No Guarantee of Profit</h2>
+            <p>Past performance does not guarantee future results. Sports betting involves inherent risk, and no system, model, or strategy can guarantee profit. Propickz makes no representations or warranties that the use of our picks or tools will result in financial gain. All users assume full responsibility for their betting activity.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">3. Content May Include Simulations</h2>
+            <p>Certain results, projections, or performance metrics displayed on the platform may be based on hypothetical, backtested, or simulated data. These are provided for educational and illustrative purposes only and do not reflect actual user results. Simulated results have inherent limitations and should not be relied upon as indicators of future performance.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">4. No Client/Fiduciary Relationship</h2>
+            <p>Use of the Propickz platform does not create a client, advisory, fiduciary, or professional relationship between you and Propickz or any of its affiliates. Propickz is not a licensed financial advisor, broker, or betting service provider.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">5. Limitation of Liability</h2>
+            <p>To the fullest extent permitted by applicable law, Propickz and its owners, officers, employees, agents, and affiliates shall not be held liable for any direct, indirect, incidental, special, consequential, or punitive damages &mdash; including but not limited to loss of profits, data, or other intangible losses &mdash; arising out of or in connection with your use of the Service.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">6. Disclaimer of Warranties</h2>
+            <p>The Service is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis without warranties of any kind, whether express, implied, or statutory. Propickz disclaims all warranties, including but not limited to implied warranties of merchantability, fitness for a particular purpose, accuracy, and non-infringement.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">7. Intellectual Property</h2>
+            <p>All content, branding, models, algorithms, tools, designs, and materials on the Propickz platform are the intellectual property of Propickz. You may not reproduce, distribute, modify, or create derivative works from any part of the Service without prior written consent.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">8. Jurisdiction</h2>
+            <p>These Terms shall be governed by and construed in accordance with the laws of the Province of Quebec, Canada, without regard to its conflict of law provisions. Any disputes arising from or relating to these Terms shall be subject to the exclusive jurisdiction of the courts located in Quebec, Canada.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">9. Changes to Terms</h2>
+            <p>Propickz reserves the right to modify or update these Terms at any time without prior notice. Your continued use of the Service after any changes constitutes acceptance of the updated Terms. It is your responsibility to review these Terms periodically.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">10. Severability</h2>
+            <p>If any provision of these Terms is found to be invalid, illegal, or unenforceable by a court of competent jurisdiction, the remaining provisions shall remain in full force and effect.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">11. Entire Agreement</h2>
+            <p>These Terms, together with any other legal notices or policies published on the platform, constitute the entire agreement between you and Propickz regarding the use of the Service.</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">12. Guarantee Disclaimer</h2>
+            <p className="mb-4">Propickz offers a performance-based guarantee on select membership tiers. The following outlines the scope, conditions, and limitations of this guarantee.</p>
+
+            <div className="space-y-6 pl-4 border-l-2 border-purple-500/30">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">12.1 Scope</h3>
+                <p>The guarantee applies only to paid membership tiers that explicitly advertise a guarantee as part of their plan. Free or community-tier memberships are not eligible.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">12.2 Definition of Loss</h3>
+                <p>A &ldquo;loss&rdquo; under this guarantee is defined as a negative unit balance at the end of the applicable guarantee period, calculated using flat-unit betting at the recommended unit size, based solely on picks published by Propickz during the membership term.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">12.3 Membership-Specific Guarantees</h3>
+                <div className="space-y-4 mt-3">
+                  <div>
+                    <h4 className="text-base font-bold text-purple-400 mb-1">Monthly Membership</h4>
+                    <p>If the member finishes the calendar month at a net loss (in units), they are eligible for a free extension of one (1) additional month.</p>
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-purple-400 mb-1">Yearly Membership</h4>
+                    <p>If the member finishes the twelve (12) month period at a net loss (in units), they are eligible for a free extension of up to three (3) additional months.</p>
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-purple-400 mb-1">Lifetime Membership</h4>
+                    <p>Lifetime members are not eligible for extensions, as their access is already perpetual. However, Propickz commits to maintaining service quality and transparency for all lifetime members.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">12.4 Member-Initiated Claims</h3>
+                <p>To claim a guarantee extension, the member must contact Propickz support within fourteen (14) days of the end of their billing period. Claims must include the member&rsquo;s username, membership tier, and the relevant billing dates. Propickz will review the claim using internal tracking records.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">12.5 Exclusions</h3>
+                <p>The guarantee does not apply if:</p>
+                <ul className="list-disc list-inside mt-2 space-y-1 text-gray-400">
+                  <li>The member did not follow the recommended unit size or bankroll management guidelines.</li>
+                  <li>The member selectively tailed picks rather than following the full card.</li>
+                  <li>The member&rsquo;s account was suspended or terminated for violating platform rules.</li>
+                  <li>The member requested a refund or chargeback during the guarantee period.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">12.6 Guarantee Limitation</h3>
+                <p>The guarantee is limited to service extensions only. Under no circumstances will Propickz provide monetary refunds, cash compensation, or reimbursement of betting losses. The guarantee is a goodwill gesture and does not constitute a contractual obligation to ensure profitability.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">12.7 No Workarounds</h3>
+                <p>Any attempt to manipulate, abuse, or exploit the guarantee &mdash; including but not limited to creating multiple accounts, falsifying records, or misrepresenting betting activity &mdash; will result in immediate disqualification from the guarantee and potential termination of membership.</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-3">13. Contact</h2>
+            <p>For questions, concerns, or legal inquiries, please contact us at <a href="mailto:support@propickz.com" className="text-purple-400 hover:text-purple-300 underline transition-colors">support@propickz.com</a>.</p>
+          </div>
+        </div>
+
+        <div className="mt-20 text-center border-t border-gray-800 pt-16">
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Ready to Start Winning?</h2>
+          <p className="font-nav text-gray-400 mb-8 max-w-xl mx-auto">Join thousands of members who trust Propickz for data-driven sports picks backed by our performance guarantee.</p>
+          <a href="https://whop.com/propickz/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-xl hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition-all hover:scale-105 text-lg">Get Started <ArrowRight size={20} /></a>
         </div>
       </div>
     </div>
