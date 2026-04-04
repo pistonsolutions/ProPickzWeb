@@ -19,7 +19,6 @@ import ResultsDashboard from './components/ResultsDashboard';
 import SportsCarousel from './components/SportsCarousel';
 import { Reveal } from './utils/Reveal';
 import CommunityBenefits from './components/CommunityBenefits';
-import AboutUsPage from './components/AboutUsPage';
 
 import FeatureTiles from './components/FeatureTiles';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
@@ -1185,7 +1184,6 @@ const App: React.FC = () => {
       case 'Calculators': return <CalculatorsPage />;
       case 'HowItWorks': return <HowItWorksPage />;
       case 'SupportedSports': return <SupportedSportsPage />;
-      case 'AboutUs': return <AboutUsPage />;
       case 'Trust': return <TrustPage />;
       case 'Testimonials': return <TestimonialsPage />;
       case 'FAQ': return <FAQPage />;

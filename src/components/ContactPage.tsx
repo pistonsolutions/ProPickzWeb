@@ -5,11 +5,27 @@ import { useLanguage } from '../contexts/LanguageContext';
 const ContactPage: React.FC = () => {
     const { t } = useLanguage();
     const [submitted, setSubmitted] = useState(false);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [subject, setSubject] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        const selectedSubject = subject || t('contact', 'OptionGeneral');
+        const mailSubject = `[Website Inquiry] ${selectedSubject}`;
+        const mailBody = [
+            `Name: ${name}`,
+            `Email: ${email}`,
+            `Subject: ${selectedSubject}`,
+            '',
+            'Message:',
+            message,
+        ].join('\n');
+
+        window.location.href = `mailto:propickz.business@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
         setSubmitted(true);
-        // In a real app, you would send the form data here
         setTimeout(() => setSubmitted(false), 5000);
     };
 
@@ -51,7 +67,7 @@ const ContactPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <div className="text-sm text-gray-500 font-bold uppercase">{t('contact', 'EmailLabel')}</div>
-                                        <div className="text-white">support@propickz.com</div>
+                                        <div className="text-white">propickz.business@gmail.com</div>
                                     </div>
                                 </div>
                             </div>
@@ -75,6 +91,8 @@ const ContactPage: React.FC = () => {
                                     <input
                                         type="text"
                                         required
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
                                         className="w-full bg-black/50 border border-gray-800 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors"
                                     />
                                 </div>
@@ -83,16 +101,22 @@ const ContactPage: React.FC = () => {
                                     <input
                                         type="email"
                                         required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         className="w-full bg-black/50 border border-gray-800 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors"
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-400 mb-2">{t('contact', 'Subject')}</label>
-                                    <select className="w-full bg-black/50 border border-gray-800 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors">
-                                        <option>{t('contact', 'OptionGeneral')}</option>
-                                        <option>{t('contact', 'OptionBilling')}</option>
-                                        <option>{t('contact', 'OptionTech')}</option>
-                                        <option>{t('contact', 'OptionPartner')}</option>
+                                    <select
+                                        value={subject}
+                                        onChange={(e) => setSubject(e.target.value)}
+                                        className="w-full bg-black/50 border border-gray-800 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                    >
+                                        <option value="">{t('contact', 'OptionGeneral')}</option>
+                                        <option value={t('contact', 'OptionBilling')}>{t('contact', 'OptionBilling')}</option>
+                                        <option value={t('contact', 'OptionTech')}>{t('contact', 'OptionTech')}</option>
+                                        <option value={t('contact', 'OptionPartner')}>{t('contact', 'OptionPartner')}</option>
                                     </select>
                                 </div>
                                 <div>
@@ -100,6 +124,8 @@ const ContactPage: React.FC = () => {
                                     <textarea
                                         required
                                         rows={4}
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
                                         className="w-full bg-black/50 border border-gray-800 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors resize-none"
                                     ></textarea>
                                 </div>

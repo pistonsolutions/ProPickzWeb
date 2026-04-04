@@ -145,7 +145,7 @@ const CalculatorsPage: React.FC = () => {
     const kellyResults = calculateKelly();
 
     return (
-        <div className="min-h-screen bg-black text-white py-24 px-4">
+        <div className="min-h-screen bg-[radial-gradient(circle_at_20%_0%,rgba(168,85,247,0.22),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(34,211,238,0.16),transparent_40%),#050509] text-white py-24 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-16">
@@ -163,9 +163,9 @@ const CalculatorsPage: React.FC = () => {
                         <button
                             key={calc.id}
                             onClick={() => setActiveCalc(calc.id)}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${activeCalc === calc.id
-                                ? 'bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)]'
-                                : 'bg-gray-900/50 text-gray-400 hover:bg-gray-900 hover:text-white border border-gray-800'
+                            className={`flex items-center gap-2 px-6 py-3.5 rounded-full font-bold text-sm transition-all duration-300 ${activeCalc === calc.id
+                                ? 'bg-gradient-to-r from-purple-600/90 to-violet-600/90 text-white shadow-[0_12px_30px_rgba(168,85,247,0.35)] border border-purple-300/30'
+                                : 'bg-white/[0.03] backdrop-blur-md text-gray-300 hover:bg-white/[0.08] hover:text-white border border-white/10'
                                 }`}
                         >
                             {calc.icon}
@@ -175,7 +175,7 @@ const CalculatorsPage: React.FC = () => {
                 </div>
 
                 {/* Calculator Content */}
-                <div className="bg-gray-900/30 border border-gray-800 rounded-3xl p-8">
+                <div className="calc-soft bg-white/[0.035] backdrop-blur-xl border border-white/12 rounded-[2rem] p-6 md:p-8 shadow-[0_20px_60px_rgba(8,8,14,0.45)]">
 
                     {/* PARLAY CALCULATOR */}
                     {activeCalc === 'parlay' && (
