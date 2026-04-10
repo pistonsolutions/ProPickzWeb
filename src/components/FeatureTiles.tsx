@@ -11,7 +11,7 @@ const FeatureTiles: React.FC = () => {
 
     const widgets = [
         // Widget 1: Inside the Winning Room
-        <div key="widget1" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-[#0a0a0a] p-4 relative overflow-hidden border border-white/10 shadow-[inset_0_0_30px_rgba(0,0,0,0.5),0_0_40px_rgba(139,92,246,0.1)] group h-[440px] md:h-full md:min-h-[400px] hover:shadow-[0_0_60px_rgba(139,92,246,0.2)] transition-all duration-300">
+        <div key="widget1" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-[#0a0a0a] p-4 relative overflow-hidden border border-white/10 shadow-[inset_0_0_30px_rgba(0,0,0,0.5),0_0_40px_rgba(139,92,246,0.1)] group h-[500px] md:h-full md:min-h-[400px] hover:shadow-[0_0_60px_rgba(139,92,246,0.2)] transition-all duration-300">
             <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-[80px] pointer-events-none"></div>
 
             {/* Live Tracking Badge - Absolute positioned */}
@@ -36,7 +36,7 @@ const FeatureTiles: React.FC = () => {
         </div>,
 
         // Widget 2: Exclusive Giveaways
-        <div key="widget2" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-gradient-to-br from-amber-600 to-yellow-700 p-6 relative overflow-hidden border border-white/20 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] group h-[400px] md:h-full md:min-h-[400px] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] transition-all">
+        <div key="widget2" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-gradient-to-br from-amber-600 to-yellow-700 p-6 relative overflow-hidden border border-white/20 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] group h-[500px] md:h-full md:min-h-[400px] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] transition-all">
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-25 mix-blend-overlay pointer-events-none"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-yellow-300/20 rounded-full blur-[40px] pointer-events-none animate-pulse"></div>
 
@@ -57,7 +57,7 @@ const FeatureTiles: React.FC = () => {
         </div>,
 
         // Widget 3: The Algorithm
-        <div key="widget3" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-[#0c0c0c] p-6 relative overflow-hidden border border-white/10 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] group h-[400px] md:h-full md:min-h-[400px]">
+        <div key="widget3" className="w-[280px] md:w-auto flex-shrink-0 md:flex-shrink rounded-[2rem] bg-[#0c0c0c] p-6 relative overflow-hidden border border-white/10 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] group h-[500px] md:h-full md:min-h-[400px]">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(34,197,94,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(34,197,94,0.05)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
 
             {/* Live Tracking Badge - Absolute positioned */}
@@ -161,8 +161,10 @@ const FeatureTiles: React.FC = () => {
                     backface-visibility: hidden;
                     perspective: 1000px;
                 }
-                .animate-carousel-scroll:hover {
-                    animation-play-state: paused;
+                @media (hover: hover) and (pointer: fine) {
+                    .animate-carousel-scroll:hover {
+                        animation-play-state: paused;
+                    }
                 }
             `}</style>
         </section>

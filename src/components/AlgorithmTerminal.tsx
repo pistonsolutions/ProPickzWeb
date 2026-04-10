@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const codeLines = [
     { type: 'code', content: 'picks = sports_picks.get_today_picks()' },
@@ -23,11 +23,30 @@ const codeLines = [
 ];
 
 const AlgorithmTerminal: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
     const [displayedLines, setDisplayedLines] = useState<typeof codeLines>([]);
     const [currentLine, setCurrentLine] = useState(0);
     const [currentChar, setCurrentChar] = useState(0);
-    const [isTyping] = useState(true);
+    const [isTyping, setIsTyping] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);
+
+    useEffect(() => {
+        const element = containerRef.current;
+        if (!element) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsTyping(entry.isIntersecting);
+            },
+            {
+                threshold: 0.35,
+            }
+        );
+
+        observer.observe(element);
+
+        return () => observer.disconnect();
+    }, []);
 
     useEffect(() => {
         if (!isTyping) return;
@@ -114,7 +133,7 @@ const AlgorithmTerminal: React.FC = () => {
     };
 
     return (
-        <div className="flex-1 bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden font-mono text-[10px] sm:text-xs shadow-2xl">
+        <div ref={containerRef} className="flex-1 bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden font-mono text-[10px] sm:text-xs shadow-2xl">
             <div className="bg-[#2d2d2d] px-3 py-2 flex gap-1.5 border-b border-white/5">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>

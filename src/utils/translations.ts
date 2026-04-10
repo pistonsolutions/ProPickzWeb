@@ -156,7 +156,7 @@ export const translations = {
             Subtitle: "Everything you need to know about the system, the math, and the money."
         },
         footer: {
-            Copyright: "© 2025 Propickz Inc. All rights reserved.",
+            Copyright: "© 2026 Propickz Inc. All rights reserved.",
             Disclaimer: "This is not gambling advice. Please bet responsibly."
         },
         popup: {
@@ -765,7 +765,7 @@ export const translations = {
             Subtitle: "Tout ce que vous devez savoir sur le système, les mathématiques et l'argent."
         },
         footer: {
-            Copyright: "© 2025 Propickz Inc. Tous droits réservés.",
+            Copyright: "© 2026 Propickz Inc. Tous droits réservés.",
             Disclaimer: "Ceci n'est pas un conseil en jeux d'argent. Jouez de manière responsable."
         },
         popup: {
@@ -1373,7 +1373,7 @@ export const translations = {
             Subtitle: "Todo lo que necesitas saber sobre el sistema, las matemáticas y el dinero."
         },
         footer: {
-            Copyright: "© 2025 Propickz Inc. Todos los derechos reservados.",
+            Copyright: "© 2026 Propickz Inc. Todos los derechos reservados.",
             Disclaimer: "Esto no es consejo de apuestas. Apuesta responsablemente."
         },
         popup: {
