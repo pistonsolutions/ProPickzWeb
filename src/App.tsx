@@ -7,7 +7,6 @@ import { ChevronDown, ChevronUp, CheckCircle, X, Menu, Star, Shield, Zap, Trendi
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
-import propickzLogo from './assets/propickzlogo.png';
 import pIcon from './assets/p_icon.png';
 import CalculatorsPage from './pages/CalculatorsPage';
 import EarningsPopup from './components/EarningsPopup';
@@ -24,11 +23,6 @@ import FeatureTiles from './components/FeatureTiles';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import LotteryCountdown from './components/LotteryCountdown';
 import ScrollProgressIndicator from './components/ScrollProgressIndicator';
-
-interface FomoData {
-  name: string;
-  action: string;
-}
 
 interface FaqItem {
   q: string;
@@ -232,48 +226,6 @@ const ROICalculator: React.FC = () => {
         </div>
         <p className="font-code text-[11px] text-gray-600 mt-6 text-center italic border-t border-gray-800 pt-4">{t('roi', 'Disclaimer')}</p>
       </div>
-    </div>
-  );
-};
-
-const FomoNotification: React.FC = () => {
-  const [visible, setVisible] = useState(false);
-  const [data, setData] = useState<FomoData>({ name: '', action: '' });
-  const { t } = useLanguage();
-  const FOMO_CONFIG = { MAX_POPUPS: 4, DISPLAY_DURATION: 5000, INITIAL_DELAYS: [5000, 15000, 30000, 60000], INTERVALS: [15000, 25000, 40000, 60000] };
-
-  useEffect(() => {
-    const popupCount = parseInt(sessionStorage.getItem('fomoPopupCount') || '0');
-    if (popupCount >= FOMO_CONFIG.MAX_POPUPS) return;
-
-    const trigger = () => {
-      const currentCount = parseInt(sessionStorage.getItem('fomoPopupCount') || '0');
-      if (currentCount >= FOMO_CONFIG.MAX_POPUPS) return;
-
-      const randomName = "User";
-      // @ts-ignore
-      const randomActionKey = `Action${Math.floor(Math.random() * 8) + 1}`;
-      // @ts-ignore
-      const randomAction = t('fomo', randomActionKey);
-      setData({ name: randomName, action: randomAction });
-      setVisible(true);
-      sessionStorage.setItem('fomoPopupCount', String(currentCount + 1));
-      setTimeout(() => setVisible(false), FOMO_CONFIG.DISPLAY_DURATION);
-    };
-
-    const delay = FOMO_CONFIG.INITIAL_DELAYS[popupCount] || FOMO_CONFIG.INITIAL_DELAYS[FOMO_CONFIG.INITIAL_DELAYS.length - 1];
-    const randomInterval = Math.random() * (FOMO_CONFIG.INTERVALS[popupCount] || FOMO_CONFIG.INTERVALS[FOMO_CONFIG.INTERVALS.length - 1]);
-    const timer = setTimeout(trigger, delay + randomInterval);
-    return () => clearTimeout(timer);
-  }, [t]);
-
-  if (!visible) return null;
-
-  return (
-    <div className="fixed bottom-24 left-4 md:left-8 z-50 bg-white dark:bg-gray-900 border border-purple-500/30 p-4 rounded-xl shadow-2xl flex items-center gap-4 animate-slide-in-left max-w-sm">
-      <div className="bg-black p-2 rounded-full border border-gray-800"><img src={propickzLogo} alt="Propickz" className="w-6 h-6 object-contain" /></div>
-      <div><div className="text-sm font-bold text-gray-900 dark:text-white">{data.name}</div><div className="text-xs text-gray-500 dark:text-gray-400">{data.action}</div></div>
-      <div className="text-xs text-gray-400 ml-auto">{t('fomo', 'JustNow')}</div>
     </div>
   );
 };
@@ -657,7 +609,7 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
 
             {/* Steps Content */}
             <Reveal className="grid md:grid-cols-2 gap-8 md:gap-12 items-center relative">
-              <div className="md:order-1 relative">
+              <div className="order-2 md:order-1 relative">
                 <div className="absolute right-[-3rem] top-1/2 w-4 h-4 bg-purple-500 rounded-full shadow-[0_0_20px_rgba(168,85,247,1)] hidden md:block"></div>
                 <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-0 relative overflow-hidden group shadow-2xl">
                   <div className="bg-gray-900/80 backdrop-blur-md p-3 border-b border-gray-800 flex justify-between items-center"><div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div><div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div><div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div></div><div className="text-[10px] text-green-500 font-mono animate-pulse flex items-center gap-1.5 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20"><div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> {t('engineSection', 'Scanning')}</div></div>
@@ -673,13 +625,13 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
                   </div>
                 </Reveal>
               </div>
-              <div className="md:order-2 md:pl-12">
+              <div className="order-1 md:order-2 md:pl-12">
                 <Reveal delay={200}><div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20 text-blue-400"><TrendingUp size={24} /></div><h3 className="text-3xl font-black text-white mb-4">{t('engineSection', 'Step1Title')}</h3><p className="text-gray-400 leading-relaxed">{t('engineSection', 'Step1Desc')}</p></Reveal>
               </div>
             </Reveal>
 
             <Reveal className="grid md:grid-cols-2 gap-12 items-center relative">
-              <div className="md:order-2 relative">
+              <div className="order-2 md:order-2 relative">
                 <div className="absolute left-[-3rem] top-1/2 w-4 h-4 bg-purple-500 rounded-full shadow-[0_0_20px_rgba(168,85,247,1)] hidden md:block"></div>
                 <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-6 relative">
                   <div className="text-center text-[10px] text-purple-400 font-mono mb-4 tracking-widest">{t('engineSection', 'HybridActive')}</div>
@@ -691,20 +643,20 @@ const HomePage: React.FC<HomePageProps> = ({ setView }) => {
                   <div className="bg-gradient-to-r from-purple-900/40 to-blue-900/40 border border-purple-500/30 p-4 rounded-xl text-center"><div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">{t('engineSection', 'FinalVerdict')}</div><div className="text-xl font-black text-white mb-1">Lakers -5.5</div><div className="text-[9px] text-green-400">{t('engineSection', 'ConfirmedBy')}</div></div>
                 </Reveal>
               </div>
-              <div className="md:order-1 md:pr-12 md:text-right">
+              <div className="order-1 md:order-1 md:pr-12 md:text-right">
                 <Reveal delay={200}><div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6 border border-purple-500/20 text-purple-400 md:ml-auto"><Zap size={24} /></div><h3 className="text-3xl font-black text-white mb-4">{t('engineSection', 'Step2Title')}</h3><p className="text-gray-400 leading-relaxed">{t('engineSection', 'Step2Desc')}</p></Reveal>
               </div>
             </Reveal>
 
             <Reveal className="grid md:grid-cols-2 gap-12 items-center relative">
-              <div className="md:order-1 relative">
+              <div className="order-2 md:order-1 relative">
                 <div className="absolute right-[-3rem] top-1/2 w-4 h-4 bg-green-500 rounded-full shadow-[0_0_20px_rgba(34,197,94,1)] hidden md:block animate-pulse"></div>
                 <Reveal className="bg-[#0f1014] border border-gray-800 rounded-2xl p-6 relative shadow-lg">
                   <div className="flex items-center gap-3 mb-4"><div className="w-10 h-10 rounded-full bg-transparent overflow-hidden"><img src={pIcon} alt="ProPickz Bot" className="w-full h-full object-cover" /></div><div><div className="text-white font-bold text-sm flex items-center gap-2">{t('engineSection', 'BotName')} <span className="bg-blue-600 text-[9px] px-1.5 rounded text-white">BOT</span></div><div className="text-[10px] text-gray-500">{t('engineSection', 'BotTime')}</div></div></div>
                   <div className="pl-12"><div className="bg-[#1e1f25] border-l-4 border-green-500 rounded-r-lg p-3 text-sm"><div className="text-green-400 font-bold mb-1 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div> 💎 {t('engineSection', 'WhalePlay')}</div><div className="text-white font-bold mb-0.5">LeBron James Over 25.5 Pts</div><div className="text-gray-400 text-xs mb-1">{t('engineSection', 'OddsExample')}</div><div className="text-purple-400 text-xs font-mono">{t('engineSection', 'HybridScore')}</div></div></div>
                 </Reveal>
               </div>
-              <div className="md:order-2 md:pl-12">
+              <div className="order-1 md:order-2 md:pl-12">
                 <Reveal delay={200}><div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6 border border-green-500/20 text-green-400"><Smartphone size={24} /></div><h3 className="text-3xl font-black text-white mb-4">{t('engineSection', 'Step3Title')}</h3><p className="text-gray-400 leading-relaxed">{t('engineSection', 'Step3Desc')}</p></Reveal>
               </div>
             </Reveal>
@@ -1199,7 +1151,6 @@ const App: React.FC = () => {
         <main className="relative z-10">{renderView()}</main>
         <Footer />
         <EarningsPopup />
-        {view === 'Home' && <FomoNotification />}
         <ScrollProgressIndicator />
       </div>
     </LanguageProvider>
