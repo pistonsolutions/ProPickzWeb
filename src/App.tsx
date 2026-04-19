@@ -419,6 +419,26 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-black border-t border-gray-900 py-12 text-center">
       <div className="max-w-7xl mx-auto px-4">
+        <div className="mb-24 mt-12">
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+            Ready to Start Winning?
+          </h2>
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+            Join members who trust Propickz for data-driven sports picks backed by our performance guarantee.
+          </p>
+          <button
+            onClick={() => {
+              const el = document.getElementById('pricing');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+            <span className="relative z-10 text-lg">Get Started</span>
+            <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+
         <div className="mb-16 border-b border-gray-800 pb-16">
           <h2 className="text-3xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600 tracking-tight">{t('newsletter', 'Headline')}</h2>
           <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">{t('newsletter', 'Subheadline')}</p>
