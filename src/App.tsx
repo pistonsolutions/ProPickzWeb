@@ -20,6 +20,7 @@ import { Reveal } from './utils/Reveal';
 import CommunityBenefits from './components/CommunityBenefits';
 
 import FeatureTiles from './components/FeatureTiles';
+import { supabase } from './utils/supabaseClient';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import LotteryCountdown from './components/LotteryCountdown';
 import ScrollProgressIndicator from './components/ScrollProgressIndicator';
@@ -342,7 +343,6 @@ const Footer: React.FC = () => {
   const [submitMessage, setSubmitMessage] = useState('');
   const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const NEWSLETTER_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzq6JX5Jo4VRZGgz9PqFFqjo4kj6PB4l5Tkl45KAJRYcbzKHLjADthPG0_XH9b31pM0Vg/exec';
   const SIGNUP_EMAILS_STORAGE_KEY = 'propickzPromoSignupEmails';
 
   const getStoredSignupEmails = (): string[] => {
@@ -392,16 +392,23 @@ const Footer: React.FC = () => {
     setSubmitMessage('');
 
     try {
-      await fetch(NEWSLETTER_WEBHOOK_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
+      const { error } = await supabase
+        .from('newsletter_signups')
+        .insert({
           email: normalizedEmail,
           source: 'promo-15',
-          discountCode: 'PROPICKZ15',
-        }),
-      });
+          discount_code: 'PROPICKZ15',
+        });
+
+      if (error) {
+        if (error.code === '23505') {
+          setSubmitState('error');
+          setSubmitMessage('This email is already signed up.');
+          saveSignupEmail(normalizedEmail);
+          return;
+        }
+        throw error;
+      }
 
       setSubmitState('success');
       setSubmitMessage('Thanks! Your 15% code is on the way.');
