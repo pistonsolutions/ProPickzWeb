@@ -3,10 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronUp, CheckCircle, X, Menu, Star, Shield, Zap, TrendingUp, Users, Target, MessageSquare, AlertCircle, LayoutDashboard, Layers, BookOpen, Gift, Trophy, Globe, ArrowUpRight, Smartphone, ArrowRight, Lock } from 'lucide-react';
 
-// Firebase Imports
-import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
 import pIcon from './assets/p_icon.png';
 import CalculatorsPage from './pages/CalculatorsPage';
 import EarningsPopup from './components/EarningsPopup';
@@ -81,43 +77,6 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0): [R
   }, [onScreen, end, duration, start, hasAnimated]);
 
   return [ref, count];
-};
-
-// --- FIREBASE SERVICE ---
-
-declare global {
-  interface Window {
-    __firebase_config?: string;
-    __initial_auth_token?: string;
-  }
-}
-
-const firebaseConfigStr = typeof window !== 'undefined' && window.__firebase_config ? window.__firebase_config : '{}';
-const firebaseConfig = JSON.parse(firebaseConfigStr);
-
-const initFirebase = (): Promise<{ db: Firestore | null; auth: Auth | null; userId: string | null }> => {
-  try {
-    const app: FirebaseApp = initializeApp(firebaseConfig);
-    const auth: Auth = getAuth(app);
-    const db: Firestore = getFirestore(app);
-    return new Promise((resolve) => {
-      const token = typeof window !== 'undefined' ? window.__initial_auth_token : null;
-
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          resolve({ db, auth, userId: user.uid });
-        } else if (token) {
-          await signInWithCustomToken(auth, token);
-        } else {
-          const anon = await signInAnonymously(auth);
-          resolve({ db, auth, userId: anon.user.uid });
-        }
-      });
-    });
-  } catch (e) {
-    console.error("Firebase init error", e);
-    return Promise.resolve({ db: null, auth: null, userId: null });
-  }
 };
 
 // --- COMPONENTS ---
@@ -381,13 +340,6 @@ const Footer: React.FC = () => {
       return;
     }
 
-    const existingEmails = getStoredSignupEmails();
-    if (existingEmails.includes(normalizedEmail)) {
-      setSubmitState('error');
-      setSubmitMessage('This email is already signed up.');
-      return;
-    }
-
     setIsSubmitting(true);
     setSubmitState('idle');
     setSubmitMessage('');
@@ -401,18 +353,12 @@ const Footer: React.FC = () => {
           discount_code: 'PROPICKZ15',
         });
 
-      if (error) {
-        if (error.code === '23505') {
-          setSubmitState('error');
-          setSubmitMessage('This email is already signed up.');
-          saveSignupEmail(normalizedEmail);
-          return;
-        }
+      if (error && error.code !== '23505') {
         throw error;
       }
 
       setSubmitState('success');
-      setSubmitMessage('Thanks! Your 15% code is on the way.');
+      setSubmitMessage('Thanks! Your 15% code is applied below.');
       saveSignupEmail(normalizedEmail);
       setSignupEmail(normalizedEmail);
       setEmail('');
@@ -1169,8 +1115,6 @@ const FreeTrialPage: React.FC = () => {
 const App: React.FC = () => {
   const [view, setView] = useState('Home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => { initFirebase(); }, []);
 
   const renderView = () => {
     switch (view) {
