@@ -414,8 +414,8 @@ const Footer: React.FC = () => {
               />
             </div>
           ) : (
-            <form className="max-w-md mx-auto relative group flex flex-col gap-4 md:block" onSubmit={handleNewsletterSubmit}>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder={t('newsletter', 'Placeholder')} className="w-full pl-6 pr-6 md:pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.15)]" />
+            <form noValidate className="max-w-md mx-auto relative group flex flex-col gap-4 md:block" onSubmit={handleNewsletterSubmit}>
+              <input type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('newsletter', 'Placeholder')} className="w-full pl-6 pr-6 md:pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.15)]" />
               <button type="submit" disabled={isSubmitting} className="w-full md:w-auto md:mt-0 relative md:absolute md:right-2 md:top-2 md:bottom-2 px-8 md:px-6 py-4 md:py-0 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center justify-center md:inline-flex gap-2 text-sm shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
                 {isSubmitting ? (
                   <span className="inline-flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>Sending...</span>
