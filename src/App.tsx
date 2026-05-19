@@ -339,6 +339,7 @@ const Navbar: React.FC<NavbarInternalProps> = ({ setView, mobileMenuOpen, setMob
 const Footer: React.FC = () => {
   const { t } = useLanguage();
   const [email, setEmail] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle');
@@ -413,6 +414,7 @@ const Footer: React.FC = () => {
       setSubmitState('success');
       setSubmitMessage('Thanks! Your 15% code is on the way.');
       saveSignupEmail(normalizedEmail);
+      setSignupEmail(normalizedEmail);
       setEmail('');
     } catch (error) {
       console.error('Newsletter submit failed', error);
@@ -449,23 +451,40 @@ const Footer: React.FC = () => {
         <div className="mb-16 border-b border-gray-800 pb-16">
           <h2 className="text-3xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600 tracking-tight">{t('newsletter', 'Headline')}</h2>
           <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">{t('newsletter', 'Subheadline')}</p>
-          <form className="max-w-md mx-auto relative group flex flex-col gap-4 md:block" onSubmit={handleNewsletterSubmit}>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder={t('newsletter', 'Placeholder')} className="w-full pl-6 pr-6 md:pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.15)]" />
-            <button type="submit" disabled={isSubmitting} className="w-full md:w-auto md:mt-0 relative md:absolute md:right-2 md:top-2 md:bottom-2 px-8 md:px-6 py-4 md:py-0 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center justify-center md:inline-flex gap-2 text-sm shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
-              {isSubmitting ? (
-                <span className="inline-flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>Sending...</span>
-              ) : (
-                <>
-                  <span className="md:hidden">Send My Discount</span><span className="hidden md:inline">{t('newsletter', 'Button')}</span><ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-            {submitMessage && (
-              <p className={`text-xs md:mt-3 md:text-left px-3 py-2 rounded-lg border ${submitState === 'success' ? 'text-green-300 border-green-500/30 bg-green-500/10' : 'text-red-300 border-red-500/30 bg-red-500/10'}`}>
-                {submitMessage}
+          {submitState === 'success' ? (
+            <div className="max-w-md mx-auto flex flex-col items-center gap-4">
+              <p className="text-sm px-3 py-2 rounded-lg border text-green-300 border-green-500/30 bg-green-500/10">
+                {submitMessage} Your 15% off is applied below.
               </p>
-            )}
-          </form>
+              <div
+                data-whop-checkout-plan-id="plan_M2115mrgbgPp2"
+                data-whop-checkout-hide-price="true"
+                data-whop-checkout-theme="dark"
+                data-whop-checkout-prefill-promo-code="PROPICKZ15"
+                data-whop-checkout-prefill-email={signupEmail}
+                data-whop-checkout-return-url="https://propickz.com/"
+                style={{ width: '100%', maxWidth: 500 }}
+              />
+            </div>
+          ) : (
+            <form className="max-w-md mx-auto relative group flex flex-col gap-4 md:block" onSubmit={handleNewsletterSubmit}>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder={t('newsletter', 'Placeholder')} className="w-full pl-6 pr-6 md:pr-44 py-4 bg-gray-900/50 border border-gray-800 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.15)]" />
+              <button type="submit" disabled={isSubmitting} className="w-full md:w-auto md:mt-0 relative md:absolute md:right-2 md:top-2 md:bottom-2 px-8 md:px-6 py-4 md:py-0 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white rounded-full font-bold transition-all flex items-center justify-center md:inline-flex gap-2 text-sm shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
+                {isSubmitting ? (
+                  <span className="inline-flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>Sending...</span>
+                ) : (
+                  <>
+                    <span className="md:hidden">Send My Discount</span><span className="hidden md:inline">{t('newsletter', 'Button')}</span><ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+              {submitMessage && submitState === 'error' && (
+                <p className="text-xs md:mt-3 md:text-left px-3 py-2 rounded-lg border text-red-300 border-red-500/30 bg-red-500/10">
+                  {submitMessage}
+                </p>
+              )}
+            </form>
+          )}
         </div>
         <p className="text-gray-600 text-sm">{t('footer', 'Copyright')}<br /> {t('footer', 'Disclaimer')}</p>
       </div>
