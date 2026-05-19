@@ -462,6 +462,7 @@ const Footer: React.FC = () => {
                 data-whop-checkout-theme="dark"
                 data-whop-checkout-prefill-promo-code="PROPICKZ15"
                 data-whop-checkout-prefill-email={signupEmail}
+                data-whop-checkout-hide-email="true"
                 data-whop-checkout-return-url="https://propickz.com/"
                 style={{ width: '100%', maxWidth: 500 }}
               />
